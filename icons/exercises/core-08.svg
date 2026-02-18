@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 250" width="300" height="250">
+  <rect width="300" height="250" fill="#1f2937"/>
+  <!-- Floor -->
+  <line x1="20" y1="200" x2="280" y2="200" stroke="#6b7280" stroke-width="1.5"/>
+  <!-- Side Plank - on side, forearm on ground, body straight, hips raised -->
+  <!-- Obliques highlight - RED -->
+  <path d="M120,100 L190,100 L195,118 L125,118 Z" fill="#ef4444" opacity="0.55"/>
+  <!-- Head (on top) -->
+  <circle cx="110" cy="82" r="11" fill="none" stroke="#e5e7eb" stroke-width="2.5"/>
+  <!-- Neck -->
+  <line x1="115" y1="92" x2="120" y2="100" stroke="#e5e7eb" stroke-width="2.5"/>
+  <!-- Torso - straight diagonal line from shoulder to hip -->
+  <line x1="120" y1="103" x2="200" y2="110" stroke="#e5e7eb" stroke-width="3"/>
+  <!-- Support arm - forearm on ground -->
+  <line x1="120" y1="103" x2="110" y2="150" stroke="#e5e7eb" stroke-width="2.5"/>
+  <line x1="110" y1="150" x2="95" y2="200" stroke="#e5e7eb" stroke-width="2.5"/>
+  <!-- Elbow on ground -->
+  <circle cx="95" cy="200" r="3" fill="#e5e7eb"/>
+  <!-- Top arm resting on hip or raised -->
+  <line x1="155" y1="100" x2="155" y2="75" stroke="#e5e7eb" stroke-width="2"/>
+  <line x1="155" y1="75" x2="160" y2="68" stroke="#e5e7eb" stroke-width="2"/>
+  <!-- Hips -->
+  <circle cx="200" cy="112" r="3" fill="#e5e7eb"/>
+  <!-- Legs - straight, stacked, going to feet on ground -->
+  <line x1="200" y1="112" x2="245" y2="155" stroke="#e5e7eb" stroke-width="2.5"/>
+  <line x1="245" y1="155" x2="265" y2="197" stroke="#e5e7eb" stroke-width="2.5"/>
+  <!-- Feet stacked on ground -->
+  <circle cx="265" cy="197" r="3" fill="#e5e7eb"/>
+  <line x1="265" y1="197" x2="275" y2="197" stroke="#e5e7eb" stroke-width="2"/>
+  <!-- Label -->
+  <text x="150" y="232" text-anchor="middle" fill="#9ca3af" font-family="Arial, sans-serif" font-size="13" font-weight="bold">SIDE PLANK</text>
+</svg>

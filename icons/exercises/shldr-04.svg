@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 250" width="300" height="250">
+  <rect width="300" height="250" fill="#1f2937"/>
+  <line x1="50" y1="230" x2="250" y2="230" stroke="#374151" stroke-width="1"/>
+
+  <!-- Side view figure -->
+  <!-- Legs -->
+  <line x1="155" y1="178" x2="145" y2="228" stroke="#e5e7eb" stroke-width="8" stroke-linecap="round"/>
+  <line x1="155" y1="178" x2="168" y2="228" stroke="#e5e7eb" stroke-width="8" stroke-linecap="round"/>
+  <line x1="145" y1="228" x2="135" y2="230" stroke="#e5e7eb" stroke-width="6" stroke-linecap="round"/>
+  <line x1="168" y1="228" x2="178" y2="230" stroke="#e5e7eb" stroke-width="6" stroke-linecap="round"/>
+
+  <!-- Torso -->
+  <path d="M142,172 L142,108 Q155,98 168,108 L168,172 Z" fill="#374151" stroke="#e5e7eb" stroke-width="2"/>
+
+  <!-- Primary muscles: Front delts (red) -->
+  <ellipse cx="137" cy="112" rx="9" ry="13" fill="#ef4444" opacity="0.85"/>
+  <ellipse cx="173" cy="112" rx="9" ry="13" fill="#ef4444" opacity="0.85"/>
+
+  <!-- Arms raised forward to shoulder height -->
+  <!-- Upper arms going forward -->
+  <line x1="137" y1="118" x2="100" y2="110" stroke="#e5e7eb" stroke-width="7" stroke-linecap="round"/>
+  <line x1="173" y1="118" x2="100" y2="106" stroke="#e5e7eb" stroke-width="7" stroke-linecap="round"/>
+
+  <!-- Forearms forward -->
+  <line x1="100" y1="110" x2="72" y2="108" stroke="#e5e7eb" stroke-width="6" stroke-linecap="round"/>
+  <line x1="100" y1="106" x2="72" y2="104" stroke="#e5e7eb" stroke-width="6" stroke-linecap="round"/>
+
+  <!-- Hands -->
+  <circle cx="70" cy="108" r="4" fill="#e5e7eb"/>
+  <circle cx="70" cy="104" r="4" fill="#e5e7eb"/>
+
+  <!-- Dumbbells (front view, seen from side as vertical bars) -->
+  <rect x="58" y="100" width="7" height="18" rx="3" fill="#6b7280"/>
+  <rect x="55" y="98" width="13" height="5" rx="2" fill="#6b7280"/>
+  <rect x="55" y="115" width="13" height="5" rx="2" fill="#6b7280"/>
+
+  <!-- Head -->
+  <circle cx="155" cy="86" r="16" fill="#374151" stroke="#e5e7eb" stroke-width="2"/>
+
+  <!-- Motion arrow -->
+  <path d="M80,135 L80,100" stroke="#9ca3af" stroke-width="1.5" fill="none" marker-end="url(#arrowUp)"/>
+  <defs>
+    <marker id="arrowUp" markerWidth="6" markerHeight="6" refX="3" refY="6" orient="auto">
+      <path d="M0,6 L3,0 L6,6" fill="none" stroke="#9ca3af" stroke-width="1"/>
+    </marker>
+  </defs>
+
+  <!-- Label -->
+  <text x="150" y="18" text-anchor="middle" fill="#9ca3af" font-family="Arial,sans-serif" font-size="11" font-weight="bold">FRONT RAISE</text>
+</svg>

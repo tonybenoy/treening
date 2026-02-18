@@ -1,0 +1,62 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 250" width="300" height="250">
+  <rect width="300" height="250" fill="#1f2937"/>
+
+  <!-- Person standing upright - top position of deadlift, side view -->
+  <!-- Head -->
+  <circle cx="150" cy="42" r="14" fill="none" stroke="#e5e7eb" stroke-width="2.5"/>
+
+  <!-- Neck -->
+  <line x1="150" y1="56" x2="150" y2="65" stroke="#e5e7eb" stroke-width="3"/>
+
+  <!-- Traps - secondary (amber) -->
+  <path d="M138,65 Q150,58 162,65 L162,75 Q150,70 138,75 Z" fill="#f59e0b" opacity="0.55"/>
+
+  <!-- Torso -->
+  <path d="M136,65 L136,150 L164,150 L164,65 Z" fill="none" stroke="#e5e7eb" stroke-width="2.5" stroke-linejoin="round"/>
+
+  <!-- Lower back - primary muscles (red) -->
+  <path d="M138,125 L138,150 L162,150 L162,125 Q150,120 138,125 Z" fill="#ef4444" opacity="0.7"/>
+
+  <!-- Glutes - primary (red) -->
+  <path d="M134,150 Q130,165 140,172 L150,168 L160,172 Q170,165 166,150 Z" fill="#ef4444" opacity="0.65"/>
+
+  <!-- Arms hanging down holding barbell -->
+  <!-- Upper arms -->
+  <line x1="136" y1="72" x2="130" y2="115" stroke="#e5e7eb" stroke-width="5" stroke-linecap="round"/>
+  <line x1="164" y1="72" x2="170" y2="115" stroke="#e5e7eb" stroke-width="5" stroke-linecap="round"/>
+
+  <!-- Forearms -->
+  <line x1="130" y1="115" x2="128" y2="155" stroke="#e5e7eb" stroke-width="4" stroke-linecap="round"/>
+  <line x1="170" y1="115" x2="172" y2="155" stroke="#e5e7eb" stroke-width="4" stroke-linecap="round"/>
+
+  <!-- Hands -->
+  <circle cx="128" cy="155" r="3" fill="#e5e7eb"/>
+  <circle cx="172" cy="155" r="3" fill="#e5e7eb"/>
+
+  <!-- Upper legs -->
+  <line x1="142" y1="165" x2="138" y2="200" stroke="#e5e7eb" stroke-width="7" stroke-linecap="round"/>
+  <line x1="158" y1="165" x2="162" y2="200" stroke="#e5e7eb" stroke-width="7" stroke-linecap="round"/>
+
+  <!-- Hamstrings - secondary (amber) -->
+  <path d="M140,168 Q135,182 137,198" stroke="#f59e0b" stroke-width="4" stroke-linecap="round" opacity="0.5"/>
+  <path d="M160,168 Q165,182 163,198" stroke="#f59e0b" stroke-width="4" stroke-linecap="round" opacity="0.5"/>
+
+  <!-- Lower legs -->
+  <line x1="138" y1="200" x2="135" y2="232" stroke="#e5e7eb" stroke-width="5" stroke-linecap="round"/>
+  <line x1="162" y1="200" x2="165" y2="232" stroke="#e5e7eb" stroke-width="5" stroke-linecap="round"/>
+
+  <!-- Feet -->
+  <line x1="135" y1="232" x2="122" y2="236" stroke="#e5e7eb" stroke-width="4" stroke-linecap="round"/>
+  <line x1="165" y1="232" x2="178" y2="236" stroke="#e5e7eb" stroke-width="4" stroke-linecap="round"/>
+
+  <!-- Barbell at hip level -->
+  <line x1="60" y1="157" x2="240" y2="157" stroke="#6b7280" stroke-width="3"/>
+  <!-- Plates -->
+  <rect x="55" y="143" width="10" height="28" rx="2" fill="#6b7280"/>
+  <rect x="45" y="148" width="10" height="18" rx="2" fill="#6b7280"/>
+  <rect x="235" y="143" width="10" height="28" rx="2" fill="#6b7280"/>
+  <rect x="245" y="148" width="10" height="18" rx="2" fill="#6b7280"/>
+
+  <!-- Floor line -->
+  <line x1="30" y1="238" x2="270" y2="238" stroke="#6b7280" stroke-width="1" opacity="0.5"/>
+</svg>

@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 250" width="300" height="250">
+  <rect width="300" height="250" fill="#1f2937"/>
+  <!-- Floor line -->
+  <line x1="30" y1="230" x2="270" y2="230" stroke="#374151" stroke-width="1"/>
+  <!-- Cable machine behind person -->
+  <rect x="215" y="10" width="10" height="220" rx="2" fill="#6b7280"/>
+  <rect x="205" y="10" width="30" height="10" rx="2" fill="#6b7280"/>
+  <!-- Low pulley -->
+  <circle cx="220" cy="220" r="5" fill="#9ca3af" stroke="#4b5563" stroke-width="1"/>
+  <!-- Cable from low pulley up behind person to hands -->
+  <path d="M220 215 L220 180 L160 100 L150 55" stroke="#9ca3af" stroke-width="1.5" stroke-dasharray="4 2" fill="none"/>
+  <!-- Person facing away from cable - side view, leaning forward slightly -->
+  <!-- Legs -->
+  <line x1="120" y1="175" x2="110" y2="230" stroke="#e5e7eb" stroke-width="3" stroke-linecap="round"/>
+  <line x1="145" y1="175" x2="155" y2="230" stroke="#e5e7eb" stroke-width="3" stroke-linecap="round"/>
+  <!-- Feet -->
+  <line x1="110" y1="230" x2="100" y2="230" stroke="#e5e7eb" stroke-width="3" stroke-linecap="round"/>
+  <line x1="155" y1="230" x2="165" y2="230" stroke="#e5e7eb" stroke-width="3" stroke-linecap="round"/>
+  <!-- Body mass - torso slightly leaned forward -->
+  <path d="M120 100 L148 100 L150 175 L118 175 Z" fill="#374151" stroke="#e5e7eb" stroke-width="2"/>
+  <!-- Head -->
+  <circle cx="130" cy="78" r="17" fill="#374151" stroke="#e5e7eb" stroke-width="2"/>
+  <!-- Shoulders -->
+  <line x1="108" y1="105" x2="158" y2="105" stroke="#e5e7eb" stroke-width="3" stroke-linecap="round"/>
+  <!-- Left upper arm raised overhead -->
+  <line x1="115" y1="105" x2="125" y2="60" stroke="#e5e7eb" stroke-width="3" stroke-linecap="round"/>
+  <!-- Left tricep (red) -->
+  <ellipse cx="118" cy="80" rx="5" ry="16" fill="#ef4444" opacity="0.8" transform="rotate(10 118 80)"/>
+  <!-- Left forearm extended forward overhead -->
+  <line x1="125" y1="60" x2="100" y2="48" stroke="#e5e7eb" stroke-width="3" stroke-linecap="round"/>
+  <!-- Right upper arm raised -->
+  <line x1="150" y1="105" x2="145" y2="60" stroke="#e5e7eb" stroke-width="3" stroke-linecap="round"/>
+  <!-- Right tricep (red) -->
+  <ellipse cx="149" cy="80" rx="5" ry="16" fill="#ef4444" opacity="0.8" transform="rotate(-5 149 80)"/>
+  <!-- Right forearm extended forward overhead -->
+  <line x1="145" y1="60" x2="120" y2="48" stroke="#e5e7eb" stroke-width="3" stroke-linecap="round"/>
+  <!-- Rope ends in hands -->
+  <line x1="100" y1="48" x2="110" y2="50" stroke="#6b7280" stroke-width="3" stroke-linecap="round"/>
+  <line x1="120" y1="48" x2="110" y2="50" stroke="#6b7280" stroke-width="3" stroke-linecap="round"/>
+  <!-- Rope going back to cable -->
+  <line x1="110" y1="50" x2="150" y2="55" stroke="#6b7280" stroke-width="2.5"/>
+  <!-- Hands -->
+  <circle cx="100" cy="48" r="3" fill="#e5e7eb"/>
+  <circle cx="120" cy="48" r="3" fill="#e5e7eb"/>
+</svg>

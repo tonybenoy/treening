@@ -1,0 +1,58 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 250" width="300" height="250">
+  <rect width="300" height="250" fill="#1f2937"/>
+
+  <!-- Bulgarian Split Squat - rear foot on bench, front leg lunge, dumbbells -->
+
+  <!-- Bench -->
+  <rect x="190" y="160" width="70" height="8" rx="3" fill="#6b7280"/>
+  <rect x="195" y="168" width="6" height="55" rx="2" fill="#6b7280"/>
+  <rect x="248" y="168" width="6" height="55" rx="2" fill="#6b7280"/>
+  <rect x="188" y="220" width="75" height="5" rx="2" fill="#6b7280"/>
+
+  <!-- Floor -->
+  <line x1="30" y1="228" x2="270" y2="228" stroke="#6b7280" stroke-width="1"/>
+
+  <!-- Primary muscles: Quads on front leg (red) -->
+  <polygon points="108,135 98,175 108,178 118,138" fill="#ef4444" opacity="0.7"/>
+
+  <!-- Secondary muscles: Glutes (amber) -->
+  <ellipse cx="125" cy="130" rx="14" ry="8" fill="#f59e0b" opacity="0.55"/>
+
+  <!-- Figure in split squat position - side view -->
+  <!-- Head -->
+  <circle cx="125" cy="52" r="12" fill="none" stroke="#e5e7eb" stroke-width="2.5"/>
+
+  <!-- Neck -->
+  <line x1="125" y1="64" x2="125" y2="72" stroke="#e5e7eb" stroke-width="2.5"/>
+
+  <!-- Torso (upright) -->
+  <path d="M125,72 L118,78 L115,125 L135,125 L132,78 Z" fill="none" stroke="#e5e7eb" stroke-width="2"/>
+
+  <!-- Hips -->
+  <path d="M115,125 Q125,132 135,125" fill="none" stroke="#e5e7eb" stroke-width="2"/>
+
+  <!-- Front leg (bent in lunge) -->
+  <path d="M118,127 L100,155 L95,185" fill="none" stroke="#e5e7eb" stroke-width="3"/>
+  <!-- Front lower leg -->
+  <path d="M95,185 L98,210 L95,226" fill="none" stroke="#e5e7eb" stroke-width="3"/>
+  <!-- Front foot -->
+  <line x1="86" y1="226" x2="103" y2="226" stroke="#e5e7eb" stroke-width="2.5"/>
+
+  <!-- Rear leg (extended back, foot on bench) -->
+  <path d="M132,127 L155,145 L185,158" fill="none" stroke="#e5e7eb" stroke-width="3"/>
+  <!-- Rear lower leg resting on bench -->
+  <path d="M185,158 L200,160" fill="none" stroke="#e5e7eb" stroke-width="3"/>
+  <!-- Foot on bench (toe down) -->
+  <line x1="198" y1="155" x2="205" y2="162" stroke="#e5e7eb" stroke-width="2"/>
+
+  <!-- Arms hanging with dumbbells -->
+  <path d="M120,78 L110,110 L108,138" fill="none" stroke="#e5e7eb" stroke-width="2.5"/>
+  <path d="M130,78 L140,110 L142,138" fill="none" stroke="#e5e7eb" stroke-width="2.5"/>
+
+  <!-- Dumbbells -->
+  <rect x="102" y="135" width="14" height="6" rx="2" fill="#6b7280"/>
+  <rect x="136" y="135" width="14" height="6" rx="2" fill="#6b7280"/>
+
+  <!-- Label -->
+  <text x="150" y="18" text-anchor="middle" fill="#9ca3af" font-family="Arial,sans-serif" font-size="11" font-weight="bold">BULGARIAN SPLIT SQUAT</text>
+</svg>

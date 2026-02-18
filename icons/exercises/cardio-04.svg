@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 250" width="300" height="250">
+  <rect width="300" height="250" fill="#1f2937"/>
+  <!-- Floor -->
+  <line x1="10" y1="210" x2="290" y2="210" stroke="#6b7280" stroke-width="1.5"/>
+  <!-- Rowing machine - slide rail -->
+  <line x1="40" y1="195" x2="260" y2="195" stroke="#6b7280" stroke-width="2.5"/>
+  <!-- Front flywheel housing -->
+  <circle cx="55" cy="185" r="15" fill="none" stroke="#6b7280" stroke-width="2"/>
+  <circle cx="55" cy="185" r="5" fill="#6b7280"/>
+  <!-- Front support leg -->
+  <line x1="45" y1="195" x2="40" y2="210" stroke="#6b7280" stroke-width="2"/>
+  <line x1="65" y1="195" x2="70" y2="210" stroke="#6b7280" stroke-width="2"/>
+  <!-- Rear support -->
+  <line x1="250" y1="195" x2="255" y2="210" stroke="#6b7280" stroke-width="2"/>
+  <!-- Seat on rail -->
+  <rect x="160" y="185" width="22" height="6" rx="2" fill="#6b7280"/>
+  <!-- Foot plate -->
+  <rect x="90" y="178" width="10" height="18" rx="1" fill="none" stroke="#6b7280" stroke-width="1.5"/>
+  <!-- Chain/cable from flywheel to handle -->
+  <line x1="55" y1="180" x2="130" y2="150" stroke="#6b7280" stroke-width="1.5" stroke-dasharray="3,2"/>
+  <!-- Handle -->
+  <line x1="125" y1="148" x2="140" y2="148" stroke="#6b7280" stroke-width="3"/>
+  <!-- Back highlight - RED -->
+  <path d="M148,100 L170,95 L178,140 L152,145 Z" fill="#ef4444" opacity="0.5"/>
+  <!-- Legs highlight - RED -->
+  <path d="M100,152 L175,148 L178,188 L100,188 Z" fill="#ef4444" opacity="0.35"/>
+  <!-- Person in drive phase - side view -->
+  <!-- Head -->
+  <circle cx="155" cy="82" r="10" fill="none" stroke="#e5e7eb" stroke-width="2.5"/>
+  <!-- Neck -->
+  <line x1="155" y1="92" x2="158" y2="100" stroke="#e5e7eb" stroke-width="2.5"/>
+  <!-- Torso (leaning back slightly - drive phase) -->
+  <line x1="158" y1="100" x2="170" y2="150" stroke="#e5e7eb" stroke-width="3"/>
+  <!-- Arms pulling handle -->
+  <line x1="158" y1="108" x2="145" y2="125" stroke="#e5e7eb" stroke-width="2.5"/>
+  <line x1="145" y1="125" x2="135" y2="148" stroke="#e5e7eb" stroke-width="2.5"/>
+  <!-- Hands on handle -->
+  <circle cx="135" cy="148" r="3" fill="#e5e7eb"/>
+  <!-- Hips on seat -->
+  <circle cx="170" cy="152" r="3" fill="#e5e7eb"/>
+  <!-- Legs extended (drive phase - legs pushing) -->
+  <line x1="170" y1="152" x2="130" y2="165" stroke="#e5e7eb" stroke-width="2.5"/>
+  <line x1="130" y1="165" x2="100" y2="180" stroke="#e5e7eb" stroke-width="2.5"/>
+  <!-- Feet on foot plate -->
+  <circle cx="98" cy="182" r="3" fill="#e5e7eb"/>
+  <!-- Other leg -->
+  <line x1="170" y1="155" x2="132" y2="170" stroke="#e5e7eb" stroke-width="2"/>
+  <line x1="132" y1="170" x2="100" y2="185" stroke="#e5e7eb" stroke-width="2"/>
+  <!-- Label -->
+  <text x="150" y="238" text-anchor="middle" fill="#9ca3af" font-family="Arial, sans-serif" font-size="13" font-weight="bold">ROWING MACHINE</text>
+</svg>

@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 250" width="300" height="250">
+  <rect width="300" height="250" fill="#1f2937"/>
+  <!-- Floor -->
+  <line x1="20" y1="200" x2="280" y2="200" stroke="#6b7280" stroke-width="1.5"/>
+  <!-- Bicycle Crunch - on back, elbow touching opposite knee -->
+  <!-- Abs highlight - RED -->
+  <path d="M125,130 L175,125 L178,155 L128,160 Z" fill="#ef4444" opacity="0.55"/>
+  <!-- Obliques highlight - RED -->
+  <path d="M120,128 L130,120 L140,140 L125,145 Z" fill="#ef4444" opacity="0.45"/>
+  <!-- Back on ground (lower portion) -->
+  <line x1="180" y1="155" x2="230" y2="190" stroke="#e5e7eb" stroke-width="2.5"/>
+  <!-- Torso curling up and rotating -->
+  <line x1="125" y1="130" x2="180" y2="155" stroke="#e5e7eb" stroke-width="3"/>
+  <!-- Head and neck (curled up) -->
+  <circle cx="110" cy="110" r="11" fill="none" stroke="#e5e7eb" stroke-width="2.5"/>
+  <line x1="118" y1="118" x2="125" y2="128" stroke="#e5e7eb" stroke-width="2.5"/>
+  <!-- Right arm - elbow toward left knee -->
+  <line x1="128" y1="132" x2="150" y2="118" stroke="#e5e7eb" stroke-width="2.5"/>
+  <line x1="150" y1="118" x2="165" y2="125" stroke="#e5e7eb" stroke-width="2.5"/>
+  <!-- Left arm behind head -->
+  <line x1="130" y1="135" x2="110" y2="120" stroke="#e5e7eb" stroke-width="2"/>
+  <line x1="110" y1="120" x2="105" y2="108" stroke="#e5e7eb" stroke-width="2"/>
+  <!-- Left leg - knee driven in (touching elbow) -->
+  <line x1="180" y1="155" x2="170" y2="135" stroke="#e5e7eb" stroke-width="2.5"/>
+  <line x1="170" y1="135" x2="163" y2="128" stroke="#e5e7eb" stroke-width="2.5"/>
+  <!-- Right leg - extended out straight -->
+  <line x1="230" y1="190" x2="255" y2="165" stroke="#e5e7eb" stroke-width="2.5"/>
+  <line x1="255" y1="165" x2="275" y2="155" stroke="#e5e7eb" stroke-width="2.5"/>
+  <!-- Foot -->
+  <line x1="275" y1="155" x2="280" y2="152" stroke="#e5e7eb" stroke-width="2"/>
+  <!-- Label -->
+  <text x="150" y="232" text-anchor="middle" fill="#9ca3af" font-family="Arial, sans-serif" font-size="13" font-weight="bold">BICYCLE CRUNCH</text>
+</svg>

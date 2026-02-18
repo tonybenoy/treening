@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 250" width="300" height="250">
+  <rect width="300" height="250" fill="#1f2937"/>
+
+  <!-- Front Squat - barbell on front of shoulders, elbows high -->
+
+  <!-- Primary muscles: Quads (red) -->
+  <polygon points="138,148 130,188 140,188 148,148" fill="#ef4444" opacity="0.7"/>
+  <polygon points="162,148 160,188 170,188 172,148" fill="#ef4444" opacity="0.7"/>
+
+  <!-- Secondary muscles: Glutes (amber) -->
+  <ellipse cx="150" cy="143" rx="18" ry="10" fill="#f59e0b" opacity="0.6"/>
+
+  <!-- Floor -->
+  <line x1="60" y1="230" x2="240" y2="230" stroke="#6b7280" stroke-width="1"/>
+
+  <!-- Head -->
+  <circle cx="150" cy="65" r="12" fill="none" stroke="#e5e7eb" stroke-width="2.5"/>
+
+  <!-- Neck -->
+  <line x1="150" y1="77" x2="150" y2="85" stroke="#e5e7eb" stroke-width="2.5"/>
+
+  <!-- Torso - more upright than back squat -->
+  <path d="M150,85 L143,92 L140,135 L160,135 L157,92 Z" fill="none" stroke="#e5e7eb" stroke-width="2.5"/>
+
+  <!-- Hips -->
+  <path d="M140,135 Q150,142 160,135" fill="none" stroke="#e5e7eb" stroke-width="2.5"/>
+
+  <!-- Upper legs -->
+  <path d="M140,137 L126,160 L120,190" fill="none" stroke="#e5e7eb" stroke-width="3"/>
+  <path d="M160,137 L172,160 L178,190" fill="none" stroke="#e5e7eb" stroke-width="3"/>
+
+  <!-- Lower legs -->
+  <path d="M120,190 L124,215 L122,228" fill="none" stroke="#e5e7eb" stroke-width="3"/>
+  <path d="M178,190 L174,215 L176,228" fill="none" stroke="#e5e7eb" stroke-width="3"/>
+
+  <!-- Feet -->
+  <line x1="113" y1="228" x2="131" y2="228" stroke="#e5e7eb" stroke-width="2.5"/>
+  <line x1="168" y1="228" x2="186" y2="228" stroke="#e5e7eb" stroke-width="2.5"/>
+
+  <!-- Arms - elbows high, front rack position -->
+  <path d="M145,92 L130,105 L135,88" fill="none" stroke="#e5e7eb" stroke-width="2.5"/>
+  <path d="M155,92 L170,105 L165,88" fill="none" stroke="#e5e7eb" stroke-width="2.5"/>
+
+  <!-- Barbell on front of shoulders -->
+  <line x1="85" y1="86" x2="215" y2="86" stroke="#6b7280" stroke-width="3"/>
+  <!-- Plates -->
+  <rect x="78" y="76" width="8" height="20" rx="2" fill="#6b7280"/>
+  <rect x="70" y="79" width="8" height="14" rx="2" fill="#6b7280"/>
+  <rect x="214" y="76" width="8" height="20" rx="2" fill="#6b7280"/>
+  <rect x="222" y="79" width="8" height="14" rx="2" fill="#6b7280"/>
+
+  <!-- Label -->
+  <text x="150" y="18" text-anchor="middle" fill="#9ca3af" font-family="Arial,sans-serif" font-size="11" font-weight="bold">FRONT SQUAT</text>
+</svg>

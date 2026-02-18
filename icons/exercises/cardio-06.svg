@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 250" width="300" height="250">
+  <rect width="300" height="250" fill="#1f2937"/>
+  <!-- Floor -->
+  <line x1="20" y1="215" x2="280" y2="215" stroke="#6b7280" stroke-width="1.5"/>
+  <!-- Jump Rope - person jumping, rope overhead -->
+  <!-- Jump rope arc overhead -->
+  <path d="M95,195 Q90,160 100,110 Q120,30 150,20 Q180,30 200,110 Q210,160 205,195" fill="none" stroke="#9ca3af" stroke-width="2" stroke-dasharray="6,3"/>
+  <!-- Calves highlight - RED -->
+  <path d="M130,180 L145,180 L148,205 L128,205 Z" fill="#ef4444" opacity="0.55"/>
+  <path d="M155,180 L170,180 L173,205 L153,205 Z" fill="#ef4444" opacity="0.55"/>
+  <!-- Person jumping - front view -->
+  <!-- Head -->
+  <circle cx="150" cy="60" r="11" fill="none" stroke="#e5e7eb" stroke-width="2.5"/>
+  <!-- Neck -->
+  <line x1="150" y1="71" x2="150" y2="80" stroke="#e5e7eb" stroke-width="2.5"/>
+  <!-- Shoulders -->
+  <line x1="130" y1="85" x2="170" y2="85" stroke="#e5e7eb" stroke-width="2.5"/>
+  <!-- Torso -->
+  <line x1="150" y1="80" x2="150" y2="140" stroke="#e5e7eb" stroke-width="3"/>
+  <!-- Left arm down, holding rope -->
+  <line x1="130" y1="85" x2="115" y2="115" stroke="#e5e7eb" stroke-width="2.5"/>
+  <line x1="115" y1="115" x2="100" y2="145" stroke="#e5e7eb" stroke-width="2.5"/>
+  <!-- Left hand -->
+  <circle cx="98" cy="148" r="3" fill="#e5e7eb"/>
+  <!-- Right arm down, holding rope -->
+  <line x1="170" y1="85" x2="185" y2="115" stroke="#e5e7eb" stroke-width="2.5"/>
+  <line x1="185" y1="115" x2="200" y2="145" stroke="#e5e7eb" stroke-width="2.5"/>
+  <!-- Right hand -->
+  <circle cx="202" cy="148" r="3" fill="#e5e7eb"/>
+  <!-- Hips -->
+  <line x1="140" y1="140" x2="160" y2="140" stroke="#e5e7eb" stroke-width="2.5"/>
+  <!-- Left leg (slightly airborne) -->
+  <line x1="140" y1="140" x2="137" y2="170" stroke="#e5e7eb" stroke-width="2.5"/>
+  <line x1="137" y1="170" x2="135" y2="200" stroke="#e5e7eb" stroke-width="2.5"/>
+  <!-- Left foot (off ground) -->
+  <line x1="135" y1="200" x2="130" y2="205" stroke="#e5e7eb" stroke-width="2"/>
+  <!-- Right leg -->
+  <line x1="160" y1="140" x2="163" y2="170" stroke="#e5e7eb" stroke-width="2.5"/>
+  <line x1="163" y1="170" x2="165" y2="200" stroke="#e5e7eb" stroke-width="2.5"/>
+  <!-- Right foot (off ground) -->
+  <line x1="165" y1="200" x2="170" y2="205" stroke="#e5e7eb" stroke-width="2"/>
+  <!-- Gap between feet and floor shows jumping -->
+  <!-- Label -->
+  <text x="150" y="240" text-anchor="middle" fill="#9ca3af" font-family="Arial, sans-serif" font-size="13" font-weight="bold">JUMP ROPE</text>
+</svg>

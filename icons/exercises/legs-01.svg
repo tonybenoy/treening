@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 250" width="300" height="250">
+  <rect width="300" height="250" fill="#1f2937"/>
+
+  <!-- Barbell Squat - squat position, thighs parallel -->
+
+  <!-- Primary muscles: Quads (red) -->
+  <polygon points="138,145 132,185 142,185 148,145" fill="#ef4444" opacity="0.7"/>
+  <polygon points="162,145 158,185 168,185 172,145" fill="#ef4444" opacity="0.7"/>
+
+  <!-- Secondary muscles: Glutes (amber) -->
+  <ellipse cx="150" cy="140" rx="18" ry="10" fill="#f59e0b" opacity="0.6"/>
+
+  <!-- Secondary muscles: Hamstrings (amber) -->
+  <polygon points="132,150 126,185 134,185 138,150" fill="#f59e0b" opacity="0.5"/>
+  <polygon points="168,150 166,185 174,185 172,150" fill="#f59e0b" opacity="0.5"/>
+
+  <!-- Floor -->
+  <line x1="60" y1="230" x2="240" y2="230" stroke="#6b7280" stroke-width="1"/>
+
+  <!-- Figure in squat position - side view facing right -->
+  <!-- Head -->
+  <circle cx="155" cy="65" r="12" fill="none" stroke="#e5e7eb" stroke-width="2.5"/>
+
+  <!-- Neck -->
+  <line x1="155" y1="77" x2="155" y2="85" stroke="#e5e7eb" stroke-width="2.5"/>
+
+  <!-- Torso - leaning slightly forward in squat -->
+  <path d="M155,85 L145,90 L140,130 L160,130 L165,90 Z" fill="none" stroke="#e5e7eb" stroke-width="2.5"/>
+
+  <!-- Hips/Pelvis -->
+  <path d="M140,130 Q150,138 160,130" fill="none" stroke="#e5e7eb" stroke-width="2.5"/>
+
+  <!-- Upper legs (thighs roughly parallel) -->
+  <path d="M140,132 L125,155 L120,185" fill="none" stroke="#e5e7eb" stroke-width="3"/>
+  <path d="M160,132 L170,155 L175,185" fill="none" stroke="#e5e7eb" stroke-width="3"/>
+
+  <!-- Lower legs -->
+  <path d="M120,185 L125,215 L122,228" fill="none" stroke="#e5e7eb" stroke-width="3"/>
+  <path d="M175,185 L170,215 L173,228" fill="none" stroke="#e5e7eb" stroke-width="3"/>
+
+  <!-- Feet -->
+  <line x1="112" y1="228" x2="130" y2="228" stroke="#e5e7eb" stroke-width="2.5"/>
+  <line x1="165" y1="228" x2="183" y2="228" stroke="#e5e7eb" stroke-width="2.5"/>
+
+  <!-- Arms holding barbell on upper back -->
+  <path d="M148,90 L130,100 L115,85" fill="none" stroke="#e5e7eb" stroke-width="2.5"/>
+  <path d="M162,90 L175,100 L190,85" fill="none" stroke="#e5e7eb" stroke-width="2.5"/>
+
+  <!-- Barbell on upper back -->
+  <line x1="80" y1="78" x2="225" y2="78" stroke="#6b7280" stroke-width="3"/>
+  <!-- Barbell plates -->
+  <rect x="73" y="68" width="8" height="20" rx="2" fill="#6b7280"/>
+  <rect x="65" y="71" width="8" height="14" rx="2" fill="#6b7280"/>
+  <rect x="224" y="68" width="8" height="20" rx="2" fill="#6b7280"/>
+  <rect x="232" y="71" width="8" height="14" rx="2" fill="#6b7280"/>
+
+  <!-- Label -->
+  <text x="150" y="18" text-anchor="middle" fill="#9ca3af" font-family="Arial,sans-serif" font-size="11" font-weight="bold">BARBELL SQUAT</text>
+</svg>

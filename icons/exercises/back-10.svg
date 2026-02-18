@@ -1,0 +1,61 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 250" width="300" height="250">
+  <rect width="300" height="250" fill="#1f2937"/>
+
+  <!-- Cable machine -->
+  <rect x="50" y="15" width="8" height="230" fill="#6b7280"/>
+  <rect x="40" y="10" width="28" height="12" rx="2" fill="#6b7280"/>
+  <!-- High pulley -->
+  <circle cx="54" cy="22" r="5" fill="#9ca3af"/>
+  <!-- Cable going up and over -->
+  <path d="M59,22 Q80,18 100,50" stroke="#9ca3af" stroke-width="1.5" fill="none"/>
+  <line x1="100" y1="50" x2="135" y2="78" stroke="#9ca3af" stroke-width="1.5"/>
+  <!-- Straight bar -->
+  <line x1="125" y1="72" x2="145" y2="84" stroke="#6b7280" stroke-width="3"/>
+  <!-- Base -->
+  <rect x="35" y="238" width="38" height="6" rx="2" fill="#6b7280"/>
+
+  <!-- Person facing machine, arms overhead pulling bar down in arc -->
+  <!-- Standing position, slightly leaned forward -->
+
+  <!-- Head -->
+  <circle cx="150" cy="58" r="13" fill="none" stroke="#e5e7eb" stroke-width="2.5"/>
+
+  <!-- Neck -->
+  <line x1="150" y1="71" x2="152" y2="78" stroke="#e5e7eb" stroke-width="3"/>
+
+  <!-- Torso - slight forward lean -->
+  <path d="M140,78 L138,160 L166,160 L164,78 Z" fill="none" stroke="#e5e7eb" stroke-width="2.5" stroke-linejoin="round"/>
+
+  <!-- Lats - primary muscles (red) - prominent for pullover -->
+  <path d="M135,85 Q125,110 130,150 L140,150 L140,85 Z" fill="#ef4444" opacity="0.7"/>
+  <path d="M169,85 Q179,110 174,150 L164,150 L164,85 Z" fill="#ef4444" opacity="0.7"/>
+
+  <!-- Arms - extended forward and slightly up to bar, mid-pull position -->
+  <!-- Upper arms -->
+  <line x1="142" y1="82" x2="130" y2="72" stroke="#e5e7eb" stroke-width="5" stroke-linecap="round"/>
+  <line x1="162" y1="82" x2="140" y2="72" stroke="#e5e7eb" stroke-width="5" stroke-linecap="round"/>
+
+  <!-- Forearms pulling bar -->
+  <line x1="130" y1="72" x2="135" y2="78" stroke="#e5e7eb" stroke-width="4" stroke-linecap="round"/>
+
+  <!-- Hands on bar -->
+  <circle cx="135" cy="78" r="3" fill="#e5e7eb"/>
+
+  <!-- Hips -->
+  <ellipse cx="152" cy="165" rx="15" ry="8" fill="none" stroke="#e5e7eb" stroke-width="2"/>
+
+  <!-- Legs - standing -->
+  <line x1="145" y1="172" x2="142" y2="210" stroke="#e5e7eb" stroke-width="6" stroke-linecap="round"/>
+  <line x1="160" y1="172" x2="163" y2="210" stroke="#e5e7eb" stroke-width="6" stroke-linecap="round"/>
+
+  <!-- Lower legs -->
+  <line x1="142" y1="210" x2="140" y2="234" stroke="#e5e7eb" stroke-width="5" stroke-linecap="round"/>
+  <line x1="163" y1="210" x2="165" y2="234" stroke="#e5e7eb" stroke-width="5" stroke-linecap="round"/>
+
+  <!-- Feet -->
+  <line x1="140" y1="234" x2="130" y2="237" stroke="#e5e7eb" stroke-width="3" stroke-linecap="round"/>
+  <line x1="165" y1="234" x2="175" y2="237" stroke="#e5e7eb" stroke-width="3" stroke-linecap="round"/>
+
+  <!-- Floor line -->
+  <line x1="30" y1="240" x2="270" y2="240" stroke="#6b7280" stroke-width="1" opacity="0.5"/>
+</svg>

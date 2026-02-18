@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 250" width="300" height="250">
+  <rect width="300" height="250" fill="#1f2937"/>
+  <!-- Floor line -->
+  <line x1="50" y1="230" x2="250" y2="230" stroke="#374151" stroke-width="1"/>
+  <!-- Legs -->
+  <line x1="135" y1="170" x2="125" y2="230" stroke="#e5e7eb" stroke-width="3" stroke-linecap="round"/>
+  <line x1="165" y1="170" x2="175" y2="230" stroke="#e5e7eb" stroke-width="3" stroke-linecap="round"/>
+  <!-- Feet -->
+  <line x1="125" y1="230" x2="115" y2="230" stroke="#e5e7eb" stroke-width="3" stroke-linecap="round"/>
+  <line x1="175" y1="230" x2="185" y2="230" stroke="#e5e7eb" stroke-width="3" stroke-linecap="round"/>
+  <!-- Body mass - torso -->
+  <path d="M138 100 L162 100 L166 170 L134 170 Z" fill="#374151" stroke="#e5e7eb" stroke-width="2"/>
+  <!-- Head -->
+  <circle cx="150" cy="75" r="18" fill="#374151" stroke="#e5e7eb" stroke-width="2"/>
+  <!-- Shoulders -->
+  <line x1="120" y1="105" x2="180" y2="105" stroke="#e5e7eb" stroke-width="3" stroke-linecap="round"/>
+  <!-- Left upper arm raised -->
+  <line x1="128" y1="105" x2="135" y2="60" stroke="#e5e7eb" stroke-width="3" stroke-linecap="round"/>
+  <!-- Left tricep (red) -->
+  <ellipse cx="129" cy="80" rx="5" ry="15" fill="#ef4444" opacity="0.8" transform="rotate(10 129 80)"/>
+  <!-- Left forearm bent behind head -->
+  <line x1="135" y1="60" x2="145" y2="90" stroke="#e5e7eb" stroke-width="3" stroke-linecap="round"/>
+  <!-- Right upper arm raised -->
+  <line x1="172" y1="105" x2="165" y2="60" stroke="#e5e7eb" stroke-width="3" stroke-linecap="round"/>
+  <!-- Right tricep (red) -->
+  <ellipse cx="171" cy="80" rx="5" ry="15" fill="#ef4444" opacity="0.8" transform="rotate(-10 171 80)"/>
+  <!-- Right forearm bent behind head -->
+  <line x1="165" y1="60" x2="155" y2="90" stroke="#e5e7eb" stroke-width="3" stroke-linecap="round"/>
+  <!-- Dumbbell behind head (horizontal) -->
+  <rect x="140" y="84" width="6" height="14" rx="2" fill="#6b7280"/>
+  <line x1="143" y1="91" x2="157" y2="91" stroke="#6b7280" stroke-width="3"/>
+  <rect x="154" y="84" width="6" height="14" rx="2" fill="#6b7280"/>
+  <!-- Hands holding dumbbell -->
+  <circle cx="147" cy="91" r="3" fill="#e5e7eb"/>
+  <circle cx="153" cy="91" r="3" fill="#e5e7eb"/>
+</svg>

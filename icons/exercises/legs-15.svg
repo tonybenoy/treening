@@ -1,0 +1,72 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 250" width="300" height="250">
+  <rect width="300" height="250" fill="#1f2937"/>
+
+  <!-- Smith Machine Squat - squatting with guided bar on rails -->
+
+  <!-- Smith Machine frame -->
+  <!-- Left vertical rail -->
+  <rect x="72" y="25" width="5" height="210" rx="2" fill="#6b7280"/>
+  <!-- Right vertical rail -->
+  <rect x="223" y="25" width="5" height="210" rx="2" fill="#6b7280"/>
+  <!-- Top crossbar -->
+  <rect x="72" y="25" width="156" height="5" rx="2" fill="#6b7280"/>
+  <!-- Bottom crossbar / base -->
+  <rect x="65" y="230" width="170" height="5" rx="2" fill="#6b7280"/>
+  <!-- Guide rail indicators (small ticks) -->
+  <line x1="72" y1="60" x2="65" y2="60" stroke="#6b7280" stroke-width="1.5"/>
+  <line x1="72" y1="80" x2="65" y2="80" stroke="#6b7280" stroke-width="1.5"/>
+  <line x1="72" y1="100" x2="65" y2="100" stroke="#6b7280" stroke-width="1.5"/>
+  <line x1="72" y1="120" x2="65" y2="120" stroke="#6b7280" stroke-width="1.5"/>
+  <line x1="228" y1="60" x2="235" y2="60" stroke="#6b7280" stroke-width="1.5"/>
+  <line x1="228" y1="80" x2="235" y2="80" stroke="#6b7280" stroke-width="1.5"/>
+  <line x1="228" y1="100" x2="235" y2="100" stroke="#6b7280" stroke-width="1.5"/>
+  <line x1="228" y1="120" x2="235" y2="120" stroke="#6b7280" stroke-width="1.5"/>
+
+  <!-- Bar sliding on rails (in squat position, lowered) -->
+  <line x1="74" y1="85" x2="226" y2="85" stroke="#6b7280" stroke-width="4"/>
+  <!-- Bar-to-rail connectors (J-hooks / guides) -->
+  <rect x="70" y="80" width="10" height="12" rx="2" fill="none" stroke="#6b7280" stroke-width="1.5"/>
+  <rect x="222" y="80" width="10" height="12" rx="2" fill="none" stroke="#6b7280" stroke-width="1.5"/>
+
+  <!-- Primary muscles: Quads (red) -->
+  <polygon points="135,150 128,190 138,192 145,152" fill="#ef4444" opacity="0.7"/>
+  <polygon points="160,150 156,190 166,192 170,152" fill="#ef4444" opacity="0.7"/>
+
+  <!-- Secondary muscles: Glutes (amber) -->
+  <ellipse cx="150" cy="145" rx="17" ry="9" fill="#f59e0b" opacity="0.55"/>
+
+  <!-- Floor -->
+  <line x1="90" y1="228" x2="210" y2="228" stroke="#6b7280" stroke-width="1" opacity="0.5"/>
+
+  <!-- Figure in squat under Smith bar -->
+  <!-- Head -->
+  <circle cx="150" cy="68" r="11" fill="none" stroke="#e5e7eb" stroke-width="2.5"/>
+
+  <!-- Neck -->
+  <line x1="150" y1="79" x2="150" y2="85" stroke="#e5e7eb" stroke-width="2.5"/>
+
+  <!-- Torso -->
+  <path d="M150,85 L143,90 L140,138 L160,138 L157,90 Z" fill="none" stroke="#e5e7eb" stroke-width="2"/>
+
+  <!-- Hips -->
+  <path d="M140,138 Q150,145 160,138" fill="none" stroke="#e5e7eb" stroke-width="2"/>
+
+  <!-- Upper legs (squatting) -->
+  <path d="M142,140 L127,165 L120,192" fill="none" stroke="#e5e7eb" stroke-width="3"/>
+  <path d="M158,140 L172,165 L178,192" fill="none" stroke="#e5e7eb" stroke-width="3"/>
+
+  <!-- Lower legs -->
+  <path d="M120,192 L124,215 L122,226" fill="none" stroke="#e5e7eb" stroke-width="3"/>
+  <path d="M178,192 L174,215 L176,226" fill="none" stroke="#e5e7eb" stroke-width="3"/>
+
+  <!-- Feet -->
+  <line x1="114" y1="226" x2="132" y2="226" stroke="#e5e7eb" stroke-width="2.5"/>
+  <line x1="168" y1="226" x2="186" y2="226" stroke="#e5e7eb" stroke-width="2.5"/>
+
+  <!-- Arms gripping bar -->
+  <path d="M145,92 L128,88 L115,85" fill="none" stroke="#e5e7eb" stroke-width="2.5"/>
+  <path d="M155,92 L172,88 L185,85" fill="none" stroke="#e5e7eb" stroke-width="2.5"/>
+
+  <!-- Label -->
+  <text x="150" y="18" text-anchor="middle" fill="#9ca3af" font-family="Arial,sans-serif" font-size="11" font-weight="bold">SMITH MACHINE SQUAT</text>
+</svg>

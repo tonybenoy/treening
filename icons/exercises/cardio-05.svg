@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 250" width="300" height="250">
+  <rect width="300" height="250" fill="#1f2937"/>
+  <!-- Floor -->
+  <line x1="20" y1="220" x2="280" y2="220" stroke="#6b7280" stroke-width="1.5"/>
+  <!-- Stair Climber machine -->
+  <!-- Main machine body/post -->
+  <rect x="90" y="30" width="40" height="180" rx="4" fill="none" stroke="#6b7280" stroke-width="2.5"/>
+  <!-- Console at top -->
+  <rect x="93" y="35" width="34" height="25" rx="3" fill="#6b7280"/>
+  <rect x="98" y="40" width="24" height="14" rx="2" fill="#374151"/>
+  <!-- Handrails -->
+  <line x1="93" y1="65" x2="93" y2="95" stroke="#6b7280" stroke-width="2.5"/>
+  <line x1="127" y1="65" x2="127" y2="95" stroke="#6b7280" stroke-width="2.5"/>
+  <!-- Grip tops -->
+  <line x1="88" y1="65" x2="98" y2="65" stroke="#6b7280" stroke-width="2.5"/>
+  <line x1="122" y1="65" x2="132" y2="65" stroke="#6b7280" stroke-width="2.5"/>
+  <!-- Step pedals (at different heights) -->
+  <rect x="95" y="165" width="30" height="5" rx="1" fill="#6b7280"/>
+  <rect x="95" y="185" width="30" height="5" rx="1" fill="#6b7280"/>
+  <!-- Machine base -->
+  <rect x="85" y="205" width="50" height="10" rx="3" fill="none" stroke="#6b7280" stroke-width="2"/>
+  <!-- Quads highlight - RED -->
+  <path d="M145,115 L165,112 L172,170 L148,175 Z" fill="#ef4444" opacity="0.5"/>
+  <!-- Glutes highlight - RED -->
+  <path d="M158,108 L175,105 L178,120 L162,122 Z" fill="#ef4444" opacity="0.5"/>
+  <!-- Person stepping - side view -->
+  <!-- Head -->
+  <circle cx="150" cy="55" r="10" fill="none" stroke="#e5e7eb" stroke-width="2.5"/>
+  <!-- Neck -->
+  <line x1="150" y1="65" x2="152" y2="75" stroke="#e5e7eb" stroke-width="2.5"/>
+  <!-- Torso -->
+  <line x1="152" y1="75" x2="160" y2="118" stroke="#e5e7eb" stroke-width="3"/>
+  <!-- Arms on handrails -->
+  <line x1="152" y1="80" x2="135" y2="75" stroke="#e5e7eb" stroke-width="2"/>
+  <line x1="135" y1="75" x2="127" y2="72" stroke="#e5e7eb" stroke-width="2"/>
+  <!-- Hips -->
+  <circle cx="160" cy="120" r="3" fill="#e5e7eb"/>
+  <!-- High leg (on upper step) -->
+  <line x1="160" y1="120" x2="145" y2="145" stroke="#e5e7eb" stroke-width="2.5"/>
+  <line x1="145" y1="145" x2="115" y2="165" stroke="#e5e7eb" stroke-width="2.5"/>
+  <!-- Foot on upper pedal -->
+  <circle cx="115" cy="167" r="3" fill="#e5e7eb"/>
+  <!-- Low leg (on lower step) -->
+  <line x1="160" y1="120" x2="155" y2="155" stroke="#e5e7eb" stroke-width="2.5"/>
+  <line x1="155" y1="155" x2="118" y2="187" stroke="#e5e7eb" stroke-width="2.5"/>
+  <!-- Foot on lower pedal -->
+  <circle cx="118" cy="188" r="3" fill="#e5e7eb"/>
+  <!-- Label -->
+  <text x="150" y="245" text-anchor="middle" fill="#9ca3af" font-family="Arial, sans-serif" font-size="13" font-weight="bold">STAIR CLIMBER</text>
+</svg>

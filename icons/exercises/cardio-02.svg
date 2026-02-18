@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 250" width="300" height="250">
+  <rect width="300" height="250" fill="#1f2937"/>
+  <!-- Floor -->
+  <line x1="20" y1="215" x2="280" y2="215" stroke="#6b7280" stroke-width="1.5"/>
+  <!-- Elliptical machine frame -->
+  <!-- Base -->
+  <ellipse cx="150" cy="210" rx="80" ry="5" fill="none" stroke="#6b7280" stroke-width="2"/>
+  <!-- Central post -->
+  <line x1="120" y1="210" x2="110" y2="100" stroke="#6b7280" stroke-width="3"/>
+  <!-- Console -->
+  <rect x="100" y="90" width="25" height="18" rx="3" fill="#6b7280" stroke="#9ca3af" stroke-width="1"/>
+  <rect x="104" y="94" width="16" height="9" rx="1" fill="#374151"/>
+  <!-- Flywheel housing (front) -->
+  <circle cx="100" cy="200" r="12" fill="none" stroke="#6b7280" stroke-width="2"/>
+  <!-- Pedal rails -->
+  <line x1="100" y1="195" x2="190" y2="185" stroke="#6b7280" stroke-width="2"/>
+  <line x1="100" y1="200" x2="185" y2="195" stroke="#6b7280" stroke-width="2"/>
+  <!-- Moving handle bars -->
+  <line x1="115" y1="105" x2="135" y2="170" stroke="#6b7280" stroke-width="2"/>
+  <line x1="110" y1="108" x2="170" y2="175" stroke="#6b7280" stroke-width="2"/>
+  <!-- Legs highlight - RED -->
+  <path d="M140,145 L168,140 L175,195 L135,195 Z" fill="#ef4444" opacity="0.5"/>
+  <!-- Arms highlight - AMBER -->
+  <path d="M142,108 L155,105 L160,130 L145,132 Z" fill="#f59e0b" opacity="0.45"/>
+  <!-- Person on elliptical - side view striding -->
+  <!-- Head -->
+  <circle cx="148" cy="78" r="10" fill="none" stroke="#e5e7eb" stroke-width="2.5"/>
+  <!-- Neck -->
+  <line x1="148" y1="88" x2="150" y2="98" stroke="#e5e7eb" stroke-width="2.5"/>
+  <!-- Torso -->
+  <line x1="150" y1="98" x2="155" y2="145" stroke="#e5e7eb" stroke-width="3"/>
+  <!-- Front arm gripping handle -->
+  <line x1="150" y1="103" x2="135" y2="125" stroke="#e5e7eb" stroke-width="2.5"/>
+  <line x1="135" y1="125" x2="130" y2="145" stroke="#e5e7eb" stroke-width="2.5"/>
+  <!-- Back arm gripping handle -->
+  <line x1="150" y1="103" x2="165" y2="120" stroke="#e5e7eb" stroke-width="2"/>
+  <line x1="165" y1="120" x2="170" y2="138" stroke="#e5e7eb" stroke-width="2"/>
+  <!-- Front leg (extended forward on pedal) -->
+  <line x1="155" y1="145" x2="140" y2="170" stroke="#e5e7eb" stroke-width="2.5"/>
+  <line x1="140" y1="170" x2="130" y2="192" stroke="#e5e7eb" stroke-width="2.5"/>
+  <!-- Pedal -->
+  <rect x="122" y="190" width="16" height="4" rx="1" fill="#6b7280"/>
+  <!-- Back leg (extended back) -->
+  <line x1="155" y1="145" x2="170" y2="165" stroke="#e5e7eb" stroke-width="2.5"/>
+  <line x1="170" y1="165" x2="180" y2="188" stroke="#e5e7eb" stroke-width="2.5"/>
+  <!-- Pedal -->
+  <rect x="174" y="186" width="16" height="4" rx="1" fill="#6b7280"/>
+  <!-- Label -->
+  <text x="150" y="240" text-anchor="middle" fill="#9ca3af" font-family="Arial, sans-serif" font-size="13" font-weight="bold">ELLIPTICAL</text>
+</svg>

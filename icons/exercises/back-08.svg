@@ -1,0 +1,60 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 250" width="300" height="250">
+  <rect width="300" height="250" fill="#1f2937"/>
+
+  <!-- Pull-up bar structure -->
+  <rect x="60" y="18" width="8" height="230" fill="#6b7280"/>
+  <rect x="232" y="18" width="8" height="230" fill="#6b7280"/>
+  <rect x="60" y="18" width="180" height="8" rx="3" fill="#6b7280"/>
+  <!-- Base -->
+  <rect x="45" y="238" width="40" height="6" rx="2" fill="#6b7280"/>
+  <rect x="218" y="238" width="40" height="6" rx="2" fill="#6b7280"/>
+
+  <!-- Person - chin above bar, front view, underhand grip -->
+  <!-- Head -->
+  <circle cx="150" cy="35" r="13" fill="none" stroke="#e5e7eb" stroke-width="2.5"/>
+
+  <!-- Neck -->
+  <line x1="150" y1="48" x2="150" y2="55" stroke="#e5e7eb" stroke-width="3"/>
+
+  <!-- Torso -->
+  <path d="M135,55 L135,140 L165,140 L165,55 Z" fill="none" stroke="#e5e7eb" stroke-width="2.5" stroke-linejoin="round"/>
+
+  <!-- Lats - primary muscles (red) -->
+  <path d="M132,62 Q120,85 125,130 L135,130 L135,62 Z" fill="#ef4444" opacity="0.7"/>
+  <path d="M168,62 Q180,85 175,130 L165,130 L165,62 Z" fill="#ef4444" opacity="0.7"/>
+
+  <!-- Upper arms - closer grip, underhand -->
+  <line x1="135" y1="60" x2="115" y2="28" stroke="#e5e7eb" stroke-width="5" stroke-linecap="round"/>
+  <line x1="165" y1="60" x2="185" y2="28" stroke="#e5e7eb" stroke-width="5" stroke-linecap="round"/>
+
+  <!-- Forearms - supinated (underhand) grip, slightly different angle -->
+  <line x1="115" y1="28" x2="118" y2="22" stroke="#e5e7eb" stroke-width="4" stroke-linecap="round"/>
+  <line x1="185" y1="28" x2="182" y2="22" stroke="#e5e7eb" stroke-width="4" stroke-linecap="round"/>
+
+  <!-- Biceps - secondary (amber) - more prominent for chin-ups -->
+  <path d="M130,52 Q122,40 118,30" stroke="#f59e0b" stroke-width="6" stroke-linecap="round" opacity="0.7"/>
+  <path d="M170,52 Q178,40 182,30" stroke="#f59e0b" stroke-width="6" stroke-linecap="round" opacity="0.7"/>
+
+  <!-- Hands gripping bar (underhand - palms facing toward face) -->
+  <!-- Show underhand grip with small palm indicators -->
+  <circle cx="118" cy="22" r="4" fill="#e5e7eb"/>
+  <circle cx="182" cy="22" r="4" fill="#e5e7eb"/>
+  <!-- Underhand grip indicator - small arcs showing palm direction -->
+  <path d="M114,20 Q118,16 122,20" stroke="#e5e7eb" stroke-width="1.5" fill="none"/>
+  <path d="M178,20 Q182,16 186,20" stroke="#e5e7eb" stroke-width="1.5" fill="none"/>
+
+  <!-- Hips -->
+  <ellipse cx="150" cy="145" rx="16" ry="8" fill="none" stroke="#e5e7eb" stroke-width="2"/>
+
+  <!-- Upper legs -->
+  <line x1="142" y1="152" x2="138" y2="192" stroke="#e5e7eb" stroke-width="6" stroke-linecap="round"/>
+  <line x1="158" y1="152" x2="162" y2="192" stroke="#e5e7eb" stroke-width="6" stroke-linecap="round"/>
+
+  <!-- Lower legs -->
+  <line x1="138" y1="192" x2="142" y2="228" stroke="#e5e7eb" stroke-width="5" stroke-linecap="round"/>
+  <line x1="162" y1="192" x2="158" y2="228" stroke="#e5e7eb" stroke-width="5" stroke-linecap="round"/>
+
+  <!-- Feet -->
+  <line x1="142" y1="228" x2="148" y2="232" stroke="#e5e7eb" stroke-width="3" stroke-linecap="round"/>
+  <line x1="158" y1="228" x2="152" y2="232" stroke="#e5e7eb" stroke-width="3" stroke-linecap="round"/>
+</svg>

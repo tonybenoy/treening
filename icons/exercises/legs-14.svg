@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 250" width="300" height="250">
+  <rect width="300" height="250" fill="#1f2937"/>
+
+  <!-- Leg Press Calf Raise - in leg press, toes on edge, pressing with calves -->
+
+  <!-- Machine frame -->
+  <!-- Base -->
+  <rect x="50" y="195" width="210" height="6" rx="2" fill="#6b7280"/>
+  <!-- Seat back (reclined) -->
+  <line x1="75" y1="198" x2="95" y2="115" stroke="#6b7280" stroke-width="4"/>
+  <!-- Guide rails (45 degrees) -->
+  <line x1="150" y1="195" x2="240" y2="50" stroke="#6b7280" stroke-width="3"/>
+  <line x1="175" y1="195" x2="260" y2="50" stroke="#6b7280" stroke-width="3"/>
+  <!-- Sled/Platform -->
+  <rect x="205" y="72" width="45" height="10" rx="2" fill="#6b7280" transform="rotate(-45,228,77)"/>
+  <!-- Base feet -->
+  <rect x="55" y="198" width="8" height="30" rx="2" fill="#6b7280"/>
+  <rect x="245" y="198" width="8" height="30" rx="2" fill="#6b7280"/>
+  <rect x="45" y="225" width="220" height="5" rx="2" fill="#6b7280"/>
+
+  <!-- Primary muscles: Calves (red) -->
+  <polygon points="168,118 164,140 174,142 178,120" fill="#ef4444" opacity="0.8"/>
+
+  <!-- Figure seated, legs nearly straight, toes pressing sled -->
+  <!-- Head -->
+  <circle cx="88" cy="108" r="11" fill="none" stroke="#e5e7eb" stroke-width="2.5"/>
+
+  <!-- Torso reclined -->
+  <path d="M88,119 L86,125 L105,178 L118,175 L100,125 Z" fill="none" stroke="#e5e7eb" stroke-width="2"/>
+
+  <!-- Hips -->
+  <ellipse cx="112" cy="178" rx="8" ry="5" fill="none" stroke="#e5e7eb" stroke-width="2"/>
+
+  <!-- Legs (nearly straight, along rails) -->
+  <path d="M115,175 L145,145 L180,110" fill="none" stroke="#e5e7eb" stroke-width="3"/>
+
+  <!-- Feet - toes on edge of platform, heels off -->
+  <path d="M180,110 L195,98" fill="none" stroke="#e5e7eb" stroke-width="3"/>
+  <!-- Toes pressing -->
+  <line x1="193" y1="93" x2="200" y2="100" stroke="#e5e7eb" stroke-width="2.5"/>
+
+  <!-- Foot flexion indicator (heel dropped) -->
+  <path d="M180,110 L175,115" fill="none" stroke="#e5e7eb" stroke-width="2" stroke-dasharray="3,2"/>
+
+  <!-- Arms at sides holding handles -->
+  <path d="M92,122 L82,145 L78,165" fill="none" stroke="#e5e7eb" stroke-width="2"/>
+  <circle cx="78" cy="165" r="3" fill="#e5e7eb"/>
+
+  <!-- Label -->
+  <text x="150" y="18" text-anchor="middle" fill="#9ca3af" font-family="Arial,sans-serif" font-size="11" font-weight="bold">LEG PRESS CALF RAISE</text>
+</svg>

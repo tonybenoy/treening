@@ -1,0 +1,60 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 250" width="300" height="250">
+  <rect width="300" height="250" fill="#1f2937"/>
+
+  <!-- T-Bar apparatus -->
+  <!-- Bar pivot point on floor -->
+  <circle cx="45" cy="215" r="6" fill="#6b7280" stroke="#9ca3af" stroke-width="1"/>
+  <!-- Bar -->
+  <line x1="45" y1="215" x2="200" y2="155" stroke="#6b7280" stroke-width="3"/>
+  <!-- T-handle -->
+  <line x1="155" y1="140" x2="155" y2="170" stroke="#6b7280" stroke-width="3"/>
+  <!-- Plates -->
+  <rect x="188" y="142" width="8" height="26" rx="2" fill="#6b7280"/>
+  <rect x="196" y="146" width="8" height="18" rx="2" fill="#6b7280"/>
+
+  <!-- Person straddling T-bar, bent forward, pulling to chest - side view -->
+  <!-- Head -->
+  <circle cx="130" cy="72" r="13" fill="none" stroke="#e5e7eb" stroke-width="2.5"/>
+
+  <!-- Neck -->
+  <line x1="137" y1="80" x2="145" y2="88" stroke="#e5e7eb" stroke-width="3"/>
+
+  <!-- Torso - bent forward ~50 degrees -->
+  <path d="M145,82 L205,130 L205,148 L145,100 Z" fill="none" stroke="#e5e7eb" stroke-width="2.5" stroke-linejoin="round"/>
+
+  <!-- Mid-back and lats - primary muscles (red) -->
+  <path d="M155,88 Q150,98 152,112 L160,108 L160,92 Z" fill="#ef4444" opacity="0.7"/>
+  <path d="M165,95 Q160,108 163,120 L172,115 L172,98 Z" fill="#ef4444" opacity="0.7"/>
+  <path d="M178,105 Q173,115 176,130 L185,125 L185,108 Z" fill="#ef4444" opacity="0.7"/>
+  <!-- Side lats -->
+  <path d="M147,95 Q142,108 145,120 L152,115 Z" fill="#ef4444" opacity="0.6"/>
+  <path d="M203,135 Q208,128 206,145 L203,148 Z" fill="#ef4444" opacity="0.6"/>
+
+  <!-- Arms pulling T-handle to chest -->
+  <line x1="160" y1="100" x2="155" y2="140" stroke="#e5e7eb" stroke-width="5" stroke-linecap="round"/>
+
+  <!-- Biceps - secondary (amber) -->
+  <path d="M158,108 Q152,122 154,138" stroke="#f59e0b" stroke-width="4" stroke-linecap="round" opacity="0.6"/>
+
+  <!-- Forearms to handle -->
+  <line x1="155" y1="140" x2="155" y2="155" stroke="#e5e7eb" stroke-width="4" stroke-linecap="round"/>
+  <!-- Hand -->
+  <circle cx="155" cy="155" r="3" fill="#e5e7eb"/>
+
+  <!-- Hips -->
+  <ellipse cx="210" cy="142" rx="10" ry="10" fill="none" stroke="#e5e7eb" stroke-width="2"/>
+
+  <!-- Legs straddling bar -->
+  <!-- Front leg -->
+  <line x1="210" y1="152" x2="195" y2="195" stroke="#e5e7eb" stroke-width="7" stroke-linecap="round"/>
+  <line x1="195" y1="195" x2="190" y2="232" stroke="#e5e7eb" stroke-width="5" stroke-linecap="round"/>
+  <line x1="190" y1="232" x2="178" y2="236" stroke="#e5e7eb" stroke-width="3" stroke-linecap="round"/>
+
+  <!-- Back leg (slightly behind) -->
+  <line x1="215" y1="152" x2="225" y2="195" stroke="#e5e7eb" stroke-width="7" stroke-linecap="round"/>
+  <line x1="225" y1="195" x2="228" y2="232" stroke="#e5e7eb" stroke-width="5" stroke-linecap="round"/>
+  <line x1="228" y1="232" x2="240" y2="236" stroke="#e5e7eb" stroke-width="3" stroke-linecap="round"/>
+
+  <!-- Floor line -->
+  <line x1="30" y1="238" x2="270" y2="238" stroke="#6b7280" stroke-width="1" opacity="0.5"/>
+</svg>

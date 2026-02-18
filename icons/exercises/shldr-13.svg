@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 250" width="300" height="250">
+  <rect width="300" height="250" fill="#1f2937"/>
+  <line x1="50" y1="230" x2="250" y2="230" stroke="#374151" stroke-width="1"/>
+
+  <!-- Legs -->
+  <line x1="138" y1="178" x2="128" y2="228" stroke="#e5e7eb" stroke-width="8" stroke-linecap="round"/>
+  <line x1="162" y1="178" x2="172" y2="228" stroke="#e5e7eb" stroke-width="8" stroke-linecap="round"/>
+  <line x1="128" y1="228" x2="118" y2="230" stroke="#e5e7eb" stroke-width="6" stroke-linecap="round"/>
+  <line x1="172" y1="228" x2="182" y2="230" stroke="#e5e7eb" stroke-width="6" stroke-linecap="round"/>
+
+  <!-- Torso -->
+  <path d="M135,172 L135,105 Q150,95 165,105 L165,172 Z" fill="#374151" stroke="#e5e7eb" stroke-width="2"/>
+
+  <!-- Primary muscles: Traps (red) - raised shoulders -->
+  <path d="M130,98 Q150,85 170,98 L170,110 Q150,105 130,110 Z" fill="#ef4444" opacity="0.85"/>
+  <ellipse cx="133" cy="100" rx="8" ry="10" fill="#ef4444" opacity="0.75"/>
+  <ellipse cx="167" cy="100" rx="8" ry="10" fill="#ef4444" opacity="0.75"/>
+
+  <!-- Arms hanging straight down at sides -->
+  <line x1="130" y1="112" x2="115" y2="170" stroke="#e5e7eb" stroke-width="7" stroke-linecap="round"/>
+  <line x1="170" y1="112" x2="185" y2="170" stroke="#e5e7eb" stroke-width="7" stroke-linecap="round"/>
+
+  <!-- Hands -->
+  <circle cx="114" cy="172" r="4" fill="#e5e7eb"/>
+  <circle cx="186" cy="172" r="4" fill="#e5e7eb"/>
+
+  <!-- Dumbbells at sides -->
+  <!-- Left dumbbell -->
+  <rect x="107" y="168" width="7" height="20" rx="3" fill="#6b7280"/>
+  <rect x="104" y="166" width="13" height="5" rx="2" fill="#6b7280"/>
+  <rect x="104" y="185" width="13" height="5" rx="2" fill="#6b7280"/>
+  <!-- Right dumbbell -->
+  <rect x="180" y="168" width="7" height="20" rx="3" fill="#6b7280"/>
+  <rect x="177" y="166" width="13" height="5" rx="2" fill="#6b7280"/>
+  <rect x="177" y="185" width="13" height="5" rx="2" fill="#6b7280"/>
+
+  <!-- Head -->
+  <circle cx="150" cy="80" r="15" fill="#374151" stroke="#e5e7eb" stroke-width="2"/>
+
+  <!-- Shoulder raise indicators -->
+  <path d="M125,95 L125,85" stroke="#9ca3af" stroke-width="1.5" fill="none" marker-end="url(#dbShrugUp)"/>
+  <path d="M175,95 L175,85" stroke="#9ca3af" stroke-width="1.5" fill="none" marker-end="url(#dbShrugUp)"/>
+  <defs>
+    <marker id="dbShrugUp" markerWidth="6" markerHeight="6" refX="3" refY="6" orient="auto">
+      <path d="M0,6 L3,0 L6,6" fill="none" stroke="#9ca3af" stroke-width="1"/>
+    </marker>
+  </defs>
+
+  <!-- Label -->
+  <text x="150" y="18" text-anchor="middle" fill="#9ca3af" font-family="Arial,sans-serif" font-size="11" font-weight="bold">DUMBBELL SHRUGS</text>
+</svg>

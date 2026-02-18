@@ -1,0 +1,60 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 250" width="300" height="250">
+  <rect width="300" height="250" fill="#1f2937"/>
+
+  <!-- Seated Calf Raise - seated, pads on knees, on toes -->
+
+  <!-- Machine -->
+  <!-- Seat -->
+  <rect x="60" y="130" width="80" height="8" rx="2" fill="#6b7280"/>
+  <!-- Machine frame / post -->
+  <rect x="130" y="90" width="6" height="140" rx="2" fill="#6b7280"/>
+  <!-- Base -->
+  <rect x="55" y="225" width="130" height="5" rx="2" fill="#6b7280"/>
+  <!-- Knee pad arm -->
+  <line x1="133" y1="100" x2="90" y2="100" stroke="#6b7280" stroke-width="3"/>
+  <!-- Knee pad -->
+  <rect x="78" y="95" width="40" height="8" rx="3" fill="#6b7280"/>
+  <!-- Foot platform (step) -->
+  <rect x="75" y="210" width="55" height="8" rx="2" fill="#6b7280"/>
+  <!-- Weight holder -->
+  <rect x="132" y="92" width="25" height="8" rx="2" fill="#6b7280"/>
+  <rect x="140" y="82" width="10" height="20" rx="1" fill="#6b7280" opacity="0.7"/>
+
+  <!-- Primary muscles: Calves (red) -->
+  <polygon points="92,170 88,205 96,207 100,172" fill="#ef4444" opacity="0.75"/>
+  <polygon points="110,170 106,205 114,207 118,172" fill="#ef4444" opacity="0.75"/>
+
+  <!-- Figure seated -->
+  <!-- Head -->
+  <circle cx="95" cy="55" r="12" fill="none" stroke="#e5e7eb" stroke-width="2.5"/>
+
+  <!-- Neck -->
+  <line x1="95" y1="67" x2="95" y2="75" stroke="#e5e7eb" stroke-width="2.5"/>
+
+  <!-- Torso (upright) -->
+  <path d="M95,75 L88,80 L85,128 L105,128 L102,80 Z" fill="none" stroke="#e5e7eb" stroke-width="2"/>
+
+  <!-- Upper legs (on seat, under pad) -->
+  <path d="M88,130 L95,108 L110,105" fill="none" stroke="#e5e7eb" stroke-width="3"/>
+  <path d="M102,130 L108,112 L120,108" fill="none" stroke="#e5e7eb" stroke-width="3"/>
+
+  <!-- Knees (under pad) -->
+  <!-- Lower legs -->
+  <path d="M110,105 L105,140 L98,170" fill="none" stroke="#e5e7eb" stroke-width="3"/>
+  <path d="M120,108 L115,142 L110,170" fill="none" stroke="#e5e7eb" stroke-width="3"/>
+
+  <!-- Calves to feet (on toes, heels raised) -->
+  <path d="M98,170 L95,200 L93,210" fill="none" stroke="#e5e7eb" stroke-width="3"/>
+  <path d="M110,170 L108,200 L106,210" fill="none" stroke="#e5e7eb" stroke-width="3"/>
+
+  <!-- Feet on toes on platform -->
+  <line x1="88" y1="210" x2="98" y2="210" stroke="#e5e7eb" stroke-width="2.5"/>
+  <line x1="101" y1="210" x2="112" y2="210" stroke="#e5e7eb" stroke-width="2.5"/>
+
+  <!-- Arms on knee pad -->
+  <path d="M90,82 L85,95 L88,100" fill="none" stroke="#e5e7eb" stroke-width="2"/>
+  <path d="M100,82 L108,95 L110,100" fill="none" stroke="#e5e7eb" stroke-width="2"/>
+
+  <!-- Label -->
+  <text x="150" y="18" text-anchor="middle" fill="#9ca3af" font-family="Arial,sans-serif" font-size="11" font-weight="bold">SEATED CALF RAISE</text>
+</svg>

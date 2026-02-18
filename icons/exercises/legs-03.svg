@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 250" width="300" height="250">
+  <rect width="300" height="250" fill="#1f2937"/>
+
+  <!-- Leg Press - seated at 45 degrees, pressing sled -->
+
+  <!-- Machine frame -->
+  <line x1="60" y1="230" x2="260" y2="230" stroke="#6b7280" stroke-width="2"/>
+  <!-- Base frame -->
+  <rect x="55" y="185" width="200" height="8" rx="2" fill="none" stroke="#6b7280" stroke-width="2"/>
+  <!-- Seat back (reclined) -->
+  <line x1="80" y1="190" x2="105" y2="110" stroke="#6b7280" stroke-width="4"/>
+  <!-- Rails at 45 degrees -->
+  <line x1="140" y1="185" x2="220" y2="60" stroke="#6b7280" stroke-width="3"/>
+  <line x1="160" y1="185" x2="240" y2="60" stroke="#6b7280" stroke-width="3"/>
+  <!-- Sled/Platform -->
+  <rect x="185" y="95" width="50" height="10" rx="2" fill="#6b7280" stroke="#6b7280" stroke-width="1" transform="rotate(-45,210,100)"/>
+
+  <!-- Primary muscles: Quads (red) -->
+  <polygon points="125,140 115,170 125,172 133,140" fill="#ef4444" opacity="0.7"/>
+
+  <!-- Secondary muscles: Glutes (amber) -->
+  <ellipse cx="115" cy="168" rx="12" ry="8" fill="#f59e0b" opacity="0.5"/>
+
+  <!-- Secondary muscles: Hamstrings (amber) -->
+  <polygon points="120,148 110,172 118,174 125,148" fill="#f59e0b" opacity="0.5"/>
+
+  <!-- Figure seated, legs pressing up at 45 degrees -->
+  <!-- Head -->
+  <circle cx="95" cy="105" r="11" fill="none" stroke="#e5e7eb" stroke-width="2.5"/>
+
+  <!-- Torso reclined against seat back -->
+  <path d="M95,116 L90,120 L105,170 L115,168 L107,120 Z" fill="none" stroke="#e5e7eb" stroke-width="2"/>
+
+  <!-- Upper legs -->
+  <path d="M108,165 L140,145 L165,118" fill="none" stroke="#e5e7eb" stroke-width="3"/>
+
+  <!-- Lower legs pressing against platform -->
+  <path d="M165,118 L185,100" fill="none" stroke="#e5e7eb" stroke-width="3"/>
+
+  <!-- Feet on platform -->
+  <line x1="183" y1="95" x2="190" y2="105" stroke="#e5e7eb" stroke-width="2.5"/>
+
+  <!-- Arms at sides, gripping handles -->
+  <path d="M98,120 L85,140 L80,155" fill="none" stroke="#e5e7eb" stroke-width="2"/>
+  <!-- Hand grip -->
+  <circle cx="80" cy="155" r="3" fill="#e5e7eb"/>
+
+  <!-- Label -->
+  <text x="150" y="18" text-anchor="middle" fill="#9ca3af" font-family="Arial,sans-serif" font-size="11" font-weight="bold">LEG PRESS</text>
+</svg>

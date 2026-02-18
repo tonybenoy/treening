@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 250" width="300" height="250">
+  <rect width="300" height="250" fill="#1f2937"/>
+
+  <!-- Bench -->
+  <rect x="75" y="148" width="150" height="12" rx="3" fill="#6b7280"/>
+  <!-- Bench legs -->
+  <line x1="85" y1="160" x2="85" y2="195" stroke="#6b7280" stroke-width="4" stroke-linecap="round"/>
+  <line x1="215" y1="160" x2="215" y2="195" stroke="#6b7280" stroke-width="4" stroke-linecap="round"/>
+
+  <!-- Person lying on bench - front view -->
+  <!-- Head -->
+  <circle cx="150" cy="125" r="13" fill="none" stroke="#e5e7eb" stroke-width="2.5"/>
+  <!-- Neck -->
+  <line x1="150" y1="138" x2="150" y2="143" stroke="#e5e7eb" stroke-width="2.5"/>
+  <!-- Torso -->
+  <line x1="150" y1="143" x2="150" y2="190" stroke="#e5e7eb" stroke-width="2.5" stroke-linecap="round"/>
+  <!-- Shoulder line -->
+  <line x1="118" y1="145" x2="182" y2="145" stroke="#e5e7eb" stroke-width="2.5" stroke-linecap="round"/>
+
+  <!-- Chest muscles - RED primary (front view pecs) -->
+  <ellipse cx="135" cy="155" rx="14" ry="9" fill="#ef4444" opacity="0.7"/>
+  <ellipse cx="165" cy="155" rx="14" ry="9" fill="#ef4444" opacity="0.7"/>
+
+  <!-- Upper arms out to sides then up -->
+  <line x1="118" y1="145" x2="100" y2="145" stroke="#e5e7eb" stroke-width="2.5" stroke-linecap="round"/>
+  <line x1="182" y1="145" x2="200" y2="145" stroke="#e5e7eb" stroke-width="2.5" stroke-linecap="round"/>
+  <!-- Forearms going up -->
+  <line x1="100" y1="145" x2="100" y2="105" stroke="#e5e7eb" stroke-width="2.5" stroke-linecap="round"/>
+  <line x1="200" y1="145" x2="200" y2="105" stroke="#e5e7eb" stroke-width="2.5" stroke-linecap="round"/>
+
+  <!-- Triceps - AMBER -->
+  <ellipse cx="100" cy="145" rx="5" ry="4" fill="#f59e0b" opacity="0.6"/>
+  <ellipse cx="200" cy="145" rx="5" ry="4" fill="#f59e0b" opacity="0.6"/>
+
+  <!-- Dumbbells -->
+  <rect x="91" y="95" width="18" height="8" rx="3" fill="#6b7280"/>
+  <line x1="100" y1="95" x2="100" y2="105" stroke="#9ca3af" stroke-width="3"/>
+  <rect x="191" y="95" width="18" height="8" rx="3" fill="#6b7280"/>
+  <line x1="200" y1="95" x2="200" y2="105" stroke="#9ca3af" stroke-width="3"/>
+
+  <!-- Legs -->
+  <line x1="145" y1="190" x2="130" y2="195" stroke="#e5e7eb" stroke-width="2.5" stroke-linecap="round"/>
+  <line x1="155" y1="190" x2="170" y2="195" stroke="#e5e7eb" stroke-width="2.5" stroke-linecap="round"/>
+
+  <!-- Floor -->
+  <line x1="30" y1="195" x2="270" y2="195" stroke="#374151" stroke-width="1"/>
+
+  <text x="150" y="228" text-anchor="middle" fill="#9ca3af" font-family="Arial, sans-serif" font-size="11">Dumbbell Bench Press</text>
+</svg>

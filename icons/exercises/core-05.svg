@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 250" width="300" height="250">
+  <rect width="300" height="250" fill="#1f2937"/>
+  <!-- Floor -->
+  <line x1="30" y1="205" x2="270" y2="205" stroke="#6b7280" stroke-width="1.5"/>
+  <!-- Russian Twist - seated, feet off ground, rotated -->
+  <!-- Obliques highlight - RED -->
+  <path d="M130,115 Q155,110 170,125 L170,155 Q155,165 130,155 Z" fill="#ef4444" opacity="0.55"/>
+  <!-- Torso - slightly reclined and rotated -->
+  <line x1="150" y1="170" x2="140" y2="115" stroke="#e5e7eb" stroke-width="3"/>
+  <!-- Head -->
+  <circle cx="135" cy="100" r="12" fill="none" stroke="#e5e7eb" stroke-width="2.5"/>
+  <!-- Shoulders -->
+  <line x1="125" y1="118" x2="160" y2="122" stroke="#e5e7eb" stroke-width="2.5"/>
+  <!-- Arms extended to one side (rotated) holding imaginary weight -->
+  <line x1="160" y1="122" x2="190" y2="130" stroke="#e5e7eb" stroke-width="2.5"/>
+  <line x1="125" y1="118" x2="185" y2="128" stroke="#e5e7eb" stroke-width="2.5"/>
+  <!-- Hands/weight -->
+  <circle cx="190" cy="130" r="5" fill="none" stroke="#e5e7eb" stroke-width="2"/>
+  <!-- Hips on ground -->
+  <ellipse cx="155" cy="175" rx="10" ry="5" fill="none" stroke="#e5e7eb" stroke-width="2"/>
+  <!-- Legs - feet off ground, knees bent -->
+  <line x1="155" y1="175" x2="190" y2="165" stroke="#e5e7eb" stroke-width="2.5"/>
+  <line x1="190" y1="165" x2="210" y2="150" stroke="#e5e7eb" stroke-width="2.5"/>
+  <line x1="155" y1="175" x2="185" y2="170" stroke="#e5e7eb" stroke-width="2"/>
+  <line x1="185" y1="170" x2="205" y2="155" stroke="#e5e7eb" stroke-width="2"/>
+  <!-- Feet -->
+  <line x1="210" y1="150" x2="218" y2="148" stroke="#e5e7eb" stroke-width="2"/>
+  <line x1="205" y1="155" x2="213" y2="153" stroke="#e5e7eb" stroke-width="2"/>
+  <!-- Label -->
+  <text x="150" y="235" text-anchor="middle" fill="#9ca3af" font-family="Arial, sans-serif" font-size="13" font-weight="bold">RUSSIAN TWIST</text>
+</svg>

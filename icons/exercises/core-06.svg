@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 250" width="300" height="250">
+  <rect width="300" height="250" fill="#1f2937"/>
+  <!-- Floor -->
+  <line x1="20" y1="200" x2="280" y2="200" stroke="#6b7280" stroke-width="1.5"/>
+  <!-- Ab Wheel Rollout - kneeling, extended forward -->
+  <!-- Ab wheel on ground -->
+  <circle cx="80" cy="196" r="10" fill="none" stroke="#6b7280" stroke-width="2.5"/>
+  <line x1="80" y1="186" x2="80" y2="206" stroke="#6b7280" stroke-width="3"/>
+  <!-- Axle -->
+  <line x1="72" y1="196" x2="88" y2="196" stroke="#6b7280" stroke-width="2"/>
+  <!-- Core/abs highlight - RED -->
+  <path d="M95,145 L185,130 L190,155 L100,165 Z" fill="#ef4444" opacity="0.55"/>
+  <!-- Body extended - nearly flat from knees to hands -->
+  <!-- Hands on wheel -->
+  <circle cx="88" cy="190" r="3" fill="#e5e7eb"/>
+  <!-- Arms extended forward -->
+  <line x1="88" y1="190" x2="115" y2="165" stroke="#e5e7eb" stroke-width="2.5"/>
+  <line x1="88" y1="188" x2="110" y2="162" stroke="#e5e7eb" stroke-width="2"/>
+  <!-- Shoulders -->
+  <line x1="115" y1="155" x2="120" y2="148" stroke="#e5e7eb" stroke-width="2.5"/>
+  <!-- Head -->
+  <circle cx="105" cy="148" r="11" fill="none" stroke="#e5e7eb" stroke-width="2.5"/>
+  <!-- Torso (extended, angled) -->
+  <line x1="118" y1="155" x2="210" y2="148" stroke="#e5e7eb" stroke-width="3"/>
+  <!-- Hips -->
+  <circle cx="210" cy="150" r="3" fill="#e5e7eb"/>
+  <!-- Upper legs (thighs angled down to knees) -->
+  <line x1="210" y1="150" x2="225" y2="195" stroke="#e5e7eb" stroke-width="2.5"/>
+  <!-- Knees on ground -->
+  <circle cx="225" cy="197" r="3" fill="#e5e7eb"/>
+  <!-- Lower legs folded back -->
+  <line x1="225" y1="197" x2="255" y2="185" stroke="#e5e7eb" stroke-width="2.5"/>
+  <line x1="255" y1="185" x2="260" y2="180" stroke="#e5e7eb" stroke-width="2"/>
+  <!-- Label -->
+  <text x="150" y="232" text-anchor="middle" fill="#9ca3af" font-family="Arial, sans-serif" font-size="13" font-weight="bold">AB WHEEL ROLLOUT</text>
+</svg>

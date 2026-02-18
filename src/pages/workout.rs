@@ -1,0 +1,202 @@
+use yew::prelude::*;
+use yew_router::prelude::*;
+use gloo::timers::callback::Interval;
+use gloo::storage::{LocalStorage, Storage};
+use crate::components::exercise_list::ExerciseList;
+use crate::components::workout_log::WorkoutLog;
+use crate::models::{Exercise, Workout, WorkoutExercise, WorkoutSet};
+use crate::storage;
+use crate::data;
+use crate::Route;
+
+#[function_component(WorkoutPage)]
+pub fn workout_page() -> Html {
+    let workout_exercises = use_state(Vec::<WorkoutExercise>::new);
+    let workout_name = use_state(|| "Workout".to_string());
+    let show_exercise_picker = use_state(|| false);
+    let elapsed_seconds = use_state(|| 0u32);
+    let workout_active = use_state(|| false);
+    let saved = use_state(|| false);
+    let navigator = use_navigator().unwrap();
+
+    let custom_exercises = storage::load_custom_exercises();
+    let all_exercises: Vec<Exercise> = {
+        let mut exs = data::default_exercises();
+        exs.extend(custom_exercises);
+        exs
+    };
+
+    // Load from routine if set
+    {
+        let workout_exercises = workout_exercises.clone();
+        let workout_name = workout_name.clone();
+        let workout_active = workout_active.clone();
+        use_effect_with((), move |_| {
+            if let Ok(routine_id) = LocalStorage::get::<String>("treening_active_routine") {
+                let _ = LocalStorage::delete("treening_active_routine");
+                let routines = storage::load_routines();
+                if let Some(routine) = routines.iter().find(|r| r.id == routine_id) {
+                    workout_name.set(routine.name.clone());
+                    let exs: Vec<WorkoutExercise> = routine.exercise_ids.iter().map(|eid| {
+                        WorkoutExercise {
+                            exercise_id: eid.clone(),
+                            sets: vec![WorkoutSet { weight: 0.0, reps: 10, completed: false }],
+                            notes: String::new(),
+                        }
+                    }).collect();
+                    workout_exercises.set(exs);
+                    workout_active.set(true);
+                }
+            }
+            || ()
+        });
+    }
+
+    // Timer
+    {
+        let elapsed = elapsed_seconds.clone();
+        let active = workout_active.clone();
+        use_effect_with((*active,), move |(active,)| {
+            let interval = if *active {
+                Some(Interval::new(1000, move || {
+                    elapsed.set(*elapsed + 1);
+                }))
+            } else {
+                None
+            };
+            move || drop(interval)
+        });
+    }
+
+    let format_time = |secs: u32| -> String {
+        let m = secs / 60;
+        let s = secs % 60;
+        format!("{:02}:{:02}", m, s)
+    };
+
+    let on_add_exercise = {
+        let we = workout_exercises.clone();
+        let show = show_exercise_picker.clone();
+        let active = workout_active.clone();
+        Callback::from(move |ex: Exercise| {
+            let mut exs = (*we).clone();
+            exs.push(WorkoutExercise {
+                exercise_id: ex.id,
+                sets: vec![WorkoutSet { weight: 0.0, reps: 10, completed: false }],
+                notes: String::new(),
+            });
+            we.set(exs);
+            show.set(false);
+            active.set(true);
+        })
+    };
+
+    let on_update = {
+        let we = workout_exercises.clone();
+        Callback::from(move |exs: Vec<WorkoutExercise>| {
+            we.set(exs);
+        })
+    };
+
+    let on_remove = {
+        let we = workout_exercises.clone();
+        Callback::from(move |idx: usize| {
+            let mut exs = (*we).clone();
+            if idx < exs.len() {
+                exs.remove(idx);
+            }
+            we.set(exs);
+        })
+    };
+
+    let on_save = {
+        let we = workout_exercises.clone();
+        let name = workout_name.clone();
+        let elapsed = elapsed_seconds.clone();
+        let saved = saved.clone();
+        let nav = navigator.clone();
+        Callback::from(move |_| {
+            if we.is_empty() { return; }
+            let now = chrono::Local::now();
+            let workout = Workout {
+                id: uuid::Uuid::new_v4().to_string(),
+                date: now.format("%Y-%m-%d").to_string(),
+                name: (*name).clone(),
+                exercises: (*we).clone(),
+                duration_mins: *elapsed / 60,
+            };
+            let mut workouts = storage::load_workouts();
+            workouts.push(workout);
+            storage::save_workouts(&workouts);
+            saved.set(true);
+            // Navigate to history after short delay
+            nav.push(&Route::History);
+        })
+    };
+
+    if *show_exercise_picker {
+        return html! {
+            <div class="pb-20">
+                <div class="px-4 pt-4 pb-2 flex justify-between items-center">
+                    <h2 class="text-xl font-bold">{"Add Exercise"}</h2>
+                    <button
+                        class="text-gray-400 hover:text-gray-200"
+                        onclick={let s = show_exercise_picker.clone(); Callback::from(move |_| s.set(false))}
+                    >{"Cancel"}</button>
+                </div>
+                <ExerciseList
+                    exercises={all_exercises.clone()}
+                    on_select={on_add_exercise.clone()}
+                    on_add={on_add_exercise}
+                    show_add_button={true}
+                />
+            </div>
+        };
+    }
+
+    html! {
+        <div class="px-4 py-4 pb-24 space-y-4">
+            <div class="flex justify-between items-center">
+                <div>
+                    <input
+                        type="text"
+                        class="text-2xl font-bold bg-transparent border-b border-gray-700 focus:border-blue-500 focus:outline-none"
+                        value={(*workout_name).clone()}
+                        onchange={let n = workout_name.clone(); Callback::from(move |e: Event| {
+                            let input: web_sys::HtmlInputElement = e.target_unchecked_into();
+                            n.set(input.value());
+                        })}
+                    />
+                </div>
+                { if *workout_active {
+                    html! {
+                        <div class="text-xl font-mono text-blue-400">
+                            {format_time(*elapsed_seconds)}
+                        </div>
+                    }
+                } else { html! {} }}
+            </div>
+
+            <WorkoutLog
+                workout_exercises={(*workout_exercises).clone()}
+                all_exercises={all_exercises.clone()}
+                on_update={on_update}
+                on_remove_exercise={on_remove}
+            />
+
+            <button
+                class="w-full py-3 bg-gray-800 rounded-lg text-blue-400 font-medium hover:bg-gray-700 border border-gray-700 border-dashed"
+                onclick={let s = show_exercise_picker.clone(); Callback::from(move |_| s.set(true))}
+            >{"+ Add Exercise"}</button>
+
+            { if !workout_exercises.is_empty() {
+                html! {
+                    <button
+                        class="w-full py-3 bg-green-700 rounded-lg font-bold text-lg hover:bg-green-600"
+                        onclick={on_save}
+                    >{"Finish & Save Workout"}</button>
+                }
+            } else { html! {} }}
+        </div>
+    }
+}

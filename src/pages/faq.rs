@@ -1,0 +1,81 @@
+use yew::prelude::*;
+
+struct FaqItem {
+    question: &'static str,
+    answer: &'static str,
+}
+
+const FAQS: &[FaqItem] = &[
+    FaqItem {
+        question: "Do I need to create an account?",
+        answer: "No. Treening has no accounts, no login, and no server. All your data is stored locally in your browser's localStorage.",
+    },
+    FaqItem {
+        question: "Does it work offline?",
+        answer: "Yes! After your first visit, the app is cached by a service worker and works fully offline. You can install it as a PWA on your phone for the best experience.",
+    },
+    FaqItem {
+        question: "How do I install it on my phone?",
+        answer: "On Android (Chrome): tap the menu and select \"Add to Home screen\" or \"Install app\". On iOS (Safari): tap the share button and select \"Add to Home Screen\". The app will appear as a standalone app.",
+    },
+    FaqItem {
+        question: "Where is my data stored?",
+        answer: "Everything is stored in your browser's localStorage. Your data never leaves your device. If you clear your browser data, your workouts will be lost \u{2014} use the Export feature in Settings to back up regularly.",
+    },
+    FaqItem {
+        question: "How do I back up my data?",
+        answer: "Go to Settings and tap \"Export Data\". This downloads a JSON file with all your workouts, routines, and custom exercises. To restore, use \"Import Data\" and select the JSON file.",
+    },
+    FaqItem {
+        question: "Can I transfer data to another device?",
+        answer: "Yes. Export your data as JSON on one device, transfer the file (email, cloud drive, etc.), then import it on the other device via Settings.",
+    },
+    FaqItem {
+        question: "Can I add my own exercises?",
+        answer: "Yes. Go to the Exercises tab and tap \"Add Custom Exercise\". Fill in the name, category, equipment, muscle groups, and description. Your custom exercises will appear alongside the built-in ones.",
+    },
+    FaqItem {
+        question: "What are routines?",
+        answer: "Routines are pre-planned workout templates. Create one in the Routines tab (e.g., \"Push Day\" with Bench Press, Overhead Press, Tricep Pushdowns). Then start a workout from that routine with one tap \u{2014} all exercises are pre-loaded.",
+    },
+    FaqItem {
+        question: "How does the workout timer work?",
+        answer: "The timer starts automatically when you add your first exercise or start from a routine. It counts up and shows elapsed time. The duration is saved with your workout when you finish.",
+    },
+    FaqItem {
+        question: "Can I edit a saved workout?",
+        answer: "Currently, saved workouts are read-only in the history. You can delete workouts you no longer need. For corrections, you can export, edit the JSON file manually, and re-import.",
+    },
+    FaqItem {
+        question: "What technology is this built with?",
+        answer: "Treening is built with Rust compiled to WebAssembly (WASM), using the Yew framework. It uses Tailwind CSS for styling, localStorage for data persistence, and service workers for offline PWA support. No backend server required.",
+    },
+    FaqItem {
+        question: "Is it open source?",
+        answer: "Yes! The source code is available on GitHub. It's a Rust/WASM project you can build with Trunk.",
+    },
+];
+
+#[function_component(FaqPage)]
+pub fn faq_page() -> Html {
+    html! {
+        <div class="px-4 py-4 pb-24 max-w-lg mx-auto space-y-4">
+            <h1 class="text-2xl font-bold">{"FAQ"}</h1>
+            <p class="text-gray-400 text-sm">{"Frequently asked questions about Treening."}</p>
+            <div class="space-y-3">
+                { for FAQS.iter().map(|faq| {
+                    html! {
+                        <details class="bg-gray-800 rounded-lg">
+                            <summary class="px-4 py-3 cursor-pointer font-medium hover:text-blue-400 transition">
+                                {faq.question}
+                            </summary>
+                            <div class="px-4 pb-3 text-sm text-gray-400 leading-relaxed">
+                                {faq.answer}
+                            </div>
+                        </details>
+                    }
+                })}
+            </div>
+        </div>
+    }
+}

@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 250" width="300" height="250">
+  <rect width="300" height="250" fill="#1f2937"/>
+  <line x1="50" y1="230" x2="250" y2="230" stroke="#374151" stroke-width="1"/>
+
+  <!-- Cable machine (low pulley on left) -->
+  <rect x="30" y="50" width="10" height="180" rx="3" fill="#6b7280"/>
+  <rect x="25" y="48" width="20" height="8" rx="2" fill="#6b7280"/>
+  <!-- Base -->
+  <rect x="20" y="225" width="30" height="5" rx="2" fill="#6b7280"/>
+  <!-- Low pulley -->
+  <circle cx="40" cy="215" r="4" fill="#9ca3af" stroke="#6b7280" stroke-width="1"/>
+  <!-- Cable going from low pulley to hand -->
+  <line x1="40" y1="215" x2="115" y2="120" stroke="#9ca3af" stroke-width="1.5"/>
+
+  <!-- Legs -->
+  <line x1="155" y1="178" x2="145" y2="228" stroke="#e5e7eb" stroke-width="8" stroke-linecap="round"/>
+  <line x1="175" y1="178" x2="185" y2="228" stroke="#e5e7eb" stroke-width="8" stroke-linecap="round"/>
+  <line x1="145" y1="228" x2="135" y2="230" stroke="#e5e7eb" stroke-width="6" stroke-linecap="round"/>
+  <line x1="185" y1="228" x2="195" y2="230" stroke="#e5e7eb" stroke-width="6" stroke-linecap="round"/>
+
+  <!-- Torso -->
+  <path d="M150,172 L150,112 Q165,102 180,112 L180,172 Z" fill="#374151" stroke="#e5e7eb" stroke-width="2"/>
+
+  <!-- Primary muscles: Side delt on active side (left - closer to cable cross body) -->
+  <ellipse cx="145" cy="116" rx="10" ry="13" fill="#ef4444" opacity="0.85"/>
+
+  <!-- Right arm at rest -->
+  <line x1="185" y1="118" x2="195" y2="165" stroke="#e5e7eb" stroke-width="7" stroke-linecap="round"/>
+
+  <!-- Left arm raised out to side (pulling cable) -->
+  <line x1="145" y1="118" x2="108" y2="112" stroke="#e5e7eb" stroke-width="7" stroke-linecap="round"/>
+  <line x1="108" y1="112" x2="85" y2="115" stroke="#e5e7eb" stroke-width="6" stroke-linecap="round"/>
+
+  <!-- Hand holding cable handle -->
+  <circle cx="83" cy="116" r="4" fill="#e5e7eb"/>
+  <!-- Cable handle -->
+  <rect x="78" y="110" width="5" height="14" rx="2" fill="#9ca3af"/>
+
+  <!-- Cable from handle to the machine cable -->
+  <line x1="80" y1="120" x2="40" y2="215" stroke="#9ca3af" stroke-width="1.5"/>
+
+  <!-- Head -->
+  <circle cx="165" cy="90" r="15" fill="#374151" stroke="#e5e7eb" stroke-width="2"/>
+
+  <!-- Label -->
+  <text x="170" y="18" text-anchor="middle" fill="#9ca3af" font-family="Arial,sans-serif" font-size="11" font-weight="bold">CABLE LATERAL RAISE</text>
+</svg>

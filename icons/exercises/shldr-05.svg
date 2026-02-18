@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 250" width="300" height="250">
+  <rect width="300" height="250" fill="#1f2937"/>
+  <line x1="50" y1="230" x2="250" y2="230" stroke="#374151" stroke-width="1"/>
+
+  <!-- Cable machine post -->
+  <rect x="248" y="30" width="10" height="200" rx="3" fill="#6b7280"/>
+  <rect x="243" y="28" width="20" height="8" rx="2" fill="#6b7280"/>
+  <!-- Pulley -->
+  <circle cx="248" cy="80" r="5" fill="#9ca3af" stroke="#6b7280" stroke-width="1"/>
+  <!-- Cable -->
+  <line x1="248" y1="80" x2="185" y2="95" stroke="#9ca3af" stroke-width="1.5"/>
+  <line x1="185" y1="95" x2="175" y2="100" stroke="#9ca3af" stroke-width="1.5"/>
+
+  <!-- Legs -->
+  <line x1="130" y1="178" x2="118" y2="228" stroke="#e5e7eb" stroke-width="8" stroke-linecap="round"/>
+  <line x1="155" y1="178" x2="165" y2="228" stroke="#e5e7eb" stroke-width="8" stroke-linecap="round"/>
+  <line x1="118" y1="228" x2="108" y2="230" stroke="#e5e7eb" stroke-width="6" stroke-linecap="round"/>
+  <line x1="165" y1="228" x2="175" y2="230" stroke="#e5e7eb" stroke-width="6" stroke-linecap="round"/>
+
+  <!-- Torso -->
+  <path d="M128,172 L128,108 Q143,98 158,108 L158,172 Z" fill="#374151" stroke="#e5e7eb" stroke-width="2"/>
+
+  <!-- Primary muscles: Rear delts (red) -->
+  <ellipse cx="123" cy="112" rx="7" ry="11" fill="#ef4444" opacity="0.85"/>
+  <ellipse cx="163" cy="112" rx="7" ry="11" fill="#ef4444" opacity="0.85"/>
+
+  <!-- Secondary muscles: Traps (amber) -->
+  <path d="M133,100 Q143,92 153,100 L153,108 Q143,104 133,108 Z" fill="#f59e0b" opacity="0.7"/>
+
+  <!-- Arms pulling rope to face - elbows high and out -->
+  <!-- Upper arms (elbows high) -->
+  <line x1="123" y1="116" x2="100" y2="96" stroke="#e5e7eb" stroke-width="7" stroke-linecap="round"/>
+  <line x1="163" y1="116" x2="185" y2="96" stroke="#e5e7eb" stroke-width="7" stroke-linecap="round"/>
+
+  <!-- Forearms pulling toward face -->
+  <line x1="100" y1="96" x2="128" y2="88" stroke="#e5e7eb" stroke-width="6" stroke-linecap="round"/>
+  <line x1="185" y1="96" x2="158" y2="88" stroke="#e5e7eb" stroke-width="6" stroke-linecap="round"/>
+
+  <!-- Hands with rope ends -->
+  <circle cx="128" cy="88" r="4" fill="#e5e7eb"/>
+  <circle cx="158" cy="88" r="4" fill="#e5e7eb"/>
+
+  <!-- Rope attachment -->
+  <line x1="128" y1="88" x2="143" y2="90" stroke="#9ca3af" stroke-width="2.5"/>
+  <line x1="158" y1="88" x2="143" y2="90" stroke="#9ca3af" stroke-width="2.5"/>
+  <line x1="143" y1="90" x2="185" y2="95" stroke="#9ca3af" stroke-width="1.5"/>
+
+  <!-- Head -->
+  <circle cx="143" cy="80" r="15" fill="#374151" stroke="#e5e7eb" stroke-width="2"/>
+
+  <!-- Label -->
+  <text x="130" y="18" text-anchor="middle" fill="#9ca3af" font-family="Arial,sans-serif" font-size="11" font-weight="bold">FACE PULL</text>
+</svg>

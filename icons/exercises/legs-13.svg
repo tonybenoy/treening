@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 250" width="300" height="250">
+  <rect width="300" height="250" fill="#1f2937"/>
+
+  <!-- Hip Thrust - upper back on bench, barbell on hips, hips raised -->
+
+  <!-- Floor -->
+  <line x1="20" y1="225" x2="280" y2="225" stroke="#6b7280" stroke-width="1"/>
+
+  <!-- Bench -->
+  <rect x="55" y="130" width="55" height="30" rx="4" fill="#6b7280"/>
+  <!-- Bench legs -->
+  <rect x="60" y="160" width="6" height="63" rx="2" fill="#6b7280"/>
+  <rect x="100" y="160" width="6" height="63" rx="2" fill="#6b7280"/>
+
+  <!-- Primary muscles: Glutes (red) -->
+  <ellipse cx="150" cy="138" rx="20" ry="12" fill="#ef4444" opacity="0.7"/>
+
+  <!-- Secondary muscles: Hamstrings (amber) -->
+  <polygon points="160,145 175,175 185,172 170,142" fill="#f59e0b" opacity="0.55"/>
+
+  <!-- Figure - upper back on bench, hips thrust up -->
+  <!-- Head (near bench) -->
+  <circle cx="72" cy="118" r="11" fill="none" stroke="#e5e7eb" stroke-width="2.5"/>
+
+  <!-- Upper back resting on bench edge -->
+  <path d="M83,118 L95,120 L110,130" fill="none" stroke="#e5e7eb" stroke-width="3"/>
+
+  <!-- Torso/back (bridging from bench to hips - angled up) -->
+  <path d="M110,130 L130,128 L155,132 L160,142 L130,142 L108,140 Z" fill="none" stroke="#e5e7eb" stroke-width="2"/>
+
+  <!-- Hips (raised high) -->
+  <ellipse cx="155" cy="137" rx="8" ry="6" fill="none" stroke="#e5e7eb" stroke-width="2"/>
+
+  <!-- Upper legs (angled down from hips to knees) -->
+  <path d="M158,142 L180,165 L195,185" fill="none" stroke="#e5e7eb" stroke-width="3"/>
+
+  <!-- Lower legs (vertical, feet on floor) -->
+  <path d="M195,185 L198,210 L200,223" fill="none" stroke="#e5e7eb" stroke-width="3"/>
+
+  <!-- Feet on floor -->
+  <line x1="192" y1="223" x2="210" y2="223" stroke="#e5e7eb" stroke-width="2.5"/>
+
+  <!-- Arms on barbell -->
+  <path d="M105,132 L110,145 L125,148" fill="none" stroke="#e5e7eb" stroke-width="2"/>
+  <path d="M118,130 L130,148 L145,150" fill="none" stroke="#e5e7eb" stroke-width="2"/>
+
+  <!-- Barbell on hips -->
+  <line x1="40" y1="140" x2="260" y2="140" stroke="#6b7280" stroke-width="3"/>
+  <!-- Plates -->
+  <rect x="30" y="130" width="10" height="20" rx="2" fill="#6b7280"/>
+  <rect x="20" y="133" width="10" height="14" rx="2" fill="#6b7280"/>
+  <rect x="260" y="130" width="10" height="20" rx="2" fill="#6b7280"/>
+  <rect x="270" y="133" width="10" height="14" rx="2" fill="#6b7280"/>
+
+  <!-- Label -->
+  <text x="150" y="18" text-anchor="middle" fill="#9ca3af" font-family="Arial,sans-serif" font-size="11" font-weight="bold">HIP THRUST</text>
+</svg>

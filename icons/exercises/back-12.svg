@@ -1,0 +1,60 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 250" width="300" height="250">
+  <rect width="300" height="250" fill="#1f2937"/>
+
+  <!-- Hyperextension bench - side view -->
+  <!-- Main angled pad -->
+  <path d="M80,130 L190,100" stroke="#6b7280" stroke-width="6" stroke-linecap="round"/>
+  <!-- Pad surface -->
+  <rect x="100" y="92" width="80" height="12" rx="4" fill="#6b7280" transform="rotate(-10, 140, 98)"/>
+  <!-- Ankle pads/rollers -->
+  <circle cx="82" cy="128" r="6" fill="#6b7280" stroke="#9ca3af" stroke-width="1"/>
+  <circle cx="82" cy="140" r="6" fill="#6b7280" stroke="#9ca3af" stroke-width="1"/>
+  <!-- Support frame -->
+  <line x1="85" y1="145" x2="85" y2="230" stroke="#6b7280" stroke-width="4"/>
+  <line x1="160" y1="108" x2="160" y2="230" stroke="#6b7280" stroke-width="4"/>
+  <!-- Base -->
+  <rect x="70" y="226" width="105" height="6" rx="2" fill="#6b7280"/>
+  <!-- Cross brace -->
+  <line x1="85" y1="190" x2="160" y2="190" stroke="#6b7280" stroke-width="3"/>
+
+  <!-- Person on hyperextension bench - torso extended straight, side view -->
+  <!-- The person's hips are at the pad, legs locked behind ankle pads -->
+
+  <!-- Head -->
+  <circle cx="230" cy="72" r="13" fill="none" stroke="#e5e7eb" stroke-width="2.5"/>
+
+  <!-- Neck -->
+  <line x1="222" y1="80" x2="215" y2="86" stroke="#e5e7eb" stroke-width="3"/>
+
+  <!-- Torso - extended straight, angling slightly up from hips -->
+  <path d="M140,95 L215,80 L218,98 L143,113 Z" fill="none" stroke="#e5e7eb" stroke-width="2.5" stroke-linejoin="round"/>
+
+  <!-- Lower back - primary muscles (red) -->
+  <path d="M142,98 L155,95 L155,112 L142,113 Z" fill="#ef4444" opacity="0.7"/>
+  <path d="M148,95 L165,92 L165,110 L148,112 Z" fill="#ef4444" opacity="0.7"/>
+
+  <!-- Glutes - secondary (amber) -->
+  <path d="M130,110 Q125,120 132,128 L142,125 Q140,115 138,108 Z" fill="#f59e0b" opacity="0.55"/>
+
+  <!-- Hamstrings - secondary (amber) -->
+  <path d="M118,128 Q110,140 108,148" stroke="#f59e0b" stroke-width="5" stroke-linecap="round" opacity="0.5"/>
+
+  <!-- Arms - crossed at chest or hands behind head -->
+  <line x1="195" y1="88" x2="185" y2="78" stroke="#e5e7eb" stroke-width="4" stroke-linecap="round"/>
+  <line x1="185" y1="78" x2="190" y2="70" stroke="#e5e7eb" stroke-width="3" stroke-linecap="round"/>
+  <!-- Other arm -->
+  <line x1="188" y1="92" x2="178" y2="85" stroke="#e5e7eb" stroke-width="4" stroke-linecap="round"/>
+  <line x1="178" y1="85" x2="182" y2="76" stroke="#e5e7eb" stroke-width="3" stroke-linecap="round"/>
+
+  <!-- Hips on pad -->
+  <ellipse cx="135" cy="115" rx="10" ry="10" fill="none" stroke="#e5e7eb" stroke-width="2"/>
+
+  <!-- Upper legs - going back and down to ankle pads -->
+  <line x1="128" y1="122" x2="100" y2="135" stroke="#e5e7eb" stroke-width="7" stroke-linecap="round"/>
+
+  <!-- Lower legs locked under pads -->
+  <line x1="100" y1="135" x2="84" y2="130" stroke="#e5e7eb" stroke-width="5" stroke-linecap="round"/>
+
+  <!-- Feet -->
+  <line x1="84" y1="130" x2="78" y2="125" stroke="#e5e7eb" stroke-width="3" stroke-linecap="round"/>
+</svg>

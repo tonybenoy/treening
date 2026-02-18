@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 250" width="300" height="250">
+  <rect width="300" height="250" fill="#1f2937"/>
+  <!-- Floor -->
+  <line x1="20" y1="195" x2="280" y2="195" stroke="#6b7280" stroke-width="1.5"/>
+  <!-- Dead Bug - on back, opposite arm and leg extended -->
+  <!-- Core/abs highlight - RED -->
+  <path d="M115,140 L185,140 L185,165 L115,165 Z" fill="#ef4444" opacity="0.55"/>
+  <!-- Back flat on ground -->
+  <line x1="80" y1="170" x2="220" y2="170" stroke="#e5e7eb" stroke-width="3"/>
+  <!-- Head (on ground, left side) -->
+  <circle cx="70" cy="165" r="11" fill="none" stroke="#e5e7eb" stroke-width="2.5"/>
+  <!-- Shoulders -->
+  <line x1="95" y1="168" x2="105" y2="168" stroke="#e5e7eb" stroke-width="2"/>
+  <!-- Left arm extended straight up/back (behind) -->
+  <line x1="100" y1="168" x2="60" y2="130" stroke="#e5e7eb" stroke-width="2.5"/>
+  <line x1="60" y1="130" x2="45" y2="115" stroke="#e5e7eb" stroke-width="2.5"/>
+  <!-- Right arm reaching up (bent at 90) -->
+  <line x1="140" y1="168" x2="140" y2="130" stroke="#e5e7eb" stroke-width="2.5"/>
+  <line x1="140" y1="130" x2="140" y2="115" stroke="#e5e7eb" stroke-width="2.5"/>
+  <!-- Hips -->
+  <circle cx="200" cy="170" r="3" fill="#e5e7eb"/>
+  <!-- Right leg (bent at 90, knee up) -->
+  <line x1="195" y1="170" x2="195" y2="130" stroke="#e5e7eb" stroke-width="2.5"/>
+  <line x1="195" y1="130" x2="220" y2="130" stroke="#e5e7eb" stroke-width="2.5"/>
+  <!-- Left leg extended straight out (opposite to right arm) -->
+  <line x1="210" y1="170" x2="240" y2="140" stroke="#e5e7eb" stroke-width="2.5"/>
+  <line x1="240" y1="140" x2="265" y2="125" stroke="#e5e7eb" stroke-width="2.5"/>
+  <!-- Foot -->
+  <line x1="265" y1="125" x2="272" y2="122" stroke="#e5e7eb" stroke-width="2"/>
+  <!-- Label -->
+  <text x="150" y="228" text-anchor="middle" fill="#9ca3af" font-family="Arial, sans-serif" font-size="13" font-weight="bold">DEAD BUG</text>
+</svg>

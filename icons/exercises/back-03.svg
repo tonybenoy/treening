@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 250" width="300" height="250">
+  <rect width="300" height="250" fill="#1f2937"/>
+
+  <!-- Person bent over - side view -->
+  <!-- Head -->
+  <circle cx="105" cy="82" r="14" fill="none" stroke="#e5e7eb" stroke-width="2.5"/>
+
+  <!-- Neck -->
+  <line x1="115" y1="90" x2="125" y2="98" stroke="#e5e7eb" stroke-width="3"/>
+
+  <!-- Torso - hinged forward at ~45 degrees -->
+  <path d="M125,90 L200,140 L200,155 L125,105 Z" fill="none" stroke="#e5e7eb" stroke-width="2.5" stroke-linejoin="round"/>
+
+  <!-- Mid-back and lats - primary muscles (red) -->
+  <path d="M140,96 L135,100 Q140,115 145,108 Z" fill="#ef4444" opacity="0.7"/>
+  <path d="M150,103 Q145,115 155,120 L160,112 Z" fill="#ef4444" opacity="0.7"/>
+  <path d="M160,110 Q158,125 168,128 L172,118 Z" fill="#ef4444" opacity="0.7"/>
+  <!-- Lats on sides -->
+  <path d="M130,100 Q125,112 130,125 L137,115 Z" fill="#ef4444" opacity="0.6"/>
+  <path d="M195,148 Q200,138 198,152 L195,155 Z" fill="#ef4444" opacity="0.6"/>
+
+  <!-- Upper arms - pulling barbell up -->
+  <line x1="145" y1="108" x2="140" y2="145" stroke="#e5e7eb" stroke-width="5" stroke-linecap="round"/>
+
+  <!-- Biceps - secondary (amber) -->
+  <path d="M143,115 Q138,128 140,140" stroke="#f59e0b" stroke-width="4" stroke-linecap="round" opacity="0.6"/>
+
+  <!-- Forearms -->
+  <line x1="140" y1="145" x2="145" y2="168" stroke="#e5e7eb" stroke-width="4" stroke-linecap="round"/>
+
+  <!-- Hands -->
+  <circle cx="145" cy="168" r="3" fill="#e5e7eb"/>
+
+  <!-- Barbell -->
+  <line x1="80" y1="170" x2="225" y2="170" stroke="#6b7280" stroke-width="3"/>
+  <!-- Plates -->
+  <rect x="78" y="158" width="8" height="24" rx="2" fill="#6b7280"/>
+  <rect x="70" y="162" width="8" height="16" rx="2" fill="#6b7280"/>
+  <rect x="220" y="158" width="8" height="24" rx="2" fill="#6b7280"/>
+  <rect x="228" y="162" width="8" height="16" rx="2" fill="#6b7280"/>
+
+  <!-- Hips -->
+  <ellipse cx="205" cy="150" rx="10" ry="8" fill="none" stroke="#e5e7eb" stroke-width="2"/>
+
+  <!-- Upper legs - slightly bent -->
+  <line x1="205" y1="158" x2="195" y2="200" stroke="#e5e7eb" stroke-width="7" stroke-linecap="round"/>
+
+  <!-- Lower legs -->
+  <line x1="195" y1="200" x2="200" y2="235" stroke="#e5e7eb" stroke-width="5" stroke-linecap="round"/>
+
+  <!-- Feet -->
+  <line x1="200" y1="235" x2="215" y2="238" stroke="#e5e7eb" stroke-width="4" stroke-linecap="round"/>
+
+  <!-- Floor line -->
+  <line x1="50" y1="240" x2="260" y2="240" stroke="#6b7280" stroke-width="1" opacity="0.5"/>
+</svg>

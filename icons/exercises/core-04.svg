@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 250" width="300" height="250">
+  <rect width="300" height="250" fill="#1f2937"/>
+  <!-- Floor -->
+  <line x1="30" y1="205" x2="270" y2="205" stroke="#6b7280" stroke-width="1.5"/>
+  <!-- Cable machine - vertical post -->
+  <line x1="220" y1="20" x2="220" y2="205" stroke="#6b7280" stroke-width="4"/>
+  <!-- Cable machine top -->
+  <rect x="210" y="15" width="25" height="15" rx="2" fill="#6b7280"/>
+  <!-- Weight stack -->
+  <rect x="225" y="40" width="15" height="80" rx="2" fill="none" stroke="#6b7280" stroke-width="1.5"/>
+  <line x1="225" y1="50" x2="240" y2="50" stroke="#6b7280" stroke-width="1"/>
+  <line x1="225" y1="60" x2="240" y2="60" stroke="#6b7280" stroke-width="1"/>
+  <line x1="225" y1="70" x2="240" y2="70" stroke="#6b7280" stroke-width="1"/>
+  <!-- Cable line from top to hands -->
+  <line x1="220" y1="25" x2="165" y2="90" stroke="#6b7280" stroke-width="1.5" stroke-dasharray="4,3"/>
+  <!-- Rope attachment -->
+  <line x1="165" y1="90" x2="155" y2="95" stroke="#6b7280" stroke-width="2"/>
+  <line x1="165" y1="90" x2="175" y2="95" stroke="#6b7280" stroke-width="2"/>
+  <!-- Kneeling figure crunching down - side view -->
+  <!-- Head (tucked down) -->
+  <circle cx="140" cy="105" r="11" fill="none" stroke="#e5e7eb" stroke-width="2.5"/>
+  <!-- Hands gripping rope behind head -->
+  <line x1="145" y1="95" x2="155" y2="95" stroke="#e5e7eb" stroke-width="2"/>
+  <line x1="148" y1="98" x2="175" y2="95" stroke="#e5e7eb" stroke-width="2"/>
+  <!-- Abs highlight - RED -->
+  <path d="M130,115 L160,112 L165,155 L130,160 Z" fill="#ef4444" opacity="0.6"/>
+  <!-- Upper torso (crunched forward) -->
+  <line x1="140" y1="116" x2="150" y2="155" stroke="#e5e7eb" stroke-width="3"/>
+  <!-- Arms -->
+  <line x1="140" y1="120" x2="152" y2="100" stroke="#e5e7eb" stroke-width="2.5"/>
+  <!-- Hip -->
+  <circle cx="150" cy="158" r="3" fill="#e5e7eb"/>
+  <!-- Upper leg (kneeling - thigh vertical) -->
+  <line x1="150" y1="158" x2="145" y2="190" stroke="#e5e7eb" stroke-width="2.5"/>
+  <!-- Lower leg on ground -->
+  <line x1="145" y1="190" x2="100" y2="205" stroke="#e5e7eb" stroke-width="2.5"/>
+  <!-- Knee on ground -->
+  <circle cx="145" cy="192" r="3" fill="#e5e7eb"/>
+  <!-- Label -->
+  <text x="130" y="235" text-anchor="middle" fill="#9ca3af" font-family="Arial, sans-serif" font-size="13" font-weight="bold">CABLE CRUNCH</text>
+</svg>

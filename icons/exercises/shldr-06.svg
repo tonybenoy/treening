@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 250" width="300" height="250">
+  <rect width="300" height="250" fill="#1f2937"/>
+  <line x1="50" y1="230" x2="250" y2="230" stroke="#374151" stroke-width="1"/>
+
+  <!-- Side view - person bent forward -->
+  <!-- Legs -->
+  <line x1="180" y1="165" x2="170" y2="228" stroke="#e5e7eb" stroke-width="8" stroke-linecap="round"/>
+  <line x1="180" y1="165" x2="195" y2="228" stroke="#e5e7eb" stroke-width="8" stroke-linecap="round"/>
+  <line x1="170" y1="228" x2="160" y2="230" stroke="#e5e7eb" stroke-width="6" stroke-linecap="round"/>
+  <line x1="195" y1="228" x2="205" y2="230" stroke="#e5e7eb" stroke-width="6" stroke-linecap="round"/>
+
+  <!-- Torso (bent forward ~45 degrees) -->
+  <path d="M175,162 L128,115 Q122,108 135,108 L182,155 Z" fill="#374151" stroke="#e5e7eb" stroke-width="2"/>
+
+  <!-- Primary muscles: Rear delts (red) -->
+  <ellipse cx="128" cy="113" rx="9" ry="8" fill="#ef4444" opacity="0.85" transform="rotate(-40,128,113)"/>
+  <ellipse cx="138" cy="108" rx="9" ry="8" fill="#ef4444" opacity="0.85" transform="rotate(-40,138,108)"/>
+
+  <!-- Arms hanging down then raised out to sides -->
+  <!-- Left arm raised out -->
+  <line x1="132" y1="118" x2="85" y2="100" stroke="#e5e7eb" stroke-width="7" stroke-linecap="round"/>
+  <line x1="85" y1="100" x2="60" y2="98" stroke="#e5e7eb" stroke-width="6" stroke-linecap="round"/>
+
+  <!-- Right arm raised out (toward viewer, shown shorter) -->
+  <line x1="155" y1="130" x2="200" y2="112" stroke="#e5e7eb" stroke-width="7" stroke-linecap="round"/>
+  <line x1="200" y1="112" x2="225" y2="110" stroke="#e5e7eb" stroke-width="6" stroke-linecap="round"/>
+
+  <!-- Hands -->
+  <circle cx="58" cy="98" r="4" fill="#e5e7eb"/>
+  <circle cx="227" cy="110" r="4" fill="#e5e7eb"/>
+
+  <!-- Dumbbells -->
+  <rect x="50" y="91" width="7" height="18" rx="3" fill="#6b7280"/>
+  <rect x="47" y="89" width="13" height="5" rx="2" fill="#6b7280"/>
+  <rect x="47" y="106" width="13" height="5" rx="2" fill="#6b7280"/>
+  <rect x="220" y="103" width="7" height="18" rx="3" fill="#6b7280"/>
+  <rect x="217" y="101" width="13" height="5" rx="2" fill="#6b7280"/>
+  <rect x="217" y="118" width="13" height="5" rx="2" fill="#6b7280"/>
+
+  <!-- Head -->
+  <circle cx="120" cy="100" r="14" fill="#374151" stroke="#e5e7eb" stroke-width="2"/>
+
+  <!-- Label -->
+  <text x="150" y="18" text-anchor="middle" fill="#9ca3af" font-family="Arial,sans-serif" font-size="11" font-weight="bold">REAR DELT FLY</text>
+</svg>

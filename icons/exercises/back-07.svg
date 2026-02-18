@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 250" width="300" height="250">
+  <rect width="300" height="250" fill="#1f2937"/>
+
+  <!-- Pull-up bar structure -->
+  <rect x="60" y="18" width="8" height="230" fill="#6b7280"/>
+  <rect x="232" y="18" width="8" height="230" fill="#6b7280"/>
+  <rect x="60" y="18" width="180" height="8" rx="3" fill="#6b7280"/>
+  <!-- Base -->
+  <rect x="45" y="238" width="40" height="6" rx="2" fill="#6b7280"/>
+  <rect x="218" y="238" width="40" height="6" rx="2" fill="#6b7280"/>
+
+  <!-- Person - chin above bar, front view -->
+  <!-- Head -->
+  <circle cx="150" cy="35" r="13" fill="none" stroke="#e5e7eb" stroke-width="2.5"/>
+
+  <!-- Neck -->
+  <line x1="150" y1="48" x2="150" y2="55" stroke="#e5e7eb" stroke-width="3"/>
+
+  <!-- Torso -->
+  <path d="M135,55 L135,140 L165,140 L165,55 Z" fill="none" stroke="#e5e7eb" stroke-width="2.5" stroke-linejoin="round"/>
+
+  <!-- Lats - primary muscles (red) - V-shape on sides -->
+  <path d="M132,62 Q120,85 125,130 L135,130 L135,62 Z" fill="#ef4444" opacity="0.7"/>
+  <path d="M168,62 Q180,85 175,130 L165,130 L165,62 Z" fill="#ef4444" opacity="0.7"/>
+
+  <!-- Upper arms - reaching up and out to bar -->
+  <line x1="135" y1="60" x2="105" y2="25" stroke="#e5e7eb" stroke-width="5" stroke-linecap="round"/>
+  <line x1="165" y1="60" x2="195" y2="25" stroke="#e5e7eb" stroke-width="5" stroke-linecap="round"/>
+
+  <!-- Forearms -->
+  <line x1="105" y1="25" x2="95" y2="22" stroke="#e5e7eb" stroke-width="4" stroke-linecap="round"/>
+  <line x1="195" y1="25" x2="205" y2="22" stroke="#e5e7eb" stroke-width="4" stroke-linecap="round"/>
+
+  <!-- Biceps - secondary (amber) -->
+  <path d="M130,55 Q120,42 110,28" stroke="#f59e0b" stroke-width="5" stroke-linecap="round" opacity="0.6"/>
+  <path d="M170,55 Q180,42 190,28" stroke="#f59e0b" stroke-width="5" stroke-linecap="round" opacity="0.6"/>
+
+  <!-- Hands gripping bar (overhand) -->
+  <circle cx="95" cy="22" r="4" fill="#e5e7eb"/>
+  <circle cx="205" cy="22" r="4" fill="#e5e7eb"/>
+
+  <!-- Hips -->
+  <ellipse cx="150" cy="145" rx="16" ry="8" fill="none" stroke="#e5e7eb" stroke-width="2"/>
+
+  <!-- Upper legs -->
+  <line x1="142" y1="152" x2="138" y2="192" stroke="#e5e7eb" stroke-width="6" stroke-linecap="round"/>
+  <line x1="158" y1="152" x2="162" y2="192" stroke="#e5e7eb" stroke-width="6" stroke-linecap="round"/>
+
+  <!-- Lower legs - hanging slightly back -->
+  <line x1="138" y1="192" x2="142" y2="228" stroke="#e5e7eb" stroke-width="5" stroke-linecap="round"/>
+  <line x1="162" y1="192" x2="158" y2="228" stroke="#e5e7eb" stroke-width="5" stroke-linecap="round"/>
+
+  <!-- Feet -->
+  <line x1="142" y1="228" x2="148" y2="232" stroke="#e5e7eb" stroke-width="3" stroke-linecap="round"/>
+  <line x1="158" y1="228" x2="152" y2="232" stroke="#e5e7eb" stroke-width="3" stroke-linecap="round"/>
+</svg>

@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192" width="192" height="192">
+  <rect width="192" height="192" rx="32" fill="#1e40af"/>
+  <g transform="translate(96,96)">
+    <!-- Dumbbell -->
+    <rect x="-60" y="-8" width="120" height="16" rx="8" fill="white"/>
+    <rect x="-70" y="-24" width="20" height="48" rx="6" fill="white"/>
+    <rect x="50" y="-24" width="20" height="48" rx="6" fill="white"/>
+    <rect x="-78" y="-18" width="12" height="36" rx="4" fill="#93c5fd"/>
+    <rect x="66" y="-18" width="12" height="36" rx="4" fill="#93c5fd"/>
+  </g>
+</svg>

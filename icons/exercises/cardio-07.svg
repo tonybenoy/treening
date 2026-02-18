@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 250" width="300" height="250">
+  <rect width="300" height="250" fill="#1f2937"/>
+  <!-- Floor -->
+  <line x1="20" y1="215" x2="280" y2="215" stroke="#6b7280" stroke-width="1.5"/>
+  <!-- Battle Ropes - squat stance, making waves -->
+  <!-- Rope anchor point (wall/post) -->
+  <rect x="140" y="205" width="20" height="10" rx="2" fill="#6b7280"/>
+  <!-- Left rope with wave pattern -->
+  <path d="M140,210 Q120,195 110,200 Q95,210 85,195 Q75,175 65,180 Q55,190 50,170" fill="none" stroke="#9ca3af" stroke-width="4" stroke-linecap="round"/>
+  <!-- Right rope with wave pattern -->
+  <path d="M160,210 Q180,190 190,200 Q205,215 215,195 Q225,170 235,180 Q245,195 250,170" fill="none" stroke="#9ca3af" stroke-width="4" stroke-linecap="round"/>
+  <!-- Arms and shoulders highlight - RED -->
+  <path d="M100,82 L120,78 L125,110 L102,112 Z" fill="#ef4444" opacity="0.5"/>
+  <path d="M180,78 L200,82 L198,112 L175,110 Z" fill="#ef4444" opacity="0.5"/>
+  <!-- Shoulder area -->
+  <path d="M120,72 L180,72 L178,85 L122,85 Z" fill="#ef4444" opacity="0.4"/>
+  <!-- Person in squat stance - front view -->
+  <!-- Head -->
+  <circle cx="150" cy="50" r="11" fill="none" stroke="#e5e7eb" stroke-width="2.5"/>
+  <!-- Neck -->
+  <line x1="150" y1="61" x2="150" y2="70" stroke="#e5e7eb" stroke-width="2.5"/>
+  <!-- Shoulders -->
+  <line x1="120" y1="78" x2="180" y2="78" stroke="#e5e7eb" stroke-width="2.5"/>
+  <!-- Torso -->
+  <line x1="150" y1="70" x2="150" y2="130" stroke="#e5e7eb" stroke-width="3"/>
+  <!-- Left arm reaching down to rope -->
+  <line x1="120" y1="78" x2="100" y2="105" stroke="#e5e7eb" stroke-width="2.5"/>
+  <line x1="100" y1="105" x2="52" y2="168" stroke="#e5e7eb" stroke-width="2.5"/>
+  <!-- Left hand -->
+  <circle cx="50" cy="170" r="3" fill="#e5e7eb"/>
+  <!-- Right arm reaching down to rope -->
+  <line x1="180" y1="78" x2="200" y2="105" stroke="#e5e7eb" stroke-width="2.5"/>
+  <line x1="200" y1="105" x2="248" y2="168" stroke="#e5e7eb" stroke-width="2.5"/>
+  <!-- Right hand -->
+  <circle cx="250" cy="170" r="3" fill="#e5e7eb"/>
+  <!-- Hips -->
+  <line x1="135" y1="130" x2="165" y2="130" stroke="#e5e7eb" stroke-width="2.5"/>
+  <!-- Left leg (squat) -->
+  <line x1="135" y1="130" x2="115" y2="165" stroke="#e5e7eb" stroke-width="2.5"/>
+  <line x1="115" y1="165" x2="110" y2="210" stroke="#e5e7eb" stroke-width="2.5"/>
+  <!-- Left foot -->
+  <line x1="110" y1="210" x2="100" y2="215" stroke="#e5e7eb" stroke-width="2"/>
+  <!-- Right leg (squat) -->
+  <line x1="165" y1="130" x2="185" y2="165" stroke="#e5e7eb" stroke-width="2.5"/>
+  <line x1="185" y1="165" x2="190" y2="210" stroke="#e5e7eb" stroke-width="2.5"/>
+  <!-- Right foot -->
+  <line x1="190" y1="210" x2="200" y2="215" stroke="#e5e7eb" stroke-width="2"/>
+  <!-- Label -->
+  <text x="150" y="240" text-anchor="middle" fill="#9ca3af" font-family="Arial, sans-serif" font-size="13" font-weight="bold">BATTLE ROPES</text>
+</svg>

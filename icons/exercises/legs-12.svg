@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 250" width="300" height="250">
+  <rect width="300" height="250" fill="#1f2937"/>
+
+  <!-- Goblet Squat - holding dumbbell at chest, squatting -->
+
+  <!-- Floor -->
+  <line x1="60" y1="230" x2="240" y2="230" stroke="#6b7280" stroke-width="1"/>
+
+  <!-- Primary muscles: Quads (red) -->
+  <polygon points="130,148 122,190 132,192 140,150" fill="#ef4444" opacity="0.7"/>
+  <polygon points="160,148 158,190 168,192 170,150" fill="#ef4444" opacity="0.7"/>
+
+  <!-- Secondary muscles: Glutes (amber) -->
+  <ellipse cx="150" cy="143" rx="17" ry="9" fill="#f59e0b" opacity="0.55"/>
+
+  <!-- Figure in squat, holding dumbbell at chest -->
+  <!-- Head -->
+  <circle cx="150" cy="58" r="12" fill="none" stroke="#e5e7eb" stroke-width="2.5"/>
+
+  <!-- Neck -->
+  <line x1="150" y1="70" x2="150" y2="78" stroke="#e5e7eb" stroke-width="2.5"/>
+
+  <!-- Torso (relatively upright for goblet squat) -->
+  <path d="M150,78 L143,84 L140,135 L160,135 L157,84 Z" fill="none" stroke="#e5e7eb" stroke-width="2"/>
+
+  <!-- Hips -->
+  <path d="M140,135 Q150,143 160,135" fill="none" stroke="#e5e7eb" stroke-width="2"/>
+
+  <!-- Upper legs (squat, thighs about parallel) -->
+  <path d="M142,137 L126,162 L118,192" fill="none" stroke="#e5e7eb" stroke-width="3"/>
+  <path d="M158,137 L172,162 L180,192" fill="none" stroke="#e5e7eb" stroke-width="3"/>
+
+  <!-- Lower legs -->
+  <path d="M118,192 L122,215 L120,228" fill="none" stroke="#e5e7eb" stroke-width="3"/>
+  <path d="M180,192 L176,215 L178,228" fill="none" stroke="#e5e7eb" stroke-width="3"/>
+
+  <!-- Feet -->
+  <line x1="112" y1="228" x2="130" y2="228" stroke="#e5e7eb" stroke-width="2.5"/>
+  <line x1="170" y1="228" x2="188" y2="228" stroke="#e5e7eb" stroke-width="2.5"/>
+
+  <!-- Arms holding dumbbell at chest -->
+  <path d="M145,86 L135,95 L138,108" fill="none" stroke="#e5e7eb" stroke-width="2.5"/>
+  <path d="M155,86 L165,95 L162,108" fill="none" stroke="#e5e7eb" stroke-width="2.5"/>
+
+  <!-- Dumbbell at chest (vertical orientation) -->
+  <rect x="144" y="96" width="12" height="20" rx="3" fill="#6b7280"/>
+  <!-- Dumbbell ends -->
+  <rect x="141" y="94" width="18" height="5" rx="2" fill="#6b7280"/>
+  <rect x="141" y="113" width="18" height="5" rx="2" fill="#6b7280"/>
+
+  <!-- Label -->
+  <text x="150" y="18" text-anchor="middle" fill="#9ca3af" font-family="Arial,sans-serif" font-size="11" font-weight="bold">GOBLET SQUAT</text>
+</svg>

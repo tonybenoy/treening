@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 250" width="300" height="250">
+  <rect width="300" height="250" fill="#1f2937"/>
+  <!-- Floor -->
+  <line x1="20" y1="200" x2="280" y2="200" stroke="#6b7280" stroke-width="1.5"/>
+  <!-- Mountain Climbers - push-up position, one knee driven forward -->
+  <!-- Core highlight - RED -->
+  <path d="M110,120 L195,115 L200,140 L115,145 Z" fill="#ef4444" opacity="0.55"/>
+  <!-- Head -->
+  <circle cx="80" cy="115" r="11" fill="none" stroke="#e5e7eb" stroke-width="2.5"/>
+  <!-- Neck -->
+  <line x1="91" y1="118" x2="100" y2="122" stroke="#e5e7eb" stroke-width="2.5"/>
+  <!-- Torso line -->
+  <line x1="100" y1="122" x2="200" y2="130" stroke="#e5e7eb" stroke-width="3"/>
+  <!-- Left arm (straight, on ground) -->
+  <line x1="105" y1="125" x2="85" y2="200" stroke="#e5e7eb" stroke-width="2.5"/>
+  <circle cx="85" cy="200" r="3" fill="#e5e7eb"/>
+  <!-- Right arm -->
+  <line x1="115" y1="128" x2="100" y2="200" stroke="#e5e7eb" stroke-width="2"/>
+  <circle cx="100" cy="200" r="3" fill="#e5e7eb"/>
+  <!-- Hips -->
+  <circle cx="200" cy="132" r="3" fill="#e5e7eb"/>
+  <!-- Back leg (extended straight) -->
+  <line x1="200" y1="132" x2="240" y2="160" stroke="#e5e7eb" stroke-width="2.5"/>
+  <line x1="240" y1="160" x2="260" y2="197" stroke="#e5e7eb" stroke-width="2.5"/>
+  <circle cx="260" cy="197" r="3" fill="#e5e7eb"/>
+  <!-- Front leg (knee driven toward chest) -->
+  <line x1="200" y1="132" x2="160" y2="155" stroke="#e5e7eb" stroke-width="2.5"/>
+  <line x1="160" y1="155" x2="155" y2="175" stroke="#e5e7eb" stroke-width="2.5"/>
+  <!-- Foot of driven leg -->
+  <circle cx="155" cy="177" r="3" fill="#e5e7eb"/>
+  <!-- Label -->
+  <text x="150" y="232" text-anchor="middle" fill="#9ca3af" font-family="Arial, sans-serif" font-size="13" font-weight="bold">MOUNTAIN CLIMBERS</text>
+</svg>

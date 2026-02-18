@@ -1,0 +1,65 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 250" width="300" height="250">
+  <rect width="300" height="250" fill="#1f2937"/>
+
+  <!-- Bench/seat -->
+  <rect x="115" y="178" width="70" height="8" rx="3" fill="#6b7280"/>
+  <rect x="172" y="130" width="8" height="52" rx="2" fill="#6b7280"/>
+  <line x1="120" y1="186" x2="120" y2="230" stroke="#6b7280" stroke-width="4" stroke-linecap="round"/>
+  <line x1="180" y1="186" x2="180" y2="230" stroke="#6b7280" stroke-width="4" stroke-linecap="round"/>
+  <line x1="50" y1="230" x2="250" y2="230" stroke="#374151" stroke-width="1"/>
+
+  <!-- Legs (seated) -->
+  <path d="M137,180 L122,212 L117,228" stroke="#e5e7eb" stroke-width="7" stroke-linecap="round" fill="none"/>
+  <path d="M162,180 L175,212 L180,228" stroke="#e5e7eb" stroke-width="7" stroke-linecap="round" fill="none"/>
+  <line x1="117" y1="228" x2="107" y2="230" stroke="#e5e7eb" stroke-width="5" stroke-linecap="round"/>
+  <line x1="180" y1="228" x2="190" y2="230" stroke="#e5e7eb" stroke-width="5" stroke-linecap="round"/>
+
+  <!-- Torso -->
+  <path d="M135,175 L135,110 Q150,100 165,110 L165,175 Z" fill="#374151" stroke="#e5e7eb" stroke-width="2"/>
+
+  <!-- Primary muscles: Front and side delts (red) -->
+  <ellipse cx="130" cy="114" rx="8" ry="12" fill="#ef4444" opacity="0.85"/>
+  <ellipse cx="170" cy="114" rx="8" ry="12" fill="#ef4444" opacity="0.85"/>
+  <ellipse cx="123" cy="116" rx="5" ry="9" fill="#ef4444" opacity="0.7"/>
+  <ellipse cx="177" cy="116" rx="5" ry="9" fill="#ef4444" opacity="0.7"/>
+
+  <!-- Arms in Arnold press start position - dumbbells at shoulder, palms facing in -->
+  <!-- Upper arms close to body -->
+  <line x1="127" y1="120" x2="118" y2="140" stroke="#e5e7eb" stroke-width="7" stroke-linecap="round"/>
+  <line x1="173" y1="120" x2="182" y2="140" stroke="#e5e7eb" stroke-width="7" stroke-linecap="round"/>
+
+  <!-- Secondary muscles: Triceps (amber) -->
+  <ellipse cx="120" cy="132" rx="5" ry="10" fill="#f59e0b" opacity="0.65"/>
+  <ellipse cx="180" cy="132" rx="5" ry="10" fill="#f59e0b" opacity="0.65"/>
+
+  <!-- Forearms curling up toward shoulders -->
+  <line x1="118" y1="140" x2="125" y2="115" stroke="#e5e7eb" stroke-width="6" stroke-linecap="round"/>
+  <line x1="182" y1="140" x2="175" y2="115" stroke="#e5e7eb" stroke-width="6" stroke-linecap="round"/>
+
+  <!-- Hands -->
+  <circle cx="125" cy="113" r="4" fill="#e5e7eb"/>
+  <circle cx="175" cy="113" r="4" fill="#e5e7eb"/>
+
+  <!-- Dumbbells at shoulders (palms in - seen end-on so small circles) -->
+  <rect x="119" y="105" width="12" height="7" rx="3" fill="#6b7280"/>
+  <rect x="117" y="103" width="5" height="11" rx="2" fill="#6b7280"/>
+  <rect x="129" y="103" width="5" height="11" rx="2" fill="#6b7280"/>
+  <rect x="169" y="105" width="12" height="7" rx="3" fill="#6b7280"/>
+  <rect x="167" y="103" width="5" height="11" rx="2" fill="#6b7280"/>
+  <rect x="179" y="103" width="5" height="11" rx="2" fill="#6b7280"/>
+
+  <!-- Rotation arrows to indicate Arnold motion -->
+  <path d="M112,100 A15,15 0 0,1 105,85" stroke="#9ca3af" stroke-width="1.2" fill="none" marker-end="url(#rotArrow)"/>
+  <path d="M188,100 A15,15 0 0,0 195,85" stroke="#9ca3af" stroke-width="1.2" fill="none" marker-end="url(#rotArrow)"/>
+  <defs>
+    <marker id="rotArrow" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto">
+      <path d="M0,0 L6,3 L0,6" fill="#9ca3af"/>
+    </marker>
+  </defs>
+
+  <!-- Head -->
+  <circle cx="150" cy="88" r="15" fill="#374151" stroke="#e5e7eb" stroke-width="2"/>
+
+  <!-- Label -->
+  <text x="150" y="18" text-anchor="middle" fill="#9ca3af" font-family="Arial,sans-serif" font-size="11" font-weight="bold">ARNOLD PRESS</text>
+</svg>

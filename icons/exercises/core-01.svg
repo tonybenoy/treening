@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 250" width="300" height="250">
+  <rect width="300" height="250" fill="#1f2937"/>
+  <!-- Floor -->
+  <line x1="30" y1="195" x2="270" y2="195" stroke="#6b7280" stroke-width="1.5"/>
+  <!-- Plank figure - side view -->
+  <!-- Head -->
+  <circle cx="80" cy="130" r="12" fill="none" stroke="#e5e7eb" stroke-width="2.5"/>
+  <!-- Neck to shoulder -->
+  <line x1="92" y1="130" x2="105" y2="135" stroke="#e5e7eb" stroke-width="2.5"/>
+  <!-- Core/abs - RED highlight -->
+  <path d="M105,130 L200,128 L200,148 L105,145 Z" fill="#ef4444" opacity="0.6"/>
+  <!-- Torso (upper body line) -->
+  <line x1="105" y1="135" x2="200" y2="133" stroke="#e5e7eb" stroke-width="3"/>
+  <!-- Upper arms (forearms on ground) -->
+  <line x1="105" y1="135" x2="90" y2="165" stroke="#e5e7eb" stroke-width="2.5"/>
+  <!-- Forearm flat on ground -->
+  <line x1="90" y1="165" x2="65" y2="195" stroke="#e5e7eb" stroke-width="2.5"/>
+  <!-- Hips -->
+  <line x1="200" y1="133" x2="210" y2="140" stroke="#e5e7eb" stroke-width="2.5"/>
+  <!-- Upper leg -->
+  <line x1="210" y1="140" x2="240" y2="165" stroke="#e5e7eb" stroke-width="2.5"/>
+  <!-- Lower leg to toes -->
+  <line x1="240" y1="165" x2="255" y2="195" stroke="#e5e7eb" stroke-width="2.5"/>
+  <!-- Toes on ground -->
+  <circle cx="255" cy="195" r="3" fill="#e5e7eb"/>
+  <!-- Elbow on ground -->
+  <circle cx="65" cy="195" r="3" fill="#e5e7eb"/>
+  <!-- Other forearm -->
+  <line x1="105" y1="135" x2="95" y2="165" stroke="#e5e7eb" stroke-width="2"/>
+  <line x1="95" y1="165" x2="75" y2="195" stroke="#e5e7eb" stroke-width="2"/>
+  <!-- Label -->
+  <text x="150" y="230" text-anchor="middle" fill="#9ca3af" font-family="Arial, sans-serif" font-size="13" font-weight="bold">PLANK</text>
+</svg>
