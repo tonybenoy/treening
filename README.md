@@ -1,5 +1,6 @@
 # Treening - Workout Tracker
 
+**[treen.ing](https://treen.ing/)**
 
 Treening is a modern, offline-capable gym workout tracker built with Rust and WebAssembly. It is designed to be fast, private, and easy to use directly in your browser or installed as a Progressive Web App (PWA).
 
