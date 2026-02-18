@@ -213,14 +213,20 @@ pub fn sync_panel() -> Html {
                         </div>
                     </div>
                 },
-                SyncMode::Sender => html! {
-                    <div class="space-y-4 text-center">
-                        <div class="flex justify-between items-center mb-2">
-                            <span class="text-sm font-medium text-blue-400 uppercase tracking-wider">{"Sending Mode"}</span>
-                            <button onclick={let m = mode.clone(); Callback::from(move |_| m.set(SyncMode::Idle))} class="text-gray-500 hover:text-white">{"✕"}</button>
-                        </div>
-                        
-                        { if !peer_id.is_empty() {
+                        <div class="space-y-4 text-center">
+                            <div class="flex justify-between items-center mb-2">
+                                <span class="text-sm font-medium text-blue-400 uppercase tracking-wider">{"Sending Mode"}</span>
+                                <button onclick={let m = mode.clone(); Callback::from(move |_| m.set(SyncMode::Idle))} class="text-gray-500 hover:text-white">{"✕"}</button>
+                            </div>
+
+                            <div class="bg-blue-900/20 p-3 rounded-lg text-xs text-blue-300 text-left space-y-2">
+                                <p class="font-bold uppercase tracking-widest text-[10px]">{"Instructions:"}</p>
+                                <p>{"1. Open Treening on the other device."}</p>
+                                <p>{"2. Go to Sync and tap \"Receive\"."}</p>
+                                <p>{"3. Scan this QR code or enter the Meeting ID below."}</p>
+                            </div>
+                            
+                            { if !peer_id.is_empty() {
                             html! {
                                 <>
                                     {render_qr(&peer_id)}
@@ -245,6 +251,13 @@ pub fn sync_panel() -> Html {
                         <div class="flex justify-between items-center mb-2">
                             <span class="text-sm font-medium text-green-400 uppercase tracking-wider">{"Receiving Mode"}</span>
                             <button onclick={let m = mode.clone(); Callback::from(move |_| m.set(SyncMode::Idle))} class="text-gray-500 hover:text-white">{"✕"}</button>
+                        </div>
+
+                        <div class="bg-green-900/20 p-3 rounded-lg text-xs text-green-300 text-left space-y-2 mb-4">
+                            <p class="font-bold uppercase tracking-widest text-[10px]">{"Instructions:"}</p>
+                            <p>{"1. Tap \"Send\" on the device that has your data."}</p>
+                            <p>{"2. Enter the Meeting ID shown on that device below."}</p>
+                            <p>{"3. Once connected, your data will merge automatically."}</p>
                         </div>
 
                         <div class="space-y-3">

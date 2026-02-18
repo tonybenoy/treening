@@ -28,7 +28,15 @@ const FAQS: &[FaqItem] = &[
     },
     FaqItem {
         question: "Can I transfer data to another device?",
-        answer: "Yes. Export your data as JSON on one device, transfer the file (email, cloud drive, etc.), then import it on the other device via Settings.",
+        answer: "Yes. You have two options: 1. Use the \"Sync Devices\" feature on the Home or Settings page to transfer data directly (P2P) between devices by scanning a QR code or entering a Meeting ID. 2. Export your data as JSON on one device and import it on the other.",
+    },
+    FaqItem {
+        question: "How does Sync work?",
+        answer: "Sync uses PeerJS (WebRTC) to create a direct, private connection between two browsers. When you scan the QR code or enter a Meeting ID, the devices \"handshake\" and send your workout data directly to each other. Your data is never stored on any server during this process.",
+    },
+    FaqItem {
+        question: "Will syncing overwrite my existing data?",
+        answer: "No. Syncing uses an intelligent merge. It will combine the workouts, routines, and custom exercises from both devices, skipping any duplicates. It's safe to sync even if both devices have existing data.",
     },
     FaqItem {
         question: "Can I add my own exercises?",

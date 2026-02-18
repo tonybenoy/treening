@@ -104,9 +104,38 @@ pub fn home_page() -> Html {
                 }
             } else {
                 html! {
-                    <div class="text-center text-gray-500 py-8">
-                        <p class="text-lg">{"Welcome to Treening!"}</p>
-                        <p class="mt-1">{"Start your first workout or browse exercises."}</p>
+                    <div class="space-y-6 py-4">
+                        <div class="text-center text-gray-400">
+                            <p class="text-xl font-medium text-gray-200">{"Welcome to Treening!"}</p>
+                            <p class="mt-1">{"Your privacy-first gym tracker."}</p>
+                        </div>
+                        
+                        <div class="bg-gray-800/30 border border-gray-800 rounded-2xl p-6 space-y-6">
+                            <h3 class="font-bold text-gray-200">{"Getting Started"}</h3>
+                            <div class="space-y-4">
+                                <div class="flex gap-4">
+                                    <div class="flex-shrink-0 w-8 h-8 bg-blue-600/20 text-blue-400 rounded-full flex items-center justify-center font-bold">{"1"}</div>
+                                    <div>
+                                        <div class="font-semibold text-gray-200">{"Explore Exercises"}</div>
+                                        <p class="text-sm text-gray-500">{"Browse over 80 built-in exercises with muscle group info and images."}</p>
+                                    </div>
+                                </div>
+                                <div class="flex gap-4">
+                                    <div class="flex-shrink-0 w-8 h-8 bg-blue-600/20 text-blue-400 rounded-full flex items-center justify-center font-bold">{"2"}</div>
+                                    <div>
+                                        <div class="font-semibold text-gray-200">{"Create a Routine"}</div>
+                                        <p class="text-sm text-gray-500">{"Save your favorite workouts (e.g., 'Push Day') for one-tap starting."}</p>
+                                    </div>
+                                </div>
+                                <div class="flex gap-4">
+                                    <div class="flex-shrink-0 w-8 h-8 bg-blue-600/20 text-blue-400 rounded-full flex items-center justify-center font-bold">{"3"}</div>
+                                    <div>
+                                        <div class="font-semibold text-gray-200">{"Log Your Session"}</div>
+                                        <p class="text-sm text-gray-500">{"Track sets, reps, and weight. Your data stays 100% on your device."}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 }
             }}
