@@ -28,6 +28,8 @@ pub fn load_user_config() -> UserConfig {
         let config = UserConfig {
             nickname: "Athlete".to_string(),
             peer_id: format!("tr-{}", uuid::Uuid::new_v4().to_string()[..8].to_string()),
+            social_enabled: true,
+            theme: crate::models::Theme::Dark,
         };
         let _ = LocalStorage::set(USER_CONFIG_KEY, &config);
         config

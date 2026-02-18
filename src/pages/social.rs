@@ -2,7 +2,7 @@ use yew::prelude::*;
 use wasm_bindgen::prelude::*;
 use wasm_bindgen::JsCast;
 use crate::storage;
-use crate::models::{Friend, FriendStats, UserConfig};
+use crate::models::{Friend, FriendStats};
 use qrcode_generator;
 
 // Re-using the PeerJS definitions from sync.rs or ideally moving them to a shared place

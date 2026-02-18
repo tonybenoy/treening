@@ -132,10 +132,31 @@ pub struct FriendStats {
     pub last_active: String,
 }
 
-#[derive(Clone, Debug, Serialize, Deserialize)]
+#[derive(Clone, Debug, Serialize, Deserialize, PartialEq)]
+pub enum Theme {
+    Dark,
+    Light,
+    System,
+}
+
+impl Default for Theme {
+    fn default() -> Self {
+        Self::Dark
+    }
+}
+
+#[derive(Clone, Debug, Serialize, Deserialize, PartialEq)]
 pub struct UserConfig {
     pub nickname: String,
     pub peer_id: String,
+    #[serde(default = "default_social_enabled")]
+    pub social_enabled: bool,
+    #[serde(default)]
+    pub theme: Theme,
+}
+
+fn default_social_enabled() -> bool {
+    true
 }
 
 impl Default for AppData {

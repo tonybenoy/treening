@@ -46,25 +46,25 @@ pub fn settings_page() -> Html {
 
     html! {
         <div class="px-4 py-4 pb-20 space-y-6">
-            <h1 class="text-2xl font-bold">{"Settings"}</h1>
+            <h1 class="text-2xl font-bold text-gray-900 dark:text-gray-100">{"Settings"}</h1>
 
             <SyncPanel />
 
             <SettingsPanel on_import_complete={on_import_complete} />
 
-            <div class="bg-gray-800 rounded-lg p-4">
-                <h3 class="font-semibold mb-3">{"App Info"}</h3>
-                <Link<Route> to={Route::Faq} classes="flex items-center justify-between py-2 text-blue-400 hover:text-blue-300">
+            <div class="bg-gray-100 dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-transparent">
+                <h3 class="font-semibold mb-3 text-gray-900 dark:text-gray-100">{"App Info"}</h3>
+                <Link<Route> to={Route::Faq} classes="flex items-center justify-between py-2 text-blue-600 dark:text-blue-400 hover:text-blue-500 dark:hover:text-blue-300">
                     <span>{"Frequently Asked Questions"}</span>
                     <span>{"→"}</span>
                 </Link<Route>>
             </div>
 
             <div>
-                <div class="flex justify-between items-center mb-3">
-                    <h2 class="text-lg font-semibold">{"Custom Exercises"}</h2>
+                <div class="flex justify-between items-center mb-3 px-1">
+                    <h2 class="text-lg font-semibold text-gray-900 dark:text-gray-100">{"Custom Exercises"}</h2>
                     <button
-                        class="px-3 py-1.5 bg-blue-600 rounded text-sm hover:bg-blue-700"
+                        class="px-3 py-1.5 bg-blue-600 text-white rounded text-sm hover:bg-blue-700 shadow-sm transition-colors"
                         onclick={let s = show_custom_form.clone(); Callback::from(move |_| s.set(true))}
                     >{"+ Add"}</button>
                 </div>
@@ -83,15 +83,15 @@ pub fn settings_page() -> Html {
                         let on_delete = on_delete_custom.clone();
                         let eid = ex.id.clone();
                         html! {
-                            <div class="bg-gray-800 rounded-lg p-3 flex justify-between items-center">
+                            <div class="bg-gray-100 dark:bg-gray-800 rounded-lg p-3 flex justify-between items-center border border-gray-200 dark:border-transparent transition-colors">
                                 <div>
-                                    <div class="font-medium">{&ex.name}</div>
-                                    <div class="text-sm text-gray-400">
+                                    <div class="font-medium text-gray-800 dark:text-gray-200">{&ex.name}</div>
+                                    <div class="text-sm text-gray-500 dark:text-gray-400">
                                         {ex.category.to_string()}{" · "}{ex.equipment.to_string()}
                                     </div>
                                 </div>
                                 <button
-                                    class="text-red-400 text-sm hover:text-red-300"
+                                    class="text-red-600 dark:text-red-400 text-sm hover:text-red-500 dark:hover:text-red-300"
                                     onclick={Callback::from(move |_| on_delete.emit(eid.clone()))}
                                 >{"Delete"}</button>
                             </div>

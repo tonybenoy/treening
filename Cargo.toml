@@ -23,6 +23,8 @@ web-sys = { version = "0.3", features = [
     "Navigator",
     "Clipboard",
     "UrlSearchParams",
+    "Window",
+    "MediaQueryList",
     "RtcPeerConnection",
     "RtcDataChannel",
     "RtcDataChannelInit",
