@@ -9,7 +9,7 @@ fn ex(id: &str, name: &str, cat: Category, equip: Equipment, muscles: &[&str], d
         muscle_groups: muscles.iter().map(|s| s.to_string()).collect(),
         description: desc.to_string(),
         is_custom: false,
-        image: Some(format!("/treening/icons/exercises/{}.svg", id)),
+        image: Some(format!("icons/exercises/{}.svg", id)),
     }
 }
 
