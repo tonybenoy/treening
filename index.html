@@ -161,6 +161,11 @@
 
         // Service Worker registration
         if ('serviceWorker' in navigator) {
+            // Reload the page when a new SW takes control so users get the update
+            navigator.serviceWorker.addEventListener('controllerchange', () => {
+                window.location.reload();
+            });
+
             window.addEventListener('load', () => {
                 navigator.serviceWorker.register('sw.js')
                     .then(reg => console.log('SW registered:', reg.scope))

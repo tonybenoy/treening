@@ -12,7 +12,7 @@ self.addEventListener('install', event => {
     event.waitUntil(
         caches.open(CACHE_NAME)
             .then(cache => cache.addAll(PRECACHE_URLS))
-            .then(() => { /* new SW waits until old tabs close */ })
+            .then(() => self.skipWaiting())
     );
 });
 
