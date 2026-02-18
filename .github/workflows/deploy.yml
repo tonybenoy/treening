@@ -33,6 +33,9 @@ jobs:
         with:
           version: latest
 
+      - name: Stamp SW version
+        run: sed -i "s/__CACHE_VERSION__/$(git rev-parse --short HEAD)/" sw.js
+
       - name: Build
         run: trunk build --release --public-url /treening/
 

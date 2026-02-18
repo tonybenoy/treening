@@ -95,29 +95,13 @@
         @media (display-mode: standalone) {
             body { padding-top: env(safe-area-inset-top); }
         }
-    </style>
-</head>
-<body class="transition-colors duration-200">
-    <!-- Install Banner -->
-    <div id="install-banner" style="display:none; position:fixed; bottom:70px; left:12px; right:12px; z-index:9999; background:linear-gradient(135deg,#1e40af,#3b82f6); color:white; padding:14px 16px; border-radius:12px; box-shadow:0 4px 20px rgba(0,0,0,0.3); font-family:system-ui,sans-serif; animation:slideUp 0.3s ease-out;">
-        <div style="display:flex; align-items:center; gap:12px;">
-            <div style="flex:1;">
-                <div style="font-weight:600; font-size:15px;">Install Treening</div>
-                <div style="font-size:13px; opacity:0.9; margin-top:2px;">Add to home screen for offline use</div>
-            </div>
-            <button id="install-btn" style="background:white; color:#1e40af; border:none; padding:8px 16px; border-radius:8px; font-weight:600; font-size:14px; cursor:pointer; white-space:nowrap;">Install</button>
-            <button id="install-dismiss" style="background:none; border:none; color:white; opacity:0.7; font-size:20px; cursor:pointer; padding:4px 8px; line-height:1;">&times;</button>
-        </div>
-    </div>
-    <style>
         @keyframes slideUp {
             from { transform: translateY(100%); opacity: 0; }
             to { transform: translateY(0); opacity: 1; }
         }
     </style>
-
     <script>
-        // PWA Install Prompt
+        // Capture beforeinstallprompt early (before Yew replaces body)
         let deferredPrompt = null;
         const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
 
@@ -125,41 +109,66 @@
             e.preventDefault();
             deferredPrompt = e;
             if (!isStandalone && !localStorage.getItem('install-dismissed')) {
-                document.getElementById('install-banner').style.display = 'block';
+                showInstallBanner();
             }
         });
 
-        document.getElementById('install-btn').addEventListener('click', async () => {
-            if (!deferredPrompt) return;
-            deferredPrompt.prompt();
-            const result = await deferredPrompt.userChoice;
-            if (result.outcome === 'accepted') {
-                document.getElementById('install-banner').style.display = 'none';
-            }
-            deferredPrompt = null;
-        });
+        function showInstallBanner() {
+            if (document.getElementById('install-banner')) return;
+            const banner = document.createElement('div');
+            banner.id = 'install-banner';
+            banner.style.cssText = 'position:fixed; bottom:70px; left:12px; right:12px; z-index:9999; background:linear-gradient(135deg,#1e40af,#3b82f6); color:white; padding:14px 16px; border-radius:12px; box-shadow:0 4px 20px rgba(0,0,0,0.3); font-family:system-ui,sans-serif; animation:slideUp 0.3s ease-out;';
+            banner.innerHTML = '<div style="display:flex; align-items:center; gap:12px;">'
+                + '<div style="flex:1;">'
+                + '<div style="font-weight:600; font-size:15px;">Install Treening</div>'
+                + '<div style="font-size:13px; opacity:0.9; margin-top:2px;">Add to home screen for offline use</div>'
+                + '</div>'
+                + '<button id="install-btn" style="background:white; color:#1e40af; border:none; padding:8px 16px; border-radius:8px; font-weight:600; font-size:14px; cursor:pointer; white-space:nowrap;">Install</button>'
+                + '<button id="install-dismiss" style="background:none; border:none; color:white; opacity:0.7; font-size:20px; cursor:pointer; padding:4px 8px; line-height:1;">&times;</button>'
+                + '</div>';
+            document.body.appendChild(banner);
 
-        document.getElementById('install-dismiss').addEventListener('click', () => {
-            document.getElementById('install-banner').style.display = 'none';
-            localStorage.setItem('install-dismissed', 'true');
-        });
+            document.getElementById('install-btn').addEventListener('click', async () => {
+                if (!deferredPrompt) return;
+                deferredPrompt.prompt();
+                const result = await deferredPrompt.userChoice;
+                if (result.outcome === 'accepted') banner.remove();
+                deferredPrompt = null;
+            });
+
+            document.getElementById('install-dismiss').addEventListener('click', () => {
+                banner.remove();
+                localStorage.setItem('install-dismissed', 'true');
+            });
+        }
 
         window.addEventListener('appinstalled', () => {
-            document.getElementById('install-banner').style.display = 'none';
+            const b = document.getElementById('install-banner');
+            if (b) b.remove();
             deferredPrompt = null;
         });
-    </script>
 
-    <script>
+        // Exposed for Rust/WASM to call
+        window.canInstallApp = () => !!deferredPrompt && !isStandalone;
+        window.isAppStandalone = () => isStandalone;
+        window.triggerInstallPrompt = async () => {
+            if (!deferredPrompt) return false;
+            deferredPrompt.prompt();
+            const result = await deferredPrompt.userChoice;
+            deferredPrompt = null;
+            return result.outcome === 'accepted';
+        };
+
+        // Service Worker registration
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
                 navigator.serviceWorker.register('sw.js')
-                    .then(reg => {
-                        console.log('SW registered:', reg.scope);
-                    })
+                    .then(reg => console.log('SW registered:', reg.scope))
                     .catch(err => console.log('SW registration failed:', err));
             });
         }
     </script>
+</head>
+<body class="transition-colors duration-200">
 </body>
 </html>

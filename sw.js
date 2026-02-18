@@ -1,4 +1,4 @@
-const CACHE_NAME = 'treening-v11';
+const CACHE_NAME = 'treening-__CACHE_VERSION__';
 
 const PRECACHE_URLS = [
     './',

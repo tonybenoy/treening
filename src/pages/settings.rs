@@ -1,11 +1,73 @@
 use yew::prelude::*;
 use yew_router::prelude::*;
+use wasm_bindgen::prelude::*;
 use crate::components::settings::SettingsPanel;
 use crate::components::sync::SyncPanel;
 use crate::components::custom_exercise::CustomExerciseForm;
 use crate::models::{Exercise, BodyMetric};
 use crate::storage;
 use crate::Route;
+
+#[wasm_bindgen]
+extern "C" {
+    #[wasm_bindgen(js_name = canInstallApp)]
+    fn can_install_app() -> bool;
+
+    #[wasm_bindgen(js_name = isAppStandalone)]
+    fn is_app_standalone() -> bool;
+
+    #[wasm_bindgen(js_name = triggerInstallPrompt)]
+    fn trigger_install_prompt() -> js_sys::Promise;
+}
+
+#[function_component(InstallButton)]
+fn install_button() -> Html {
+    let can_install = use_state(|| can_install_app());
+    let is_standalone = is_app_standalone();
+
+    // Re-check periodically in case beforeinstallprompt fires after mount
+    {
+        let can_install = can_install.clone();
+        use_effect_with((), move |_| {
+            let cb = Closure::<dyn Fn()>::new(move || {
+                can_install.set(can_install_app());
+            });
+            let window = web_sys::window().unwrap();
+            let id = window.set_interval_with_callback_and_timeout_and_arguments_0(
+                cb.as_ref().unchecked_ref(),
+                1000,
+            ).unwrap();
+            cb.forget();
+            move || { let _ = web_sys::window().unwrap().clear_interval_with_handle(id); }
+        });
+    }
+
+    if is_standalone {
+        return html! {};
+    }
+
+    let onclick = {
+        Callback::from(move |_| {
+            if can_install_app() {
+                let _ = trigger_install_prompt();
+            }
+        })
+    };
+
+    html! {
+        <button
+            onclick={onclick}
+            disabled={!*can_install}
+            class={if *can_install {
+                "w-full py-3 bg-gradient-to-r from-blue-600 to-blue-500 text-white rounded-xl font-bold text-sm shadow-sm hover:from-blue-700 hover:to-blue-600 transition-all"
+            } else {
+                "w-full py-3 bg-gray-300 dark:bg-gray-700 text-gray-500 dark:text-gray-400 rounded-xl font-bold text-sm cursor-not-allowed"
+            }}
+        >
+            { if *can_install { "Install Treening App" } else { "Open in browser to install" } }
+        </button>
+    }
+}
 
 #[function_component(ProfileSection)]
 fn profile_section() -> Html {
@@ -235,6 +297,8 @@ pub fn settings_page() -> Html {
     html! {
         <div class="px-4 py-4 pb-20 space-y-8 transition-colors duration-200">
             <h1 class="text-2xl font-bold text-gray-900 dark:text-gray-100">{"Settings"}</h1>
+
+            <InstallButton />
 
             <ProfileSection />
 
