@@ -162,6 +162,10 @@ const FAQS: &[FaqItem] = &[
         question: "Is it open source?",
         answer: "Yes! The source code is available on GitHub. It is built using Rust and WebAssembly for maximum performance and privacy.",
     },
+    FaqItem {
+        question: "How can I support the development of Treening?",
+        answer: "If you enjoy using Treening and want to support its development, you can buy the developer a coffee at https://buymeacoffee.com/tonybenoy. It is completely optional but very much appreciated!",
+    },
 ];
 
 #[function_component(FaqPage)]

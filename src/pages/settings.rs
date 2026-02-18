@@ -439,6 +439,14 @@ pub fn settings_page() -> Html {
                     } else { html! {} }}
                 </div>
             </div>
+
+            <div class="text-center py-4">
+                <a href="https://buymeacoffee.com/tonybenoy" target="_blank" rel="noopener noreferrer"
+                   class="inline-flex items-center gap-2 px-4 py-2 bg-yellow-400 hover:bg-yellow-500 text-gray-900 font-semibold rounded-lg shadow-sm transition-colors text-sm">
+                    <span>{"☕"}</span>
+                    <span>{"Buy Me a Coffee"}</span>
+                </a>
+            </div>
         </div>
     }
 }
