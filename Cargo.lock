@@ -1312,6 +1312,7 @@ dependencies = [
  "serde_json",
  "uuid",
  "wasm-bindgen",
+ "wasm-bindgen-futures",
  "wasm-logger",
  "web-sys",
  "yew",

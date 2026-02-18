@@ -3,7 +3,6 @@ use wasm_bindgen::prelude::*;
 use wasm_bindgen::JsCast;
 use web_sys::{RtcPeerConnection, RtcDataChannel, RtcSdpType, RtcSessionDescriptionInit};
 use crate::storage;
-use qrcode_generator::QrCodeWithLogo;
 
 #[derive(Clone, PartialEq)]
 enum SyncMode {
@@ -34,23 +33,26 @@ pub fn sync_panel() -> Html {
             mode.set(SyncMode::Sender);
             status.set("Creating offer...".to_string());
             
-            let mut config = web_sys::RtcConfiguration::new();
+            let config = web_sys::RtcConfiguration::new();
             let ice_servers = js_sys::Array::new();
-            let mut server = web_sys::RtcIceServer::new();
-            server.urls(&wasm_bindgen::JsValue::from_str("stun:stun.l.google.com:19302"));
+            let server = web_sys::RtcIceServer::new();
+            server.set_urls(&wasm_bindgen::JsValue::from_str("stun:stun.l.google.com:19302"));
             ice_servers.push(&server);
-            config.ice_servers(&ice_servers);
+            config.set_ice_servers(&ice_servers);
             
             let pc = RtcPeerConnection::new_with_configuration(&config).unwrap();
             
             // Create data channel
             let dc = pc.create_data_channel("sync");
             let status_c = status.clone();
+            let dc_ref_c = dc_ref.clone();
             let onopen = Closure::wrap(Box::new(move |_e: web_sys::Event| {
                 status_c.set("Connected! Sending data...".to_string());
                 // Send data when channel opens
                 let data = storage::export_all_data();
-                let _ = dc_ref.borrow().as_ref().unwrap().send_with_str(&data);
+                if let Some(dc) = dc_ref_c.borrow().as_ref() {
+                    let _ = dc.send_with_str(&data);
+                }
                 status_c.set("Data sent successfully!".to_string());
             }) as Box<dyn FnMut(web_sys::Event)>);
             dc.set_onopen(Some(onopen.as_ref().unchecked_ref()));
@@ -63,7 +65,7 @@ pub fn sync_panel() -> Html {
             wasm_bindgen_futures::spawn_local(async move {
                 let offer = wasm_bindgen_futures::JsFuture::from(pc_c.create_offer()).await.unwrap();
                 let offer_obj = offer.unchecked_into::<RtcSessionDescriptionInit>();
-                let sdp = offer_obj.sdp().unwrap();
+                let sdp = offer_obj.get_sdp().unwrap_or_default();
                 let _ = wasm_bindgen_futures::JsFuture::from(pc_c.set_local_description(&offer_obj)).await;
                 offer_c.set(Some(sdp));
             });
@@ -89,12 +91,12 @@ pub fn sync_panel() -> Html {
             let sdp = input.value();
             if sdp.is_empty() { return; }
             
-            let mut config = web_sys::RtcConfiguration::new();
+            let config = web_sys::RtcConfiguration::new();
             let ice_servers = js_sys::Array::new();
-            let mut server = web_sys::RtcIceServer::new();
-            server.urls(&wasm_bindgen::JsValue::from_str("stun:stun.l.google.com:19302"));
+            let server = web_sys::RtcIceServer::new();
+            server.set_urls(&wasm_bindgen::JsValue::from_str("stun:stun.l.google.com:19302"));
             ice_servers.push(&server);
-            config.ice_servers(&ice_servers);
+            config.set_ice_servers(&ice_servers);
             
             let pc = RtcPeerConnection::new_with_configuration(&config).unwrap();
             status.set("Processing offer...".to_string());
@@ -121,13 +123,13 @@ pub fn sync_panel() -> Html {
             let pc_c = pc.clone();
             let answer_c = answer_sdp.clone();
             wasm_bindgen_futures::spawn_local(async move {
-                let mut remote_desc = RtcSessionDescriptionInit::new(RtcSdpType::Offer);
-                remote_desc.sdp(&sdp);
+                let remote_desc = RtcSessionDescriptionInit::new(RtcSdpType::Offer);
+                remote_desc.set_sdp(&sdp);
                 let _ = wasm_bindgen_futures::JsFuture::from(pc_c.set_remote_description(&remote_desc)).await;
                 
                 let answer = wasm_bindgen_futures::JsFuture::from(pc_c.create_answer()).await.unwrap();
                 let answer_obj = answer.unchecked_into::<RtcSessionDescriptionInit>();
-                let answer_sdp_text = answer_obj.sdp().unwrap();
+                let answer_sdp_text = answer_obj.get_sdp().unwrap_or_default();
                 let _ = wasm_bindgen_futures::JsFuture::from(pc_c.set_local_description(&answer_obj)).await;
                 answer_c.set(Some(answer_sdp_text));
             });
@@ -149,8 +151,8 @@ pub fn sync_panel() -> Html {
                 let pc = pc.clone();
                 status.set("Connecting...".to_string());
                 wasm_bindgen_futures::spawn_local(async move {
-                    let mut remote_desc = RtcSessionDescriptionInit::new(RtcSdpType::Answer);
-                    remote_desc.sdp(&sdp);
+                    let remote_desc = RtcSessionDescriptionInit::new(RtcSdpType::Answer);
+                    remote_desc.set_sdp(&sdp);
                     let _ = wasm_bindgen_futures::JsFuture::from(pc.set_remote_description(&remote_desc)).await;
                 });
             }
@@ -158,7 +160,7 @@ pub fn sync_panel() -> Html {
     };
 
     let render_qr = |data: &str| {
-        let result: Result<String, _> = qrcode_generator::to_svg_to_string(data, qrcode_generator::QrCodeEcc::Low, 400);
+        let result: Result<String, _> = qrcode_generator::to_svg_to_string(data, qrcode_generator::QrCodeEcc::Low, 400, None::<&str>);
         match result {
             Ok(svg) => {
                 let base64 = gloo::utils::window().btoa(&svg).unwrap_or_default();
