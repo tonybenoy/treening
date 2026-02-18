@@ -10,7 +10,8 @@ Treening is a modern, offline-capable gym workout tracker built with Rust and We
 - **Analytics & History:** View your progress over time and review past workouts.
 - **Offline First:** Works without an internet connection using Service Workers and local storage.
 - **Privacy Focused:** Your data stays on your device. No accounts, no tracking.
-- **Direct P2P Sync:** Transfer your data directly between devices using WebRTC and QR codes—completely private and server-less.
+- **Direct P2P Sync:** Transfer your data directly between devices using WebRTC—completely private and server-less.
+- **Community & Rankings:** Add friends via P2P to compare weekly workout volume and progress without a central social network.
 - **PWA Support:** Installable on iOS and Android for a native app-like experience.
 
 ## Tech Stack
@@ -18,6 +19,7 @@ Treening is a modern, offline-capable gym workout tracker built with Rust and We
 - **Frontend:** [Yew](https://yew.rs/) (Rust WASM framework)
 - **Styling:** [Tailwind CSS](https://tailwindcss.com/)
 - **Build Tool:** [Trunk](https://trunkrs.dev/)
+- **Connectivity:** [PeerJS](https://peerjs.com/) for P2P Signaling
 - **Storage:** Browser LocalStorage via [Gloo](https://github.com/rustwasm/gloo)
 - **Time/Date:** [Chrono](https://github.com/chronotope/chrono)
 
