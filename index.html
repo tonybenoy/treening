@@ -151,6 +151,7 @@
         // Exposed for Rust/WASM to call
         window.canInstallApp = () => !!deferredPrompt && !isStandalone;
         window.isAppStandalone = () => isStandalone;
+        window.isIOS = () => /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
         window.triggerInstallPrompt = async () => {
             if (!deferredPrompt) return false;
             deferredPrompt.prompt();
@@ -163,7 +164,15 @@
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
                 navigator.serviceWorker.register('sw.js')
-                    .then(reg => console.log('SW registered:', reg.scope))
+                    .then(reg => {
+                        console.log('SW registered:', reg.scope);
+                        // Check for updates every hour (important for installed PWAs)
+                        setInterval(() => reg.update(), 60 * 60 * 1000);
+                        // Also check on visibility change (user returns to app)
+                        document.addEventListener('visibilitychange', () => {
+                            if (document.visibilityState === 'visible') reg.update();
+                        });
+                    })
                     .catch(err => console.log('SW registration failed:', err));
             });
         }

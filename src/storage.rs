@@ -192,11 +192,19 @@ pub fn import_all_data(json: &str) -> Result<(), String> {
 
 /// Check if LocalStorage appears empty; if so, try restoring from IndexedDB backup.
 pub fn try_restore_from_backup() {
-    let has_workouts: bool = LocalStorage::get::<String>(WORKOUTS_KEY).is_ok();
-    let has_routines: bool = LocalStorage::get::<String>(ROUTINES_KEY).is_ok();
-    let has_config: bool = LocalStorage::get::<String>(USER_CONFIG_KEY).is_ok();
+    // Use raw get_item to check key existence — LocalStorage::get::<String> fails
+    // for JSON objects/arrays, which would incorrectly trigger restore every time.
+    let storage = gloo::utils::window()
+        .local_storage()
+        .ok()
+        .flatten();
+    let has_data = storage.map(|s| {
+        s.get_item(WORKOUTS_KEY).ok().flatten().is_some()
+            || s.get_item(ROUTINES_KEY).ok().flatten().is_some()
+            || s.get_item(USER_CONFIG_KEY).ok().flatten().is_some()
+    }).unwrap_or(false);
 
-    if has_workouts || has_routines || has_config {
+    if has_data {
         // LocalStorage has data, no need to restore
         return;
     }
