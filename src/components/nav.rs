@@ -4,7 +4,7 @@ use crate::Route;
 
 #[function_component(BottomNav)]
 pub fn bottom_nav() -> Html {
-    let route: Route = use_route().unwrap_or(Route::Landing);
+    let route: Route = use_route().unwrap_or(Route::Home);
 
     let nav_item = |r: Route, label: &str, icon: &str| {
         let active = route == r;

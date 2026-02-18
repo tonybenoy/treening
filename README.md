@@ -5,13 +5,15 @@ Treening is a modern, offline-capable gym workout tracker built with Rust and We
 ## Features
 
 - **Workout Logging:** Track your sets, reps, and weights in real-time.
-- **Exercise Library:** Comprehensive list of exercises with categorized body parts.
+- **Specialized Tracking:** Different metrics for Strength (Weight+Reps), Cardio (Dist+Time), Duration (Time), and Bodyweight exercises.
+- **Personal Profile:** Track your height, age, and gender to personalize your experience.
+- **Body Progress:** Log your weight and body fat % over time with built-in progress charts.
+- **Adaptive UI:** Full support for **Light and Dark modes** based on your system preference or manual toggle.
 - **Routine Management:** Create and save your favorite workout routines for quick access.
-- **Analytics & History:** View your progress over time and review past workouts.
-- **Offline First:** Works without an internet connection using Service Workers and local storage.
-- **Privacy Focused:** Your data stays on your device. No accounts, no tracking.
+- **Advanced Analytics:** Detailed charts for exercise progress, muscle group distribution, and body metrics.
+- **Relative Ranking:** Compare intensity with friends using **Relative Volume** (Volume per kg of body weight) for a fairer competition.
 - **Direct P2P Sync:** Transfer your data directly between devices using WebRTC—completely private and server-less.
-- **Community & Rankings:** Add friends via P2P to compare weekly workout volume and progress without a central social network.
+- **Privacy Focused:** Your data stays on your device. No accounts, no tracking.
 - **PWA Support:** Installable on iOS and Android for a native app-like experience.
 
 ## Tech Stack

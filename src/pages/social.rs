@@ -69,15 +69,16 @@ pub fn social_page() -> Html {
             }).collect();
 
         let total_volume: f64 = this_week.iter()
-            .map(|w| w.exercises.iter()
-                .map(|e| e.sets.iter().map(|s| s.weight * s.reps as f64).sum::<f64>())
-                .sum::<f64>()
-            ).sum();
+            .map(|w| w.total_volume())
+            .sum();
+
+        let latest_weight = storage::load_body_metrics().first().and_then(|m| m.weight);
 
         FriendStats {
             workouts_this_week: this_week.len() as u32,
             total_volume_kg: total_volume,
             last_active: now.format("%Y-%m-%d").to_string(),
+            body_weight: latest_weight,
         }
     };
 
@@ -295,8 +296,26 @@ pub fn social_page() -> Html {
                                             </div>
                                         </div>
                                         <div class="text-right">
-                                            <div class="text-xs font-bold text-blue-600 dark:text-blue-400">{"Offline"}</div>
-                                            <div class="text-[10px] text-gray-500">{"Last seen: -"}</div>
+                                            { if let Some(stats) = &f.last_stats {
+                                                let vol_display = if let Some(bw) = stats.body_weight {
+                                                    format!("{:.1}x Rel.", stats.total_volume_kg / bw)
+                                                } else {
+                                                    format!("{:.0}kg", stats.total_volume_kg)
+                                                };
+                                                html! {
+                                                    <>
+                                                        <div class="text-xs font-bold text-blue-600 dark:text-blue-400">{vol_display}</div>
+                                                        <div class="text-[10px] text-gray-500">{stats.workouts_this_week}{" workouts"}</div>
+                                                    </>
+                                                }
+                                            } else {
+                                                html! {
+                                                    <>
+                                                        <div class="text-xs font-bold text-gray-400 dark:text-gray-500">{"Offline"}</div>
+                                                        <div class="text-[10px] text-gray-500">{"Last seen: -"}</div>
+                                                    </>
+                                                }
+                                            }}
                                         </div>
                                     </div>
                                 }

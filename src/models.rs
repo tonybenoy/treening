@@ -68,6 +68,20 @@ impl fmt::Display for Equipment {
 }
 
 #[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
+pub enum ExerciseTrackingType {
+    Strength,   // Weight + Reps (Default)
+    Cardio,     // Distance + Duration
+    Duration,   // Duration only (e.g. Plank)
+    Bodyweight, // Reps only
+}
+
+impl Default for ExerciseTrackingType {
+    fn default() -> Self {
+        Self::Strength
+    }
+}
+
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 pub struct Exercise {
     pub id: String,
     pub name: String,
@@ -77,12 +91,20 @@ pub struct Exercise {
     pub description: String,
     pub is_custom: bool,
     pub image: Option<String>,
+    #[serde(default)]
+    pub tracking_type: ExerciseTrackingType,
 }
 
 #[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 pub struct WorkoutSet {
+    #[serde(default)]
     pub weight: f64,
+    #[serde(default)]
     pub reps: u32,
+    #[serde(default)]
+    pub distance: Option<f64>,
+    #[serde(default)]
+    pub duration_secs: Option<u32>,
     pub completed: bool,
 }
 
@@ -91,6 +113,23 @@ pub struct WorkoutExercise {
     pub exercise_id: String,
     pub sets: Vec<WorkoutSet>,
     pub notes: String,
+}
+
+impl WorkoutExercise {
+    pub fn volume(&self) -> f64 {
+        self.sets.iter()
+            .filter(|s| s.completed)
+            .map(|s| {
+                if let Some(dist) = s.distance {
+                    dist * 10.0 // Arbitrary cardio weight: 1km = 10kg volume for ranking
+                } else if let Some(secs) = s.duration_secs {
+                    secs as f64 / 6.0 // Arbitrary duration weight: 1min = 10kg volume
+                } else {
+                    s.weight * s.reps as f64
+                }
+            })
+            .sum()
+    }
 }
 
 #[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
@@ -102,11 +141,25 @@ pub struct Workout {
     pub duration_mins: u32,
 }
 
+impl Workout {
+    pub fn total_volume(&self) -> f64 {
+        self.exercises.iter().map(|e| e.volume()).sum()
+    }
+}
+
 #[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 pub struct Routine {
     pub id: String,
     pub name: String,
     pub exercise_ids: Vec<String>,
+}
+
+#[derive(Clone, Debug, Serialize, Deserialize, PartialEq)]
+pub struct BodyMetric {
+    pub id: String,
+    pub date: String,
+    pub weight: Option<f64>,
+    pub body_fat: Option<f64>,
 }
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
@@ -115,6 +168,7 @@ pub struct AppData {
     pub routines: Vec<Routine>,
     pub custom_exercises: Vec<Exercise>,
     pub friends: Vec<Friend>,
+    pub body_metrics: Vec<BodyMetric>,
     pub user_config: Option<UserConfig>,
 }
 
@@ -130,6 +184,8 @@ pub struct FriendStats {
     pub workouts_this_week: u32,
     pub total_volume_kg: f64,
     pub last_active: String,
+    #[serde(default)]
+    pub body_weight: Option<f64>,
 }
 
 #[derive(Clone, Debug, Serialize, Deserialize, PartialEq)]
@@ -153,6 +209,12 @@ pub struct UserConfig {
     pub social_enabled: bool,
     #[serde(default)]
     pub theme: Theme,
+    #[serde(default)]
+    pub height: Option<f64>,
+    #[serde(default)]
+    pub birth_date: Option<String>,
+    #[serde(default)]
+    pub gender: Option<String>,
 }
 
 fn default_social_enabled() -> bool {
@@ -166,6 +228,7 @@ impl Default for AppData {
             routines: Vec::new(),
             custom_exercises: Vec::new(),
             friends: Vec::new(),
+            body_metrics: Vec::new(),
             user_config: None,
         }
     }

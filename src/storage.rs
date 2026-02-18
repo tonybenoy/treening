@@ -1,10 +1,11 @@
 use gloo::storage::{LocalStorage, Storage};
-use crate::models::{AppData, Exercise, Friend, Routine, UserConfig, Workout};
+use crate::models::{AppData, Exercise, Friend, Routine, UserConfig, Workout, BodyMetric};
 
 const WORKOUTS_KEY: &str = "treening_workouts";
 const ROUTINES_KEY: &str = "treening_routines";
 const CUSTOM_EXERCISES_KEY: &str = "treening_custom_exercises";
 const FRIENDS_KEY: &str = "treening_friends";
+const BODY_METRICS_KEY: &str = "treening_body_metrics";
 const USER_CONFIG_KEY: &str = "treening_user_config";
 
 pub fn load_workouts() -> Vec<Workout> {
@@ -23,6 +24,14 @@ pub fn save_friends(friends: &[Friend]) {
     let _ = LocalStorage::set(FRIENDS_KEY, friends);
 }
 
+pub fn load_body_metrics() -> Vec<BodyMetric> {
+    LocalStorage::get(BODY_METRICS_KEY).unwrap_or_default()
+}
+
+pub fn save_body_metrics(metrics: &[BodyMetric]) {
+    let _ = LocalStorage::set(BODY_METRICS_KEY, metrics);
+}
+
 pub fn load_user_config() -> UserConfig {
     LocalStorage::get(USER_CONFIG_KEY).unwrap_or_else(|_| {
         let config = UserConfig {
@@ -30,6 +39,9 @@ pub fn load_user_config() -> UserConfig {
             peer_id: format!("tr-{}", uuid::Uuid::new_v4().to_string()[..8].to_string()),
             social_enabled: true,
             theme: crate::models::Theme::Dark,
+            height: None,
+            birth_date: None,
+            gender: None,
         };
         let _ = LocalStorage::set(USER_CONFIG_KEY, &config);
         config
@@ -62,6 +74,7 @@ pub fn export_all_data() -> String {
         routines: load_routines(),
         custom_exercises: load_custom_exercises(),
         friends: load_friends(),
+        body_metrics: load_body_metrics(),
         user_config: Some(load_user_config()),
     };
     serde_json::to_string_pretty(&data).unwrap_or_default()
@@ -73,6 +86,7 @@ pub fn import_all_data(json: &str) -> Result<(), String> {
     save_routines(&data.routines);
     save_custom_exercises(&data.custom_exercises);
     save_friends(&data.friends);
+    save_body_metrics(&data.body_metrics);
     if let Some(config) = data.user_config {
         save_user_config(&config);
     }
@@ -118,11 +132,29 @@ pub fn merge_all_data(json: &str) -> Result<(), String> {
     }
     save_friends(&current_friends);
 
-    // Merge User Config (keep local peer_id, but take incoming nickname if it's not default)
+    // Merge Body Metrics (deduplicate by ID)
+    let mut current_metrics = load_body_metrics();
+    for incoming_m in incoming.body_metrics {
+        if !current_metrics.iter().any(|m| m.id == incoming_m.id) {
+            current_metrics.push(incoming_m);
+        }
+    }
+    save_body_metrics(&current_metrics);
+
+    // Merge User Config (keep local peer_id, but take incoming profile info if it's set)
     if let Some(incoming_config) = incoming.user_config {
         let mut local_config = load_user_config();
         if incoming_config.nickname != "Athlete" {
             local_config.nickname = incoming_config.nickname;
+        }
+        if incoming_config.height.is_some() {
+            local_config.height = incoming_config.height;
+        }
+        if incoming_config.birth_date.is_some() {
+            local_config.birth_date = incoming_config.birth_date;
+        }
+        if incoming_config.gender.is_some() {
+            local_config.gender = incoming_config.gender;
         }
         save_user_config(&local_config);
     }

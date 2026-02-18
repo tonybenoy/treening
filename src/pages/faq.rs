@@ -19,6 +19,22 @@ const FAQS: &[FaqItem] = &[
         answer: "On Android (Chrome): tap the menu and select \"Add to Home screen\" or \"Install app\". On iOS (Safari): tap the share button and select \"Add to Home Screen\". The app will appear as a standalone app.",
     },
     FaqItem {
+        question: "Are there different tracking metrics?",
+        answer: "Yes. Treening uses specialized metrics for different exercises: Strength (Weight + Reps), Cardio (Distance + Time), Duration (Time only), and Bodyweight (Reps only). The app automatically chooses the best metric for built-in exercises.",
+    },
+    FaqItem {
+        question: "Can I track my body weight and progress?",
+        answer: "Yes. Go to Settings to fill out your Personal Profile and use the 'Body Progress' section to log your weight and body fat %. You can view your progress charts in the 'Body' tab of Analytics.",
+    },
+    FaqItem {
+        question: "What is 'Relative Volume'?",
+        answer: "Relative Volume is your total workout volume divided by your body weight. This provides a fairer 'intensity score' when comparing rankings with friends, as it accounts for different body sizes.",
+    },
+    FaqItem {
+        question: "Does it support Dark Mode?",
+        answer: "Yes. Treening supports Light, Dark, and System-default modes. You can change your preference in the Settings tab under 'App Theme'.",
+    },
+    FaqItem {
         question: "Where is my data stored?",
         answer: "Everything is stored in your browser's localStorage. Your data never leaves your device. If you clear your browser data, your workouts will be lost \u{2014} use the Export feature in Settings to back up regularly.",
     },
@@ -40,27 +56,19 @@ const FAQS: &[FaqItem] = &[
     },
     FaqItem {
         question: "Can I add my own exercises?",
-        answer: "Yes. Go to the Exercises tab and tap \"Add Custom Exercise\". Fill in the name, category, equipment, muscle groups, and description. Your custom exercises will appear alongside the built-in ones.",
+        answer: "Yes. Go to the Exercises tab and tap \"Add Custom Exercise\". You can also choose which metric to track (Strength, Cardio, etc.) for your custom moves.",
     },
     FaqItem {
         question: "What are routines?",
-        answer: "Routines are pre-planned workout templates. Create one in the Routines tab (e.g., \"Push Day\" with Bench Press, Overhead Press, Tricep Pushdowns). Then start a workout from that routine with one tap \u{2014} all exercises are pre-loaded.",
-    },
-    FaqItem {
-        question: "How does the workout timer work?",
-        answer: "The timer starts automatically when you add your first exercise or start from a routine. It counts up and shows elapsed time. The duration is saved with your workout when you finish.",
+        answer: "Routines are pre-planned workout templates. Create one in the Routines tab (e.g., \"Push Day\"). Then start a workout from that routine with one tap \u{2014} all exercises are pre-loaded.",
     },
     FaqItem {
         question: "Can I edit a saved workout?",
-        answer: "Currently, saved workouts are read-only in the history. You can delete workouts you no longer need. For corrections, you can export, edit the JSON file manually, and re-import.",
-    },
-    FaqItem {
-        question: "What technology is this built with?",
-        answer: "Treening is built with Rust compiled to WebAssembly (WASM), using the Yew framework. It uses Tailwind CSS for styling, localStorage for data persistence, and service workers for offline PWA support. No backend server required.",
+        answer: "Yes. In the History tab, you can expand any workout and tap 'Edit Workout' to change the name, delete exercises, or update sets and reps.",
     },
     FaqItem {
         question: "Is it open source?",
-        answer: "Yes! The source code is available on GitHub. It's a Rust/WASM project you can build with Trunk.",
+        answer: "Yes! The source code is available on GitHub. It is built using Rust and WebAssembly for maximum performance and privacy.",
     },
 ];
 

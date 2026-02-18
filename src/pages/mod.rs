@@ -1,4 +1,3 @@
-pub mod landing;
 pub mod home;
 pub mod exercises;
 pub mod workout;

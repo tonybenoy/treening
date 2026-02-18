@@ -3,9 +3,197 @@ use yew_router::prelude::*;
 use crate::components::settings::SettingsPanel;
 use crate::components::sync::SyncPanel;
 use crate::components::custom_exercise::CustomExerciseForm;
-use crate::models::Exercise;
+use crate::models::{Exercise, BodyMetric};
 use crate::storage;
 use crate::Route;
+
+#[function_component(ProfileSection)]
+fn profile_section() -> Html {
+    let config = use_state(|| storage::load_user_config());
+    let nickname = use_state(|| config.nickname.clone());
+    let height = use_state(|| config.height.map(|h| h.to_string()).unwrap_or_default());
+    let birth_date = use_state(|| config.birth_date.clone().unwrap_or_default());
+    let gender = use_state(|| config.gender.clone().unwrap_or_default());
+
+    let on_save = {
+        let config_state = config.clone();
+        let nickname = nickname.clone();
+        let height = height.clone();
+        let birth_date = birth_date.clone();
+        let gender = gender.clone();
+        Callback::from(move |_| {
+            let mut new_config = (*config_state).clone();
+            new_config.nickname = (*nickname).clone();
+            new_config.height = height.parse::<f64>().ok();
+            new_config.birth_date = Some((*birth_date).clone()).filter(|s| !s.is_empty());
+            new_config.gender = Some((*gender).clone()).filter(|s| !s.is_empty());
+            storage::save_user_config(&new_config);
+            config_state.set(new_config);
+        })
+    };
+
+    html! {
+        <div class="bg-gray-100 dark:bg-gray-800 rounded-2xl p-4 border border-gray-200 dark:border-transparent space-y-4 shadow-sm transition-colors">
+            <h2 class="text-lg font-bold text-gray-900 dark:text-gray-100">{"Personal Profile"}</h2>
+            <div class="grid grid-cols-2 gap-4">
+                <div class="col-span-2">
+                    <label class="block text-[10px] uppercase font-bold text-gray-500 mb-1">{"Nickname"}</label>
+                    <input 
+                        type="text" 
+                        class="w-full bg-white dark:bg-gray-700 border border-gray-200 dark:border-transparent rounded-lg px-3 py-2 text-sm text-gray-900 dark:text-white outline-none focus:ring-1 focus:ring-blue-500"
+                        value={(*nickname).clone()}
+                        oninput={let n = nickname.clone(); Callback::from(move |e: InputEvent| n.set(e.target_unchecked_into::<web_sys::HtmlInputElement>().value()))}
+                    />
+                </div>
+                <div>
+                    <label class="block text-[10px] uppercase font-bold text-gray-500 mb-1">{"Height (cm)"}</label>
+                    <input 
+                        type="number" 
+                        class="w-full bg-white dark:bg-gray-700 border border-gray-200 dark:border-transparent rounded-lg px-3 py-2 text-sm text-gray-900 dark:text-white outline-none focus:ring-1 focus:ring-blue-500"
+                        value={(*height).clone()}
+                        oninput={let h = height.clone(); Callback::from(move |e: InputEvent| h.set(e.target_unchecked_into::<web_sys::HtmlInputElement>().value()))}
+                    />
+                </div>
+                <div>
+                    <label class="block text-[10px] uppercase font-bold text-gray-500 mb-1">{"Gender"}</label>
+                    <select 
+                        class="w-full bg-white dark:bg-gray-700 border border-gray-200 dark:border-transparent rounded-lg px-3 py-2 text-sm text-gray-900 dark:text-white outline-none focus:ring-1 focus:ring-blue-500"
+                        onchange={let g = gender.clone(); Callback::from(move |e: Event| g.set(e.target_unchecked_into::<web_sys::HtmlSelectElement>().value()))}
+                    >
+                        <option value="" selected={gender.is_empty()}>{"Select..."}</option>
+                        <option value="Male" selected={*gender == "Male"}>{"Male"}</option>
+                        <option value="Female" selected={*gender == "Female"}>{"Female"}</option>
+                        <option value="Other" selected={*gender == "Other"}>{"Other"}</option>
+                    </select>
+                </div>
+                <div class="col-span-2">
+                    <label class="block text-[10px] uppercase font-bold text-gray-500 mb-1">{"Birth Date"}</label>
+                    <input 
+                        type="date" 
+                        class="w-full bg-white dark:bg-gray-700 border border-gray-200 dark:border-transparent rounded-lg px-3 py-2 text-sm text-gray-900 dark:text-white outline-none focus:ring-1 focus:ring-blue-500"
+                        value={(*birth_date).clone()}
+                        oninput={let b = birth_date.clone(); Callback::from(move |e: InputEvent| b.set(e.target_unchecked_into::<web_sys::HtmlInputElement>().value()))}
+                    />
+                </div>
+            </div>
+            <button 
+                onclick={on_save}
+                class="w-full py-2.5 bg-blue-600 text-white rounded-lg font-bold text-sm hover:bg-blue-700 shadow-sm transition-colors"
+            >{"Update Profile"}</button>
+        </div>
+    }
+}
+
+#[function_component(BodyMetricsSection)]
+fn body_metrics_section() -> Html {
+    let metrics = use_state(|| storage::load_body_metrics());
+    let weight = use_state(String::new);
+    let body_fat = use_state(String::new);
+    let show_form = use_state(|| false);
+
+    let on_add = {
+        let metrics_state = metrics.clone();
+        let weight = weight.clone();
+        let body_fat = body_fat.clone();
+        let show = show_form.clone();
+        Callback::from(move |_| {
+            if weight.is_empty() { return; }
+            let mut new_metrics = (*metrics_state).clone();
+            new_metrics.push(BodyMetric {
+                id: uuid::Uuid::new_v4().to_string(),
+                date: chrono::Local::now().format("%Y-%m-%d").to_string(),
+                weight: weight.parse().ok(),
+                body_fat: body_fat.parse().ok(),
+            });
+            storage::save_body_metrics(&new_metrics);
+            metrics_state.set(new_metrics);
+            weight.set(String::new());
+            body_fat.set(String::new());
+            show.set(false);
+        })
+    };
+
+    let on_delete = {
+        let metrics_state = metrics.clone();
+        Callback::from(move |id: String| {
+            let mut new_metrics = (*metrics_state).clone();
+            new_metrics.retain(|m| m.id != id);
+            storage::save_body_metrics(&new_metrics);
+            metrics_state.set(new_metrics);
+        })
+    };
+
+    let mut sorted_metrics = (*metrics).clone();
+    sorted_metrics.sort_by(|a, b| b.date.cmp(&a.date));
+
+    html! {
+        <div class="space-y-4">
+            <div class="flex justify-between items-center px-1 transition-colors">
+                <h2 class="text-lg font-bold text-gray-900 dark:text-gray-100">{"Body Progress"}</h2>
+                <button 
+                    onclick={let s = show_form.clone(); Callback::from(move |_| s.set(!*s))}
+                    class="text-xs font-bold text-blue-600 dark:text-blue-400 hover:underline"
+                >{if *show_form { "Cancel" } else { "+ Log Weight" }}</button>
+            </div>
+
+            { if *show_form {
+                html! {
+                    <div class="bg-gray-100 dark:bg-gray-800 rounded-xl p-4 border border-blue-500/30 space-y-3 shadow-sm transition-colors">
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-[10px] uppercase font-bold text-gray-500 mb-1">{"Weight (kg)"}</label>
+                                <input 
+                                    type="number" step="0.1" 
+                                    class="w-full bg-white dark:bg-gray-700 border border-gray-200 dark:border-transparent rounded-lg px-3 py-2 text-sm text-gray-900 dark:text-white outline-none focus:ring-1 focus:ring-blue-500"
+                                    value={(*weight).clone()}
+                                    oninput={let w = weight.clone(); Callback::from(move |e: InputEvent| w.set(e.target_unchecked_into::<web_sys::HtmlInputElement>().value()))}
+                                />
+                            </div>
+                            <div>
+                                <label class="block text-[10px] uppercase font-bold text-gray-500 mb-1">{"Body Fat %"}</label>
+                                <input 
+                                    type="number" step="0.1" 
+                                    class="w-full bg-white dark:bg-gray-700 border border-gray-200 dark:border-transparent rounded-lg px-3 py-2 text-sm text-gray-900 dark:text-white outline-none focus:ring-1 focus:ring-blue-500"
+                                    value={(*body_fat).clone()}
+                                    oninput={let bf = body_fat.clone(); Callback::from(move |e: InputEvent| bf.set(e.target_unchecked_into::<web_sys::HtmlInputElement>().value()))}
+                                />
+                            </div>
+                        </div>
+                        <button 
+                            onclick={on_add}
+                            class="w-full py-2 bg-blue-600 text-white rounded-lg font-bold text-sm shadow-sm hover:bg-blue-700 transition-colors"
+                        >{"Save Measurement"}</button>
+                    </div>
+                }
+            } else { html! {} }}
+
+            <div class="space-y-2">
+                { for sorted_metrics.iter().take(3).map(|m| {
+                    let id = m.id.clone();
+                    let on_del = on_delete.clone();
+                    html! {
+                        <div class="bg-gray-100 dark:bg-gray-800 rounded-xl p-3 flex justify-between items-center border border-gray-200 dark:border-transparent transition-colors shadow-xs">
+                            <div>
+                                <div class="text-sm font-bold text-gray-900 dark:text-gray-100">
+                                    {m.weight.map(|w| format!("{} kg", w)).unwrap_or_else(|| "--".to_string())}
+                                    {m.body_fat.map(|bf| format!(" • {}% fat", bf)).unwrap_or_default()}
+                                </div>
+                                <div class="text-[10px] text-gray-500 dark:text-gray-500 font-mono uppercase tracking-wider">{&m.date}</div>
+                            </div>
+                            <button 
+                                onclick={Callback::from(move |_| on_del.emit(id.clone()))}
+                                class="text-gray-400 hover:text-red-500 p-1 transition-colors"
+                            >{"\u{1f5d1}"}</button>
+                        </div>
+                    }
+                })}
+                { if sorted_metrics.is_empty() && !*show_form {
+                    html! { <p class="text-center py-8 text-gray-500 text-xs italic bg-gray-50 dark:bg-gray-800/20 rounded-xl border border-dashed border-gray-200 dark:border-gray-700 transition-colors">{"No measurements yet."}</p> }
+                } else { html! {} }}
+            </div>
+        </div>
+    }
+}
 
 #[function_component(SettingsPage)]
 pub fn settings_page() -> Html {
@@ -45,8 +233,12 @@ pub fn settings_page() -> Html {
     };
 
     html! {
-        <div class="px-4 py-4 pb-20 space-y-6">
+        <div class="px-4 py-4 pb-20 space-y-8 transition-colors duration-200">
             <h1 class="text-2xl font-bold text-gray-900 dark:text-gray-100">{"Settings"}</h1>
+
+            <ProfileSection />
+
+            <BodyMetricsSection />
 
             <SyncPanel />
 

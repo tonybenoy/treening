@@ -8,7 +8,6 @@ use yew::prelude::*;
 use yew_router::prelude::*;
 
 use components::nav::BottomNav;
-use pages::landing::LandingPage;
 use pages::home::HomePage;
 use pages::exercises::ExercisesPage;
 use pages::workout::WorkoutPage;
@@ -22,7 +21,7 @@ use crate::models::Theme;
 
 #[function_component(ThemeManager)]
 fn theme_manager() -> Html {
-    let route = use_route::<Route>().unwrap_or(Route::Landing);
+    let route = use_route::<Route>().unwrap_or(Route::Home);
     
     use_effect_with(route, move |_| {
         let config = storage::load_user_config();
@@ -54,8 +53,6 @@ fn theme_manager() -> Html {
 #[derive(Clone, Routable, PartialEq)]
 pub enum Route {
     #[at("/")]
-    Landing,
-    #[at("/home")]
     Home,
     #[at("/exercises")]
     Exercises,
@@ -80,7 +77,6 @@ pub enum Route {
 
 fn switch(routes: Route) -> Html {
     match routes {
-        Route::Landing => html! { <LandingPage /> },
         Route::Home => html! { <HomePage /> },
         Route::Exercises => html! { <ExercisesPage /> },
         Route::Workout => html! { <WorkoutPage /> },
@@ -90,7 +86,7 @@ fn switch(routes: Route) -> Html {
         Route::Social => html! { <SocialPage /> },
         Route::Faq => html! { <FaqPage /> },
         Route::Analytics => html! { <AnalyticsPage /> },
-        Route::NotFound => html! { <LandingPage /> },
+        Route::NotFound => html! { <HomePage /> },
     }
 }
 

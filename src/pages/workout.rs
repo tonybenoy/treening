@@ -40,7 +40,10 @@ pub fn workout_page() -> Html {
                     let exs: Vec<WorkoutExercise> = routine.exercise_ids.iter().map(|eid| {
                         WorkoutExercise {
                             exercise_id: eid.clone(),
-                            sets: vec![WorkoutSet { weight: 0.0, reps: 10, completed: false }],
+                            sets: vec![WorkoutSet { 
+                                weight: 0.0, reps: 10, completed: false,
+                                distance: None, duration_secs: None,
+                            }],
                             notes: String::new(),
                         }
                     }).collect();
@@ -82,7 +85,10 @@ pub fn workout_page() -> Html {
             let mut exs = (*we).clone();
             exs.push(WorkoutExercise {
                 exercise_id: ex.id,
-                sets: vec![WorkoutSet { weight: 0.0, reps: 10, completed: false }],
+                sets: vec![WorkoutSet { 
+                    weight: 0.0, reps: 10, completed: false,
+                    distance: None, duration_secs: None,
+                }],
                 notes: String::new(),
             });
             we.set(exs);

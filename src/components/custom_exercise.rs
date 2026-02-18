@@ -1,5 +1,5 @@
 use yew::prelude::*;
-use crate::models::{Category, Equipment, Exercise};
+use crate::models::{Category, Equipment, Exercise, ExerciseTrackingType};
 
 #[derive(Properties, PartialEq)]
 pub struct Props {
@@ -12,6 +12,7 @@ pub fn custom_exercise_form(props: &Props) -> Html {
     let name = use_state(String::new);
     let category = use_state(|| Category::Chest);
     let equipment = use_state(|| Equipment::Barbell);
+    let tracking_type = use_state(|| ExerciseTrackingType::Strength);
     let muscles = use_state(String::new);
     let description = use_state(String::new);
 
@@ -19,6 +20,7 @@ pub fn custom_exercise_form(props: &Props) -> Html {
         let name = name.clone();
         let category = category.clone();
         let equipment = equipment.clone();
+        let tracking_type = tracking_type.clone();
         let muscles = muscles.clone();
         let description = description.clone();
         let cb = props.on_save.clone();
@@ -36,6 +38,7 @@ pub fn custom_exercise_form(props: &Props) -> Html {
                     description: (*description).clone(),
                     is_custom: true,
                     image: None,
+                    tracking_type: (*tracking_type).clone(),
                 });
             }
         })
@@ -111,6 +114,28 @@ pub fn custom_exercise_form(props: &Props) -> Html {
                             <option value="Other">{"Other"}</option>
                         </select>
                     </div>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-gray-500 mb-1">{"Tracking Type"}</label>
+                    <select
+                        class="w-full px-3 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-transparent rounded text-gray-900 dark:text-gray-100 outline-none focus:ring-1 focus:ring-blue-500 transition-colors"
+                        onchange={let tt = tracking_type.clone(); Callback::from(move |e: Event| {
+                            let input: web_sys::HtmlInputElement = e.target_unchecked_into();
+                            let val = match input.value().as_str() {
+                                "Strength" => ExerciseTrackingType::Strength,
+                                "Cardio" => ExerciseTrackingType::Cardio,
+                                "Duration" => ExerciseTrackingType::Duration,
+                                "Bodyweight" => ExerciseTrackingType::Bodyweight,
+                                _ => ExerciseTrackingType::Strength,
+                            };
+                            tt.set(val);
+                        })}
+                    >
+                        <option value="Strength" selected={*tracking_type == ExerciseTrackingType::Strength}>{"Strength (Weight + Reps)"}</option>
+                        <option value="Cardio" selected={*tracking_type == ExerciseTrackingType::Cardio}>{"Cardio (Distance + Time)"}</option>
+                        <option value="Duration" selected={*tracking_type == ExerciseTrackingType::Duration}>{"Duration (Time only)"}</option>
+                        <option value="Bodyweight" selected={*tracking_type == ExerciseTrackingType::Bodyweight}>{"Bodyweight (Reps only)"}</option>
+                    </select>
                 </div>
                 <div>
                     <label class="block text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-gray-500 mb-1">{"Muscle Groups (comma-separated)"}</label>

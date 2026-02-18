@@ -15,19 +15,22 @@ fn summary_stats() -> Html {
 
     let total_workouts = workouts.len();
     let total_volume: f64 = workouts.iter()
-        .flat_map(|w| w.exercises.iter())
-        .flat_map(|we| we.sets.iter())
-        .filter(|s| s.completed)
-        .map(|s| s.weight * s.reps as f64)
+        .map(|w| w.total_volume())
         .sum();
 
-    let volume_display = if total_volume >= 1_000_000.0 {
+    let weight = storage::load_body_metrics().first().and_then(|m| m.weight);
+
+    let volume_display = if let Some(w) = weight {
+        format!("{:.1}x", total_volume / w)
+    } else if total_volume >= 1_000_000.0 {
         format!("{:.1}M", total_volume / 1_000_000.0)
     } else if total_volume >= 1000.0 {
         format!("{:.0}k", total_volume / 1000.0)
     } else {
         format!("{:.0}", total_volume)
     };
+
+    let volume_label = if weight.is_some() { "Rel. Volume" } else { "Total Volume" };
 
     let streak = {
         let mut dates: Vec<chrono::NaiveDate> = workouts
@@ -76,7 +79,7 @@ fn summary_stats() -> Html {
                 <div class="bg-gray-100 dark:bg-gray-800/50 rounded-xl p-3 border border-gray-200 dark:border-gray-700/50 text-center transition-colors">
                     <div class="text-xl mb-1">{"💪"}</div>
                     <div class="text-lg font-bold text-gray-800 dark:text-gray-200">{volume_display}</div>
-                    <div class="text-[10px] text-gray-500 dark:text-gray-500 uppercase font-bold">{"Volume (kg)"}</div>
+                    <div class="text-[10px] text-gray-500 dark:text-gray-500 uppercase font-bold">{volume_label}</div>
                 </div>
                 <div class="bg-gray-100 dark:bg-gray-800/50 rounded-xl p-3 border border-gray-200 dark:border-gray-700/50 text-center transition-colors">
                     <div class="text-xl mb-1">{"🔥"}</div>
@@ -274,33 +277,40 @@ pub fn home_page() -> Html {
             } else {
                 html! {
                     <div class="space-y-6 py-4">
-                        <div class="text-center text-gray-400">
-                            <p class="text-xl font-medium text-gray-200">{"Welcome to Treening!"}</p>
-                            <p class="mt-1">{"Your privacy-first gym tracker."}</p>
+                        <div class="text-center">
+                            <p class="text-2xl font-bold text-gray-900 dark:text-gray-100">{"Welcome to Treening!"}</p>
+                            <p class="mt-2 text-gray-600 dark:text-gray-400">{"Your privacy-first, offline workout tracker."}</p>
                         </div>
                         
-                        <div class="bg-gray-800/30 border border-gray-800 rounded-2xl p-6 space-y-6">
-                            <h3 class="font-bold text-gray-200">{"Getting Started"}</h3>
+                        <div class="bg-gray-100 dark:bg-gray-800/30 border border-gray-200 dark:border-gray-800 rounded-2xl p-6 space-y-6 shadow-sm">
+                            <h3 class="font-bold text-gray-800 dark:text-gray-200">{"Quick Start Guide"}</h3>
                             <div class="space-y-4">
                                 <div class="flex gap-4">
-                                    <div class="flex-shrink-0 w-8 h-8 bg-blue-600/20 text-blue-400 rounded-full flex items-center justify-center font-bold">{"1"}</div>
+                                    <div class="flex-shrink-0 w-8 h-8 bg-blue-600 text-white rounded-full flex items-center justify-center font-bold">{"1"}</div>
                                     <div>
-                                        <div class="font-semibold text-gray-200">{"Explore Exercises"}</div>
-                                        <p class="text-sm text-gray-500">{"Browse over 80 built-in exercises with muscle group info and images."}</p>
+                                        <div class="font-bold text-gray-800 dark:text-gray-200">{"Explore Exercises"}</div>
+                                        <p class="text-sm text-gray-600 dark:text-gray-400">{"Browse over 80 built-in exercises with muscle group info and images."}</p>
                                     </div>
                                 </div>
                                 <div class="flex gap-4">
-                                    <div class="flex-shrink-0 w-8 h-8 bg-blue-600/20 text-blue-400 rounded-full flex items-center justify-center font-bold">{"2"}</div>
+                                    <div class="flex-shrink-0 w-8 h-8 bg-blue-600 text-white rounded-full flex items-center justify-center font-bold">{"2"}</div>
                                     <div>
-                                        <div class="font-semibold text-gray-200">{"Create a Routine"}</div>
-                                        <p class="text-sm text-gray-500">{"Save your favorite workouts (e.g., 'Push Day') for one-tap starting."}</p>
+                                        <div class="font-bold text-gray-800 dark:text-gray-200">{"Create a Routine"}</div>
+                                        <p class="text-sm text-gray-600 dark:text-gray-400">{"Save your favorite workouts (e.g., 'Push Day') for one-tap starting."}</p>
                                     </div>
                                 </div>
                                 <div class="flex gap-4">
-                                    <div class="flex-shrink-0 w-8 h-8 bg-blue-600/20 text-blue-400 rounded-full flex items-center justify-center font-bold">{"3"}</div>
+                                    <div class="flex-shrink-0 w-8 h-8 bg-blue-600 text-white rounded-full flex items-center justify-center font-bold">{"3"}</div>
                                     <div>
-                                        <div class="font-semibold text-gray-200">{"Log Your Session"}</div>
-                                        <p class="text-sm text-gray-500">{"Track sets, reps, and weight. Your data stays 100% on your device."}</p>
+                                        <div class="font-bold text-gray-800 dark:text-gray-200">{"Log Your Session"}</div>
+                                        <p class="text-sm text-gray-600 dark:text-gray-400">{"Track sets, reps, and weight. Your data stays 100% on your device."}</p>
+                                    </div>
+                                </div>
+                                <div class="flex gap-4">
+                                    <div class="flex-shrink-0 w-8 h-8 bg-blue-600 text-white rounded-full flex items-center justify-center font-bold">{"4"}</div>
+                                    <div>
+                                        <div class="font-bold text-gray-800 dark:text-gray-200">{"Track Body Progress"}</div>
+                                        <p class="text-sm text-gray-600 dark:text-gray-400">{"Log your weight in Settings to unlock 'Relative Volume' stats and charts."}</p>
                                     </div>
                                 </div>
                             </div>

@@ -32,20 +32,11 @@ fn parse_date(s: &str) -> Option<NaiveDate> {
 }
 
 fn workout_volume(w: &Workout) -> f64 {
-    w.exercises
-        .iter()
-        .flat_map(|we| we.sets.iter())
-        .filter(|s| s.completed)
-        .map(|s| s.weight * s.reps as f64)
-        .sum()
+    w.total_volume()
 }
 
 fn exercise_volume(we: &WorkoutExercise) -> f64 {
-    we.sets
-        .iter()
-        .filter(|s| s.completed)
-        .map(|s| s.weight * s.reps as f64)
-        .sum()
+    we.volume()
 }
 
 fn exercise_max_weight(we: &WorkoutExercise) -> f64 {
@@ -180,7 +171,7 @@ pub fn analytics_page() -> Html {
     let workouts = use_state(|| storage::load_workouts());
     let routines = use_state(|| storage::load_routines());
     let exercises = use_memo((), |_| all_exercises());
-    let active_tab = use_state(|| 0u8); // 0 = Overview, 1 = Progress
+    let active_tab = use_state(|| 0u8); // 0 = Overview, 1 = Progress, 2 = Body
 
     let tab_click = |tab: u8| {
         let active_tab = active_tab.clone();
@@ -203,14 +194,14 @@ pub fn analytics_page() -> Html {
             <div class="flex border-b border-gray-200 dark:border-gray-700">
                 <button class={tab_class(0)} onclick={tab_click(0)}>{"Overview"}</button>
                 <button class={tab_class(1)} onclick={tab_click(1)}>{"Progress"}</button>
+                <button class={tab_class(2)} onclick={tab_click(2)}>{"Body"}</button>
             </div>
 
-            if *active_tab == 0 {
-                <OverviewTab workouts={(*workouts).clone()} exercises={(*exercises).clone()} />
-            } else {
-                <ProgressTab workouts={(*workouts).clone()} exercises={(*exercises).clone()}
-                             routines={(*routines).clone()} />
-            }
+            { match *active_tab {
+                0 => html! { <OverviewTab workouts={(*workouts).clone()} exercises={(*exercises).clone()} /> },
+                1 => html! { <ProgressTab workouts={(*workouts).clone()} exercises={(*exercises).clone()} routines={(*routines).clone()} /> },
+                _ => html! { <BodyTab /> },
+            }}
         </div>
     }
 }
@@ -568,6 +559,63 @@ fn progress_tab(props: &ProgressProps) -> Html {
                 <div class="space-y-3">
                     <h3 class="text-sm font-bold text-gray-900 dark:text-gray-100 px-1 uppercase tracking-wider">{"Routine Tracking"}</h3>
                     { for routine_stats }
+                </div>
+            }
+        </div>
+    }
+}
+
+// ── Body Tab ────────────────────────────────────────────────────────────────
+
+#[function_component(BodyTab)]
+fn body_tab() -> Html {
+    let metrics = storage::load_body_metrics();
+    let config = storage::load_user_config();
+
+    if metrics.is_empty() {
+        return html! {
+            <div class="text-center py-12 bg-gray-50 dark:bg-gray-800/20 rounded-2xl border border-dashed border-gray-200 dark:border-gray-700 transition-colors">
+                <p class="text-4xl mb-4">{"⚖️"}</p>
+                <p class="text-lg font-bold text-gray-900 dark:text-gray-100">{"No body metrics yet"}</p>
+                <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">{"Log your weight in Settings to see trends here."}</p>
+            </div>
+        };
+    }
+
+    let mut weight_data: Vec<(String, f64)> = metrics.iter()
+        .filter_map(|m| m.weight.map(|w| (m.date[5..].to_string(), w)))
+        .collect();
+    weight_data.sort_by(|a, b| a.0.cmp(&b.0)); // Simple string date sort for same-year
+
+    let mut fat_data: Vec<(String, f64)> = metrics.iter()
+        .filter_map(|m| m.body_fat.map(|f| (m.date[5..].to_string(), f)))
+        .collect();
+    fat_data.sort_by(|a, b| a.0.cmp(&b.0));
+
+    let latest_weight = weight_data.last().map(|d| d.1);
+    let bmi = if let (Some(w), Some(h)) = (latest_weight, config.height) {
+        let h_m = h / 100.0;
+        Some(w / (h_m * h_m))
+    } else {
+        None
+    };
+
+    html! {
+        <div class="space-y-6">
+            <div class="grid grid-cols-2 gap-3">
+                <StatCard label="Latest Weight" value={latest_weight.map(|w| format!("{}kg", w)).unwrap_or_else(|| "--".to_string())} icon="\u{2696}" />
+                <StatCard label="BMI" value={bmi.map(|b| format!("{:.1}", b)).unwrap_or_else(|| "--".to_string())} icon="\u{1f4cf}" />
+            </div>
+
+            if !weight_data.is_empty() {
+                <div class="bg-gray-100 dark:bg-gray-800 rounded-xl p-4 border border-gray-200 dark:border-transparent transition-colors shadow-sm">
+                    <LineChart data={weight_data} title="Weight Progress (kg)" height={180} color="#3b82f6" />
+                </div>
+            }
+
+            if !fat_data.is_empty() {
+                <div class="bg-gray-100 dark:bg-gray-800 rounded-xl p-4 border border-gray-200 dark:border-transparent transition-colors shadow-sm">
+                    <LineChart data={fat_data} title="Body Fat %" height={180} color="#ef4444" />
                 </div>
             }
         </div>
