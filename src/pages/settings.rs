@@ -21,6 +21,9 @@ extern "C" {
 
     #[wasm_bindgen(js_name = isIOS)]
     fn is_ios() -> bool;
+
+    #[wasm_bindgen(js_name = getAppVersion)]
+    fn get_app_version() -> js_sys::Promise;
 }
 
 #[function_component(InstallButton)]
@@ -100,6 +103,16 @@ fn profile_section() -> Html {
     let rest_seconds = use_state(|| config.rest_seconds.to_string());
     let bar_weight = use_state(|| config.bar_weight.to_string());
 
+    let has_changes = {
+        let c = &*config;
+        *nickname != c.nickname
+            || *height != c.height.map(|h| h.to_string()).unwrap_or_default()
+            || *birth_date != c.birth_date.clone().unwrap_or_default()
+            || *gender != c.gender.clone().unwrap_or_default()
+            || *rest_seconds != c.rest_seconds.to_string()
+            || *bar_weight != c.bar_weight.to_string()
+    };
+
     let on_save = {
         let config_state = config.clone();
         let nickname = nickname.clone();
@@ -136,11 +149,11 @@ fn profile_section() -> Html {
                 </div>
                 <div>
                     <label class="block text-[10px] uppercase font-bold text-gray-500 mb-1">{"Height (cm)"}</label>
-                    <input 
-                        type="number" 
+                    <input
+                        type="number" autocomplete="off"
                         class="w-full bg-white dark:bg-gray-700 border border-gray-200 dark:border-transparent rounded-lg px-3 py-2 text-sm text-gray-900 dark:text-white outline-none focus:ring-1 focus:ring-blue-500"
                         value={(*height).clone()}
-                        oninput={let h = height.clone(); Callback::from(move |e: InputEvent| h.set(e.target_unchecked_into::<web_sys::HtmlInputElement>().value()))}
+                        onchange={let h = height.clone(); Callback::from(move |e: Event| h.set(e.target_unchecked_into::<web_sys::HtmlInputElement>().value()))}
                     />
                 </div>
                 <div>
@@ -167,25 +180,30 @@ fn profile_section() -> Html {
                 <div>
                     <label class="block text-[10px] uppercase font-bold text-gray-500 mb-1">{"Rest Timer (sec)"}</label>
                     <input
-                        type="number"
+                        type="number" autocomplete="off"
                         class="w-full bg-white dark:bg-gray-700 border border-gray-200 dark:border-transparent rounded-lg px-3 py-2 text-sm text-gray-900 dark:text-white outline-none focus:ring-1 focus:ring-blue-500"
                         value={(*rest_seconds).clone()}
-                        oninput={let r = rest_seconds.clone(); Callback::from(move |e: InputEvent| r.set(e.target_unchecked_into::<web_sys::HtmlInputElement>().value()))}
+                        onchange={let r = rest_seconds.clone(); Callback::from(move |e: Event| r.set(e.target_unchecked_into::<web_sys::HtmlInputElement>().value()))}
                     />
                 </div>
                 <div>
                     <label class="block text-[10px] uppercase font-bold text-gray-500 mb-1">{"Bar Weight (kg)"}</label>
                     <input
-                        type="number" step="0.5"
+                        type="number" step="0.5" autocomplete="off"
                         class="w-full bg-white dark:bg-gray-700 border border-gray-200 dark:border-transparent rounded-lg px-3 py-2 text-sm text-gray-900 dark:text-white outline-none focus:ring-1 focus:ring-blue-500"
                         value={(*bar_weight).clone()}
-                        oninput={let bw = bar_weight.clone(); Callback::from(move |e: InputEvent| bw.set(e.target_unchecked_into::<web_sys::HtmlInputElement>().value()))}
+                        onchange={let bw = bar_weight.clone(); Callback::from(move |e: Event| bw.set(e.target_unchecked_into::<web_sys::HtmlInputElement>().value()))}
                     />
                 </div>
             </div>
-            <button 
+            <button
                 onclick={on_save}
-                class="w-full py-2.5 bg-blue-600 text-white rounded-lg font-bold text-sm hover:bg-blue-700 shadow-sm transition-colors"
+                disabled={!has_changes}
+                class={if has_changes {
+                    "w-full py-2.5 bg-blue-600 text-white rounded-lg font-bold text-sm hover:bg-blue-700 shadow-sm transition-colors"
+                } else {
+                    "w-full py-2.5 bg-gray-300 dark:bg-gray-700 text-gray-500 dark:text-gray-400 rounded-lg font-bold text-sm cursor-not-allowed transition-colors"
+                }}
             >{"Update Profile"}</button>
         </div>
     }
@@ -249,20 +267,20 @@ fn body_metrics_section() -> Html {
                         <div class="grid grid-cols-2 gap-3">
                             <div>
                                 <label class="block text-[10px] uppercase font-bold text-gray-500 mb-1">{"Weight (kg)"}</label>
-                                <input 
-                                    type="number" step="0.1" 
+                                <input
+                                    type="number" step="0.1"
                                     class="w-full bg-white dark:bg-gray-700 border border-gray-200 dark:border-transparent rounded-lg px-3 py-2 text-sm text-gray-900 dark:text-white outline-none focus:ring-1 focus:ring-blue-500"
                                     value={(*weight).clone()}
-                                    oninput={let w = weight.clone(); Callback::from(move |e: InputEvent| w.set(e.target_unchecked_into::<web_sys::HtmlInputElement>().value()))}
+                                    onchange={let w = weight.clone(); Callback::from(move |e: Event| w.set(e.target_unchecked_into::<web_sys::HtmlInputElement>().value()))}
                                 />
                             </div>
                             <div>
                                 <label class="block text-[10px] uppercase font-bold text-gray-500 mb-1">{"Body Fat %"}</label>
-                                <input 
-                                    type="number" step="0.1" 
+                                <input
+                                    type="number" step="0.1"
                                     class="w-full bg-white dark:bg-gray-700 border border-gray-200 dark:border-transparent rounded-lg px-3 py-2 text-sm text-gray-900 dark:text-white outline-none focus:ring-1 focus:ring-blue-500"
                                     value={(*body_fat).clone()}
-                                    oninput={let bf = body_fat.clone(); Callback::from(move |e: InputEvent| bf.set(e.target_unchecked_into::<web_sys::HtmlInputElement>().value()))}
+                                    onchange={let bf = body_fat.clone(); Callback::from(move |e: Event| bf.set(e.target_unchecked_into::<web_sys::HtmlInputElement>().value()))}
                                 />
                             </div>
                         </div>
@@ -339,6 +357,21 @@ pub fn settings_page() -> Html {
         })
     };
 
+    let app_version = use_state(|| String::from("..."));
+    {
+        let app_version = app_version.clone();
+        use_effect_with((), move |_| {
+            wasm_bindgen_futures::spawn_local(async move {
+                let promise = get_app_version();
+                if let Ok(val) = wasm_bindgen_futures::JsFuture::from(promise).await {
+                    if let Some(s) = val.as_string() {
+                        app_version.set(s);
+                    }
+                }
+            });
+        });
+    }
+
     html! {
         <div class="px-4 py-4 pb-20 space-y-8 transition-colors duration-200">
             <h1 class="text-2xl font-bold text-gray-900 dark:text-gray-100">{"Settings"}</h1>
@@ -359,6 +392,9 @@ pub fn settings_page() -> Html {
                     <span>{"Frequently Asked Questions"}</span>
                     <span>{"→"}</span>
                 </Link<Route>>
+                <div class="pt-2 border-t border-gray-200 dark:border-gray-700 mt-2">
+                    <span class="text-xs text-gray-500 dark:text-gray-400">{"Version: "}{(*app_version).clone()}</span>
+                </div>
             </div>
 
             <div>

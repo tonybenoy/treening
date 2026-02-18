@@ -160,6 +160,14 @@
             return result.outcome === 'accepted';
         };
 
+        window.getAppVersion = async () => {
+            try {
+                const keys = await caches.keys();
+                const match = keys.find(k => k.startsWith('treening-'));
+                return match ? match.replace('treening-', '') : 'dev';
+            } catch { return 'dev'; }
+        };
+
         // Service Worker registration
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
