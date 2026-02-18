@@ -51,14 +51,14 @@ pub fn routine_editor(props: &Props) -> Html {
                 let show_picker = show_exercise_picker.clone();
 
                 html! {
-                    <div class="bg-gray-800 rounded-lg p-4">
-                        <h3 class="text-lg font-semibold mb-3">
+                    <div class="bg-gray-100 dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-transparent transition-colors">
+                        <h3 class="text-lg font-semibold mb-3 text-gray-900 dark:text-gray-100">
                             { if routine.name.is_empty() { "New Routine" } else { "Edit Routine" } }
                         </h3>
                         <input
                             type="text"
                             placeholder="Routine name (e.g., Push Day)"
-                            class="w-full px-3 py-2 bg-gray-700 rounded mb-3 text-gray-100"
+                            class="w-full px-3 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-transparent rounded mb-3 text-gray-900 dark:text-gray-100 outline-none focus:ring-1 focus:ring-blue-500"
                             value={routine.name.clone()}
                             onchange={{
                                 let editing = editing2.clone();
@@ -77,10 +77,10 @@ pub fn routine_editor(props: &Props) -> Html {
                                 let editing = editing3.clone();
                                 let routine = routine.clone();
                                 html! {
-                                    <div class="flex justify-between items-center bg-gray-700 rounded px-3 py-2">
-                                        <span class="text-sm">{name}</span>
+                                    <div class="flex justify-between items-center bg-white dark:bg-gray-700 border border-gray-200 dark:border-transparent rounded px-3 py-2 transition-colors">
+                                        <span class="text-sm text-gray-800 dark:text-gray-100">{name}</span>
                                         <button
-                                            class="text-red-400 text-sm"
+                                            class="text-red-600 dark:text-red-400 text-sm hover:text-red-500 dark:hover:text-red-300"
                                             onclick={Callback::from(move |_| {
                                                 let mut r = routine.clone();
                                                 r.exercise_ids.remove(i);
@@ -98,7 +98,7 @@ pub fn routine_editor(props: &Props) -> Html {
                             let editing5 = editing4.clone();
                             let routine2 = routine.clone();
                             html! {
-                                <div class="bg-gray-700 rounded-lg p-3 mb-3 max-h-60 overflow-y-auto">
+                                <div class="bg-white dark:bg-gray-700 border border-gray-300 dark:border-transparent rounded-lg p-3 mb-3 max-h-60 overflow-y-auto transition-colors">
                                     { for exercises.iter().map(|ex| {
                                         let eid = ex.id.clone();
                                         let editing = editing5.clone();
@@ -106,7 +106,7 @@ pub fn routine_editor(props: &Props) -> Html {
                                         let show_picker = show_picker2.clone();
                                         html! {
                                             <button
-                                                class="block w-full text-left px-2 py-1.5 hover:bg-gray-600 rounded text-sm"
+                                                class="block w-full text-left px-2 py-1.5 hover:bg-gray-100 dark:hover:bg-gray-600 rounded text-sm text-gray-800 dark:text-gray-100 transition-colors"
                                                 onclick={Callback::from(move |_| {
                                                     let mut r = routine.clone();
                                                     r.exercise_ids.push(eid.clone());
@@ -115,7 +115,7 @@ pub fn routine_editor(props: &Props) -> Html {
                                                 })}
                                             >
                                                 {&ex.name}
-                                                <span class="text-gray-400 ml-2 text-xs">{ex.category.to_string()}</span>
+                                                <span class="text-gray-500 dark:text-gray-400 ml-2 text-xs">{ex.category.to_string()}</span>
                                             </button>
                                         }
                                     })}
@@ -124,7 +124,7 @@ pub fn routine_editor(props: &Props) -> Html {
                         } else {
                             html! {
                                 <button
-                                    class="text-blue-400 text-sm mb-3"
+                                    class="text-blue-600 dark:text-blue-400 text-sm mb-3 font-medium hover:underline"
                                     onclick={let sp = show_picker.clone(); Callback::from(move |_| sp.set(true))}
                                 >{"+ Add Exercise"}</button>
                             }
@@ -132,7 +132,7 @@ pub fn routine_editor(props: &Props) -> Html {
 
                         <div class="flex gap-2">
                             <button
-                                class="flex-1 py-2 bg-blue-600 rounded font-medium hover:bg-blue-700"
+                                class="flex-1 py-2 bg-blue-600 text-white rounded font-medium hover:bg-blue-700 shadow-sm transition-colors"
                                 onclick={{
                                     let routine = routine.clone();
                                     let editing = editing.clone();
@@ -145,7 +145,7 @@ pub fn routine_editor(props: &Props) -> Html {
                                 }}
                             >{"Save"}</button>
                             <button
-                                class="flex-1 py-2 bg-gray-700 rounded font-medium hover:bg-gray-600"
+                                class="flex-1 py-2 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded font-medium hover:bg-gray-300 dark:hover:bg-gray-600 border border-gray-300 dark:border-transparent transition-colors"
                                 onclick={let e = editing.clone(); Callback::from(move |_| e.set(None))}
                             >{"Cancel"}</button>
                         </div>

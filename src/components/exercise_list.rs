@@ -48,18 +48,22 @@ pub fn exercise_list(props: &Props) -> Html {
                 <input
                     type="text"
                     placeholder="Search exercises..."
-                    class="w-full px-4 py-2 bg-gray-800 border border-gray-600 rounded-lg text-gray-100 placeholder-gray-500 focus:outline-none focus:border-blue-500"
+                    class="w-full px-4 py-2 bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-gray-900 dark:text-gray-100 placeholder-gray-500 focus:outline-none focus:border-blue-500 transition-colors shadow-sm"
                     oninput={on_search}
                     value={(*search).clone()}
                 />
             </div>
-            <div class="px-4 pb-2 flex gap-2 overflow-x-auto">
+            <div class="px-4 pb-2 flex gap-2 overflow-x-auto scrollbar-hide">
                 {
                     {
                         let cf = category_filter.clone();
                         html! {
                             <button
-                                class={if cf.is_none() { "px-3 py-1 rounded-full text-sm bg-blue-600 text-white" } else { "px-3 py-1 rounded-full text-sm bg-gray-700 text-gray-300" }}
+                                class={if cf.is_none() { 
+                                    "px-3 py-1 rounded-full text-sm bg-blue-600 text-white font-medium shadow-sm transition-colors" 
+                                } else { 
+                                    "px-3 py-1 rounded-full text-sm bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 border border-gray-200 dark:border-transparent hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors" 
+                                }}
                                 onclick={let cf = cf.clone(); Callback::from(move |_| cf.set(None))}
                             >{"All"}</button>
                         }
@@ -72,7 +76,11 @@ pub fn exercise_list(props: &Props) -> Html {
                     let label = cat.to_string();
                     html! {
                         <button
-                            class={if active { "px-3 py-1 rounded-full text-sm bg-blue-600 text-white whitespace-nowrap" } else { "px-3 py-1 rounded-full text-sm bg-gray-700 text-gray-300 whitespace-nowrap" }}
+                            class={if active { 
+                                "px-3 py-1 rounded-full text-sm bg-blue-600 text-white whitespace-nowrap font-medium shadow-sm transition-colors" 
+                            } else { 
+                                "px-3 py-1 rounded-full text-sm bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 border border-gray-200 dark:border-transparent whitespace-nowrap hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors" 
+                            }}
                             onclick={Callback::from(move |_| cf.set(Some(cat_clone.clone())))}
                         >{label}</button>
                     }
@@ -87,24 +95,24 @@ pub fn exercise_list(props: &Props) -> Html {
                     let ex2 = ex.clone();
                     let ex3 = ex.clone();
                     html! {
-                        <div class="bg-gray-800 rounded-lg p-3 flex justify-between items-center">
+                        <div class="bg-gray-100 dark:bg-gray-800 rounded-lg p-3 flex justify-between items-center border border-gray-200 dark:border-transparent transition-colors shadow-sm">
                             <div class="flex-1 cursor-pointer flex items-center gap-3" onclick={Callback::from(move |_| on_select.emit(ex2.clone()))}>
                                 { if let Some(ref img) = ex.image {
                                     html! {
                                         <img
                                             src={img.clone()}
                                             alt={ex.name.clone()}
-                                            class="w-10 h-10 rounded bg-gray-700 p-0.5 flex-shrink-0"
+                                            class="w-10 h-10 rounded bg-white dark:bg-gray-700 border border-gray-200 dark:border-transparent p-0.5 flex-shrink-0 transition-colors"
                                         />
                                     }
                                 } else {
                                     html! {
-                                        <div class="w-10 h-10 rounded bg-gray-700 flex items-center justify-center flex-shrink-0 text-gray-500 text-xs">{"?"}</div>
+                                        <div class="w-10 h-10 rounded bg-white dark:bg-gray-700 border border-gray-200 dark:border-transparent flex items-center justify-center flex-shrink-0 text-gray-400 dark:text-gray-500 text-xs transition-colors">{"?"}</div>
                                     }
                                 }}
                                 <div>
-                                    <div class="font-medium">{&ex.name}</div>
-                                    <div class="text-sm text-gray-400">
+                                    <div class="font-medium text-gray-900 dark:text-gray-100">{&ex.name}</div>
+                                    <div class="text-sm text-gray-500 dark:text-gray-400">
                                         {ex.category.to_string()}{" · "}{ex.equipment.to_string()}
                                     </div>
                                 </div>
@@ -112,7 +120,7 @@ pub fn exercise_list(props: &Props) -> Html {
                             { if show_add {
                                 html! {
                                     <button
-                                        class="ml-2 px-3 py-1 bg-blue-600 rounded text-sm hover:bg-blue-700"
+                                        class="ml-2 px-3 py-1 bg-blue-600 text-white rounded text-sm font-bold hover:bg-blue-700 shadow-sm transition-colors"
                                         onclick={
                                             let on_add = on_add.clone();
                                             Callback::from(move |_| {
@@ -130,7 +138,7 @@ pub fn exercise_list(props: &Props) -> Html {
                     }
                 })}
                 { if filtered.is_empty() {
-                    html! { <p class="text-gray-500 text-center py-8">{"No exercises found"}</p> }
+                    html! { <p class="text-gray-500 dark:text-gray-400 text-center py-12 bg-gray-50 dark:bg-gray-800/20 rounded-2xl border border-dashed border-gray-200 dark:border-gray-700 transition-colors">{"No exercises found"}</p> }
                 } else {
                     html! {}
                 }}

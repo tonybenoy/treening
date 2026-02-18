@@ -42,14 +42,14 @@ pub fn custom_exercise_form(props: &Props) -> Html {
     };
 
     html! {
-        <div class="bg-gray-800 rounded-lg p-4">
-            <h3 class="text-lg font-semibold mb-4">{"Add Custom Exercise"}</h3>
-            <div class="space-y-3">
+        <div class="bg-gray-100 dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-transparent transition-colors shadow-sm">
+            <h3 class="text-lg font-bold mb-4 text-gray-900 dark:text-gray-100">{"Add Custom Exercise"}</h3>
+            <div class="space-y-4">
                 <div>
-                    <label class="block text-sm text-gray-400 mb-1">{"Name"}</label>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-gray-500 mb-1">{"Name"}</label>
                     <input
                         type="text"
-                        class="w-full px-3 py-2 bg-gray-700 rounded text-gray-100"
+                        class="w-full px-3 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-transparent rounded text-gray-900 dark:text-gray-100 outline-none focus:ring-1 focus:ring-blue-500 transition-colors"
                         value={(*name).clone()}
                         oninput={let n = name.clone(); Callback::from(move |e: InputEvent| {
                             let input: web_sys::HtmlInputElement = e.target_unchecked_into();
@@ -57,65 +57,67 @@ pub fn custom_exercise_form(props: &Props) -> Html {
                         })}
                     />
                 </div>
-                <div>
-                    <label class="block text-sm text-gray-400 mb-1">{"Category"}</label>
-                    <select
-                        class="w-full px-3 py-2 bg-gray-700 rounded text-gray-100"
-                        onchange={let c = category.clone(); Callback::from(move |e: Event| {
-                            let input: web_sys::HtmlInputElement = e.target_unchecked_into();
-                            let val = match input.value().as_str() {
-                                "Chest" => Category::Chest,
-                                "Back" => Category::Back,
-                                "Legs" => Category::Legs,
-                                "Shoulders" => Category::Shoulders,
-                                "Arms" => Category::Arms,
-                                "Core" => Category::Core,
-                                "Cardio" => Category::Cardio,
-                                _ => Category::Chest,
-                            };
-                            c.set(val);
-                        })}
-                    >
-                        { for Category::all().iter().map(|cat| {
-                            html! { <option value={cat.to_string()} selected={*category == *cat}>{cat.to_string()}</option> }
-                        })}
-                    </select>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-gray-500 mb-1">{"Category"}</label>
+                        <select
+                            class="w-full px-3 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-transparent rounded text-gray-900 dark:text-gray-100 outline-none focus:ring-1 focus:ring-blue-500 transition-colors"
+                            onchange={let c = category.clone(); Callback::from(move |e: Event| {
+                                let input: web_sys::HtmlInputElement = e.target_unchecked_into();
+                                let val = match input.value().as_str() {
+                                    "Chest" => Category::Chest,
+                                    "Back" => Category::Back,
+                                    "Legs" => Category::Legs,
+                                    "Shoulders" => Category::Shoulders,
+                                    "Arms" => Category::Arms,
+                                    "Core" => Category::Core,
+                                    "Cardio" => Category::Cardio,
+                                    _ => Category::Chest,
+                                };
+                                c.set(val);
+                            })}
+                        >
+                            { for Category::all().iter().map(|cat| {
+                                html! { <option value={cat.to_string()} selected={*category == *cat}>{cat.to_string()}</option> }
+                            })}
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-gray-500 mb-1">{"Equipment"}</label>
+                        <select
+                            class="w-full px-3 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-transparent rounded text-gray-900 dark:text-gray-100 outline-none focus:ring-1 focus:ring-blue-500 transition-colors"
+                            onchange={let eq = equipment.clone(); Callback::from(move |e: Event| {
+                                let input: web_sys::HtmlInputElement = e.target_unchecked_into();
+                                let val = match input.value().as_str() {
+                                    "Barbell" => Equipment::Barbell,
+                                    "Dumbbell" => Equipment::Dumbbell,
+                                    "Machine" => Equipment::Machine,
+                                    "Cable" => Equipment::Cable,
+                                    "Bodyweight" => Equipment::Bodyweight,
+                                    "Kettlebell" => Equipment::Kettlebell,
+                                    "Band" => Equipment::Band,
+                                    _ => Equipment::Other,
+                                };
+                                eq.set(val);
+                            })}
+                        >
+                            <option value="Barbell">{"Barbell"}</option>
+                            <option value="Dumbbell">{"Dumbbell"}</option>
+                            <option value="Machine">{"Machine"}</option>
+                            <option value="Cable">{"Cable"}</option>
+                            <option value="Bodyweight">{"Bodyweight"}</option>
+                            <option value="Kettlebell">{"Kettlebell"}</option>
+                            <option value="Band">{"Band"}</option>
+                            <option value="Other">{"Other"}</option>
+                        </select>
+                    </div>
                 </div>
                 <div>
-                    <label class="block text-sm text-gray-400 mb-1">{"Equipment"}</label>
-                    <select
-                        class="w-full px-3 py-2 bg-gray-700 rounded text-gray-100"
-                        onchange={let eq = equipment.clone(); Callback::from(move |e: Event| {
-                            let input: web_sys::HtmlInputElement = e.target_unchecked_into();
-                            let val = match input.value().as_str() {
-                                "Barbell" => Equipment::Barbell,
-                                "Dumbbell" => Equipment::Dumbbell,
-                                "Machine" => Equipment::Machine,
-                                "Cable" => Equipment::Cable,
-                                "Bodyweight" => Equipment::Bodyweight,
-                                "Kettlebell" => Equipment::Kettlebell,
-                                "Band" => Equipment::Band,
-                                _ => Equipment::Other,
-                            };
-                            eq.set(val);
-                        })}
-                    >
-                        <option value="Barbell">{"Barbell"}</option>
-                        <option value="Dumbbell">{"Dumbbell"}</option>
-                        <option value="Machine">{"Machine"}</option>
-                        <option value="Cable">{"Cable"}</option>
-                        <option value="Bodyweight">{"Bodyweight"}</option>
-                        <option value="Kettlebell">{"Kettlebell"}</option>
-                        <option value="Band">{"Band"}</option>
-                        <option value="Other">{"Other"}</option>
-                    </select>
-                </div>
-                <div>
-                    <label class="block text-sm text-gray-400 mb-1">{"Muscle Groups (comma-separated)"}</label>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-gray-500 mb-1">{"Muscle Groups (comma-separated)"}</label>
                     <input
                         type="text"
                         placeholder="e.g. Chest, Triceps"
-                        class="w-full px-3 py-2 bg-gray-700 rounded text-gray-100"
+                        class="w-full px-3 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-transparent rounded text-gray-900 dark:text-gray-100 outline-none focus:ring-1 focus:ring-blue-500 transition-colors"
                         value={(*muscles).clone()}
                         oninput={let m = muscles.clone(); Callback::from(move |e: InputEvent| {
                             let input: web_sys::HtmlInputElement = e.target_unchecked_into();
@@ -124,24 +126,24 @@ pub fn custom_exercise_form(props: &Props) -> Html {
                     />
                 </div>
                 <div>
-                    <label class="block text-sm text-gray-400 mb-1">{"Description"}</label>
-                    <input
-                        type="text"
-                        class="w-full px-3 py-2 bg-gray-700 rounded text-gray-100"
+                    <label class="block text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-gray-500 mb-1">{"Description"}</label>
+                    <textarea
+                        rows="3"
+                        class="w-full px-3 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-transparent rounded text-gray-900 dark:text-gray-100 outline-none focus:ring-1 focus:ring-blue-500 transition-colors"
                         value={(*description).clone()}
                         oninput={let d = description.clone(); Callback::from(move |e: InputEvent| {
-                            let input: web_sys::HtmlInputElement = e.target_unchecked_into();
+                            let input: web_sys::HtmlTextAreaElement = e.target_unchecked_into();
                             d.set(input.value());
                         })}
-                    />
+                    ></textarea>
                 </div>
                 <div class="flex gap-2 pt-2">
                     <button
-                        class="flex-1 py-2 bg-blue-600 rounded font-medium hover:bg-blue-700"
+                        class="flex-1 py-2.5 bg-blue-600 text-white rounded-lg font-bold shadow-sm hover:bg-blue-700 transition-colors"
                         onclick={on_save}
-                    >{"Save"}</button>
+                    >{"Save Exercise"}</button>
                     <button
-                        class="flex-1 py-2 bg-gray-700 rounded font-medium hover:bg-gray-600"
+                        class="flex-1 py-2.5 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 border border-gray-300 dark:border-transparent rounded-lg font-bold hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors"
                         onclick={let cb = props.on_cancel.clone(); Callback::from(move |_| cb.emit(()))}
                     >{"Cancel"}</button>
                 </div>

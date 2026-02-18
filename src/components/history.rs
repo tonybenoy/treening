@@ -44,19 +44,19 @@ pub fn history_list(props: &Props) -> Html {
                 };
 
                 html! {
-                    <div class="bg-gray-800 rounded-lg overflow-hidden">
+                    <div class="bg-gray-100 dark:bg-gray-800 rounded-lg overflow-hidden border border-gray-200 dark:border-transparent transition-colors shadow-sm">
                         <div
-                            class="p-4 cursor-pointer"
+                            class="p-4 cursor-pointer hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
                             onclick={Callback::from(move |_| {
                                 if is_expanded { expanded_clone.set(None) } else { expanded_clone.set(Some(wid.clone())) }
                             })}
                         >
                             <div class="flex justify-between items-start">
                                 <div>
-                                    <div class="font-semibold">{&w.name}</div>
-                                    <div class="text-sm text-gray-400">{&w.date}</div>
+                                    <div class="font-bold text-gray-900 dark:text-gray-100">{&w.name}</div>
+                                    <div class="text-sm text-gray-500 dark:text-gray-400 font-mono">{&w.date}</div>
                                 </div>
-                                <div class="text-right text-sm text-gray-400">
+                                <div class="text-right text-sm text-gray-500 dark:text-gray-400 font-medium">
                                     <div>{w.exercises.len()}{" exercises"}</div>
                                     <div>{total_sets}{" sets"}</div>
                                     { if w.duration_mins > 0 {
@@ -72,13 +72,13 @@ pub fn history_list(props: &Props) -> Html {
                                 let editing_state = editing.clone();
 
                                 html! {
-                                    <div class="px-4 pb-4 border-t border-gray-700 pt-3 space-y-3">
+                                    <div class="px-4 pb-4 border-t border-gray-200 dark:border-gray-700 pt-3 space-y-4">
                                         // Workout name
                                         <div>
-                                            <label class="block text-xs text-gray-400 mb-1">{"Workout Name"}</label>
+                                            <label class="block text-[10px] uppercase font-bold text-gray-500 dark:text-gray-500 mb-1 tracking-wider">{"Workout Name"}</label>
                                             <input
                                                 type="text"
-                                                class="w-full px-3 py-2 bg-gray-700 rounded text-gray-100"
+                                                class="w-full px-3 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-transparent rounded text-gray-900 dark:text-gray-100 outline-none focus:ring-1 focus:ring-blue-500 transition-colors"
                                                 value={edit_workout.name.clone()}
                                                 onclick={Callback::from(|e: MouseEvent| e.stop_propagation())}
                                                 onchange={{
@@ -101,11 +101,11 @@ pub fn history_list(props: &Props) -> Html {
                                             let workout = edit_workout.clone();
 
                                             html! {
-                                                <div class="bg-gray-700 rounded-lg p-3">
+                                                <div class="bg-white dark:bg-gray-700/50 border border-gray-200 dark:border-gray-700 rounded-lg p-3 transition-colors">
                                                     <div class="flex justify-between items-center mb-2">
-                                                        <span class="font-medium text-sm">{name}</span>
+                                                        <span class="font-bold text-sm text-gray-800 dark:text-gray-200">{name}</span>
                                                         <button
-                                                            class="text-red-400 text-xs hover:text-red-300"
+                                                            class="text-red-600 dark:text-red-400 text-xs hover:text-red-500 dark:hover:text-red-300 font-bold"
                                                             onclick={{
                                                                 let editing = editing.clone();
                                                                 let w = workout.clone();
@@ -119,11 +119,11 @@ pub fn history_list(props: &Props) -> Html {
                                                         >{"Remove"}</button>
                                                     </div>
                                                     <div class="space-y-1">
-                                                        <div class="grid grid-cols-12 gap-2 text-xs text-gray-400 px-1">
+                                                        <div class="grid grid-cols-12 gap-2 text-[10px] uppercase font-bold text-gray-500 dark:text-gray-500 px-1">
                                                             <div class="col-span-1">{"#"}</div>
                                                             <div class="col-span-4">{"Weight"}</div>
                                                             <div class="col-span-3">{"Reps"}</div>
-                                                            <div class="col-span-2">{"Done"}</div>
+                                                            <div class="col-span-2 text-center">{"Done"}</div>
                                                             <div class="col-span-2"></div>
                                                         </div>
                                                         { for we.sets.iter().enumerate().map(|(set_idx, set)| {
@@ -139,15 +139,15 @@ pub fn history_list(props: &Props) -> Html {
 
                                                             html! {
                                                                 <div class={classes!(
-                                                                    "grid", "grid-cols-12", "gap-2", "items-center",
-                                                                    if completed { "opacity-60" } else { "" }
+                                                                    "grid", "grid-cols-12", "gap-2", "items-center", "transition-opacity",
+                                                                    if completed { "opacity-50" } else { "" }
                                                                 )}>
-                                                                    <div class="col-span-1 text-xs text-gray-400">{set_idx + 1}</div>
+                                                                    <div class="col-span-1 text-xs font-bold text-gray-400 dark:text-gray-500">{set_idx + 1}</div>
                                                                     <div class="col-span-4">
                                                                         <input
                                                                             type="number"
                                                                             step="0.5"
-                                                                            class="w-full px-2 py-1 bg-gray-600 rounded text-xs text-center"
+                                                                            class="w-full px-2 py-1 bg-white dark:bg-gray-600 border border-gray-300 dark:border-transparent rounded text-xs text-center text-gray-900 dark:text-white outline-none focus:ring-1 focus:ring-blue-500 transition-colors"
                                                                             value={set.weight.to_string()}
                                                                             onclick={Callback::from(|e: MouseEvent| e.stop_propagation())}
                                                                             onchange={Callback::from(move |e: Event| {
@@ -166,7 +166,7 @@ pub fn history_list(props: &Props) -> Html {
                                                                     <div class="col-span-3">
                                                                         <input
                                                                             type="number"
-                                                                            class="w-full px-2 py-1 bg-gray-600 rounded text-xs text-center"
+                                                                            class="w-full px-2 py-1 bg-white dark:bg-gray-600 border border-gray-300 dark:border-transparent rounded text-xs text-center text-gray-900 dark:text-white outline-none focus:ring-1 focus:ring-blue-500 transition-colors"
                                                                             value={set.reps.to_string()}
                                                                             onclick={Callback::from(|e: MouseEvent| e.stop_propagation())}
                                                                             onchange={Callback::from(move |e: Event| {
@@ -186,7 +186,7 @@ pub fn history_list(props: &Props) -> Html {
                                                                         <input
                                                                             type="checkbox"
                                                                             checked={completed}
-                                                                            class="w-4 h-4 accent-green-500"
+                                                                            class="w-4 h-4 accent-blue-600 cursor-pointer"
                                                                             onclick={Callback::from(|e: MouseEvent| e.stop_propagation())}
                                                                             onchange={Callback::from(move |_| {
                                                                                 let mut w = workout3.clone();
@@ -201,7 +201,7 @@ pub fn history_list(props: &Props) -> Html {
                                                                     </div>
                                                                     <div class="col-span-2 flex justify-end">
                                                                         <button
-                                                                            class="text-red-400 text-xs hover:text-red-300"
+                                                                            class="text-red-600 dark:text-red-400 text-xs hover:text-red-500 dark:hover:text-red-300 p-1 transition-colors"
                                                                             onclick={{
                                                                                 Callback::from(move |e: MouseEvent| {
                                                                                     e.stop_propagation();
@@ -219,7 +219,7 @@ pub fn history_list(props: &Props) -> Html {
                                                         })}
                                                     </div>
                                                     <button
-                                                        class="mt-1 text-xs text-blue-400 hover:text-blue-300"
+                                                        class="mt-2 text-xs font-bold text-blue-600 dark:text-blue-400 hover:underline transition-colors"
                                                         onclick={{
                                                             let editing = editing.clone();
                                                             let w = workout.clone();
@@ -247,7 +247,7 @@ pub fn history_list(props: &Props) -> Html {
                                         // Save / Cancel buttons
                                         <div class="flex gap-2 pt-1">
                                             <button
-                                                class="flex-1 py-2 bg-green-700 rounded text-sm font-medium hover:bg-green-600"
+                                                class="flex-1 py-2.5 bg-blue-600 text-white rounded-lg text-sm font-bold hover:bg-blue-700 shadow-sm transition-colors"
                                                 onclick={{
                                                     let editing = editing_state.clone();
                                                     let w = edit_workout.clone();
@@ -259,7 +259,7 @@ pub fn history_list(props: &Props) -> Html {
                                                 }}
                                             >{"Save Changes"}</button>
                                             <button
-                                                class="flex-1 py-2 bg-gray-700 rounded text-sm font-medium hover:bg-gray-600"
+                                                class="flex-1 py-2.5 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 border border-gray-300 dark:border-transparent rounded-lg text-sm font-bold hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors"
                                                 onclick={{
                                                     let editing = editing_state.clone();
                                                     Callback::from(move |e: MouseEvent| {
@@ -274,29 +274,32 @@ pub fn history_list(props: &Props) -> Html {
                             } else {
                                 // View mode
                                 html! {
-                                    <div class="px-4 pb-4 border-t border-gray-700 pt-3">
+                                    <div class="px-4 pb-4 border-t border-gray-200 dark:border-gray-700 pt-3 transition-colors">
                                         { for display_workout.exercises.iter().map(|we| {
                                             let name = find_exercise(&we.exercise_id);
                                             html! {
-                                                <div class="mb-3">
-                                                    <div class="font-medium text-sm">{name}</div>
-                                                    { for we.sets.iter().enumerate().map(|(i, s)| {
-                                                        html! {
-                                                            <div class="text-sm text-gray-400 ml-2">
-                                                                {"Set "}{i+1}{": "}{s.weight}{"kg x "}{s.reps}
-                                                                { if s.completed { html!{<span class="text-green-400 ml-1">{" \u{2713}"}</span>} } else { html!{} } }
-                                                            </div>
-                                                        }
-                                                    })}
+                                                <div class="mb-4">
+                                                    <div class="font-bold text-sm text-gray-800 dark:text-gray-200 mb-1.5">{name}</div>
+                                                    <div class="space-y-1">
+                                                        { for we.sets.iter().enumerate().map(|(i, s)| {
+                                                            html! {
+                                                                <div class="text-xs text-gray-600 dark:text-gray-400 ml-2 flex items-center gap-2">
+                                                                    <span class="w-10 font-medium">{"Set "}{i+1}{":"}</span>
+                                                                    <span class="font-bold text-gray-800 dark:text-gray-200">{s.weight}{"kg x "}{s.reps}</span>
+                                                                    { if s.completed { html!{<span class="text-green-600 dark:text-green-400 text-sm font-bold">{" \u{2713}"}</span>} } else { html!{} } }
+                                                                </div>
+                                                            }
+                                                        })}
+                                                    </div>
                                                     { if !we.notes.is_empty() {
-                                                        html! { <div class="text-xs text-gray-500 ml-2 italic">{&we.notes}</div> }
+                                                        html! { <div class="text-xs text-gray-500 dark:text-gray-500 ml-2 mt-1 italic">{&we.notes}</div> }
                                                     } else { html! {} }}
                                                 </div>
                                             }
                                         })}
-                                        <div class="flex gap-3 mt-2">
+                                        <div class="flex gap-3 mt-4 border-t border-gray-200 dark:border-gray-700 pt-3">
                                             <button
-                                                class="text-blue-400 text-sm hover:text-blue-300"
+                                                class="text-blue-600 dark:text-blue-400 text-xs font-bold hover:underline transition-colors"
                                                 onclick={{
                                                     let editing = editing.clone();
                                                     let w = w.clone();
@@ -307,7 +310,7 @@ pub fn history_list(props: &Props) -> Html {
                                                 }}
                                             >{"Edit Workout"}</button>
                                             <button
-                                                class="text-red-400 text-sm hover:text-red-300"
+                                                class="text-red-600 dark:text-red-400 text-xs font-bold hover:underline transition-colors"
                                                 onclick={Callback::from(move |e: MouseEvent| {
                                                     e.stop_propagation();
                                                     on_delete.emit(wid2.clone());
@@ -322,7 +325,7 @@ pub fn history_list(props: &Props) -> Html {
                 }
             })}
             { if workouts.is_empty() {
-                html! { <p class="text-gray-500 text-center py-8">{"No workouts recorded yet."}</p> }
+                html! { <p class="text-gray-500 dark:text-gray-500 text-center py-12 bg-gray-50 dark:bg-gray-800/20 rounded-2xl border border-dashed border-gray-200 dark:border-gray-800 transition-colors">{"No workouts recorded yet."}</p> }
             } else { html! {} }}
         </div>
     }

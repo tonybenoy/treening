@@ -38,10 +38,10 @@ pub fn history_page() -> Html {
     };
 
     html! {
-        <div class="pb-20">
+        <div class="pb-20 transition-colors duration-200">
             <div class="px-4 pt-4 pb-2">
-                <h1 class="text-2xl font-bold mb-1">{"Workout History"}</h1>
-                <p class="text-gray-400 text-sm mb-3">{"Your past workouts."}</p>
+                <h1 class="text-2xl font-bold mb-1 text-gray-900 dark:text-gray-100">{"Workout History"}</h1>
+                <p class="text-gray-500 dark:text-gray-400 text-sm mb-3">{"Your past workouts."}</p>
             </div>
             <HistoryList
                 workouts={(*workouts).clone()}

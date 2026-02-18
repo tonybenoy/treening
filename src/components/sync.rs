@@ -239,23 +239,23 @@ pub fn sync_panel() -> Html {
     };
 
     html! {
-        <div class="bg-gray-800 rounded-lg p-4 space-y-4">
-            <h3 class="font-semibold text-lg flex items-center gap-2">
+        <div class="bg-gray-100 dark:bg-gray-800 rounded-lg p-4 space-y-4 border border-gray-200 dark:border-transparent transition-colors shadow-sm">
+            <h3 class="font-bold text-lg flex items-center gap-2 text-gray-900 dark:text-gray-100">
                 <span>{"📲"}</span> {"Sync Devices"}
             </h3>
             
             { match *mode {
                 SyncMode::Idle => html! {
                     <div class="space-y-4">
-                        <p class="text-sm text-gray-400">
+                        <p class="text-sm text-gray-600 dark:text-gray-400">
                             {"Transfer and merge data between your devices. No data is stored on any server."}
                         </p>
                         <div class="grid grid-cols-2 gap-4">
-                            <button onclick={start_sender} class="py-4 bg-blue-600 rounded-xl font-bold hover:bg-blue-700 transition flex flex-col items-center gap-2 shadow-lg shadow-blue-900/20">
+                            <button onclick={start_sender} class="py-4 bg-blue-600 text-white rounded-xl font-bold hover:bg-blue-700 transition flex flex-col items-center gap-2 shadow-lg shadow-blue-900/20">
                                 <span class="text-2xl">{"📤"}</span>
                                 <span>{"Send"}</span>
                             </button>
-                            <button onclick={start_receiver} class="py-4 bg-gray-700 rounded-xl font-bold hover:bg-gray-600 transition flex flex-col items-center gap-2">
+                            <button onclick={start_receiver} class="py-4 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 border border-gray-200 dark:border-transparent rounded-xl font-bold hover:bg-gray-50 dark:hover:bg-gray-600 transition flex flex-col items-center gap-2 shadow-sm">
                                 <span class="text-2xl">{"📥"}</span>
                                 <span>{"Receive"}</span>
                             </button>
@@ -265,11 +265,11 @@ pub fn sync_panel() -> Html {
                 SyncMode::Sender => html! {
                     <div class="space-y-4 text-center">
                         <div class="flex justify-between items-center mb-2">
-                            <span class="text-sm font-medium text-blue-400 uppercase tracking-wider">{"Sending Mode"}</span>
-                            <button onclick={let m = mode.clone(); Callback::from(move |_| m.set(SyncMode::Idle))} class="text-gray-500 hover:text-white">{"✕"}</button>
+                            <span class="text-xs font-bold text-blue-600 dark:text-blue-400 uppercase tracking-widest">{"Sending Mode"}</span>
+                            <button onclick={let m = mode.clone(); Callback::from(move |_| m.set(SyncMode::Idle))} class="text-gray-400 hover:text-gray-600 dark:hover:text-white transition-colors">{"✕"}</button>
                         </div>
 
-                        <div class="bg-blue-900/20 p-3 rounded-lg text-xs text-blue-300 text-left space-y-2">
+                        <div class="bg-blue-50 dark:bg-blue-900/20 p-3 rounded-lg text-xs text-blue-700 dark:text-blue-300 text-left space-y-2 border border-blue-100 dark:border-transparent">
                             <p class="font-bold uppercase tracking-widest text-[10px]">{"Instructions:"}</p>
                             <p>{"1. Open Treening on the other device."}</p>
                             <p>{"2. Go to Sync and tap \"Receive\"."}</p>
@@ -281,29 +281,29 @@ pub fn sync_panel() -> Html {
                                 <>
                                     {render_qr(&format!("https://tonybenoy.github.io/treening/#/settings?sync={}", *peer_id))}
                                     <div class="space-y-2">
-                                        <div class="text-xs text-gray-500 uppercase">{"Meeting ID"}</div>
+                                        <div class="text-[10px] text-gray-500 uppercase font-bold tracking-wider">{"Meeting ID"}</div>
                                         <div class="flex items-center justify-center gap-2">
-                                            <div class="text-2xl font-mono font-bold text-white tracking-widest">{&*peer_id}</div>
+                                            <div class="text-2xl font-mono font-bold text-gray-900 dark:text-white tracking-widest">{&*peer_id}</div>
                                             <button 
                                                 onclick={let id = (*peer_id).clone(); Callback::from(move |_| {
                                                     let window = gloo::utils::window();
                                                     let _ = window.navigator().clipboard().write_text(&id);
                                                 })}
-                                                class="p-2 bg-gray-700 rounded-lg hover:bg-gray-600 transition"
+                                                class="p-2 bg-gray-200 dark:bg-gray-700 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition text-gray-700 dark:text-gray-200"
                                                 title="Copy ID"
                                             >
                                                 {"📋"}
                                             </button>
                                         </div>
                                     </div>
-                                    <p class="text-sm text-gray-400 px-4">{"Scan with any camera to connect instantly, or share the ID above."}</p>
+                                    <p class="text-sm text-gray-500 dark:text-gray-400 px-4">{"Scan with any camera to connect instantly, or share the ID above."}</p>
                                 </>
                             }
                         } else {
-                            html! { <div class="py-12 animate-pulse text-blue-400">{"Generating ID..."}</div> }
+                            html! { <div class="py-12 animate-pulse text-blue-600 dark:text-blue-400 font-bold">{"Generating ID..."}</div> }
                         }}
                         
-                        <div class="text-xs font-medium py-2 px-3 bg-blue-900/30 rounded-full inline-block text-blue-300">
+                        <div class="text-[10px] font-bold py-2 px-3 bg-blue-100 dark:bg-blue-900/30 rounded-full inline-block text-blue-700 dark:text-blue-300 uppercase tracking-wider">
                             {&*connection_status}
                         </div>
                     </div>
@@ -311,11 +311,11 @@ pub fn sync_panel() -> Html {
                 SyncMode::Receiver => html! {
                     <div class="space-y-4">
                         <div class="flex justify-between items-center mb-2">
-                            <span class="text-sm font-medium text-green-400 uppercase tracking-wider">{"Receiving Mode"}</span>
-                            <button onclick={let m = mode.clone(); Callback::from(move |_| m.set(SyncMode::Idle))} class="text-gray-500 hover:text-white">{"✕"}</button>
+                            <span class="text-xs font-bold text-green-600 dark:text-green-400 uppercase tracking-widest">{"Receiving Mode"}</span>
+                            <button onclick={let m = mode.clone(); Callback::from(move |_| m.set(SyncMode::Idle))} class="text-gray-400 hover:text-gray-600 dark:hover:text-white transition-colors">{"✕"}</button>
                         </div>
 
-                        <div class="bg-green-900/20 p-3 rounded-lg text-xs text-green-300 text-left space-y-2 mb-4">
+                        <div class="bg-green-50 dark:bg-green-900/20 p-3 rounded-lg text-xs text-green-700 dark:text-green-300 text-left space-y-2 mb-4 border border-green-100 dark:border-transparent transition-colors">
                             <p class="font-bold uppercase tracking-widest text-[10px]">{"Instructions:"}</p>
                             <p>{"1. Tap \"Send\" on the device that has your data."}</p>
                             <p>{"2. Enter the Meeting ID shown on that device below."}</p>
@@ -324,11 +324,11 @@ pub fn sync_panel() -> Html {
 
                         <div class="space-y-3">
                             <label class="block">
-                                <span class="text-xs text-gray-500 uppercase mb-1 block">{"Enter Meeting ID"}</span>
+                                <span class="text-[10px] text-gray-500 uppercase font-bold tracking-wider mb-1 block">{"Enter Meeting ID"}</span>
                                 <input 
                                     type="text" 
                                     placeholder="e.g. apple-banana-cherry"
-                                    class="w-full bg-gray-900 border border-gray-700 rounded-xl py-3 px-4 text-center text-xl font-mono focus:border-green-500 outline-none transition"
+                                    class="w-full bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-xl py-3 px-4 text-center text-xl font-mono focus:border-green-500 dark:focus:border-green-500 outline-none transition-colors text-gray-900 dark:text-white"
                                     oninput={let target = target_id.clone(); Callback::from(move |e: InputEvent| {
                                         let input: web_sys::HtmlInputElement = e.target_unchecked_into();
                                         target.set(input.value());
@@ -339,19 +339,19 @@ pub fn sync_panel() -> Html {
                             <button 
                                 onclick={connect_to_peer}
                                 disabled={target_id.is_empty()}
-                                class="w-full py-4 bg-green-600 disabled:opacity-50 disabled:bg-gray-700 rounded-xl font-bold hover:bg-green-700 transition shadow-lg shadow-green-900/20"
+                                class="w-full py-4 bg-green-600 disabled:opacity-50 disabled:bg-gray-300 dark:disabled:bg-gray-700 text-white rounded-xl font-bold hover:bg-green-700 transition shadow-lg shadow-green-900/20"
                             >
                                 {"Connect & Sync"}
                             </button>
                         </div>
 
                         <div class="text-center">
-                            <div class="text-xs font-medium py-2 px-3 bg-green-900/30 rounded-full inline-block text-green-300">
+                            <div class="text-[10px] font-bold py-2 px-3 bg-green-100 dark:bg-green-900/30 rounded-full inline-block text-green-700 dark:text-green-300 uppercase tracking-wider">
                                 {&*connection_status}
                             </div>
                         </div>
                         
-                        <p class="text-xs text-gray-500 text-center italic">
+                        <p class="text-xs text-gray-500 dark:text-gray-500 text-center italic">
                             {"Tip: Once connected, your data will be merged automatically."}
                         </p>
                     </div>

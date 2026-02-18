@@ -27,20 +27,20 @@ pub fn workout_log(props: &Props) -> Html {
                 let exercises = props.workout_exercises.clone();
 
                 html! {
-                    <div class="bg-gray-800 rounded-lg p-4">
+                    <div class="bg-gray-100 dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-transparent transition-colors shadow-sm">
                         <div class="flex justify-between items-center mb-3">
-                            <h3 class="font-semibold text-lg">{name}</h3>
+                            <h3 class="font-semibold text-lg text-gray-900 dark:text-gray-100">{name}</h3>
                             <button
-                                class="text-red-400 text-sm hover:text-red-300"
+                                class="text-red-600 dark:text-red-400 text-sm hover:text-red-500 dark:hover:text-red-300 transition-colors"
                                 onclick={let on_remove = on_remove.clone(); Callback::from(move |_| on_remove.emit(ex_idx))}
                             >{"Remove"}</button>
                         </div>
                         <div class="space-y-2">
-                            <div class="grid grid-cols-12 gap-2 text-sm text-gray-400 px-1">
+                            <div class="grid grid-cols-12 gap-2 text-[10px] uppercase font-bold text-gray-500 dark:text-gray-500 px-1 tracking-wider">
                                 <div class="col-span-1">{"#"}</div>
                                 <div class="col-span-4">{"Weight (kg)"}</div>
                                 <div class="col-span-3">{"Reps"}</div>
-                                <div class="col-span-2">{"Done"}</div>
+                                <div class="col-span-2 text-center">{"Done"}</div>
                                 <div class="col-span-2"></div>
                             </div>
                             { for we.sets.iter().enumerate().map(|(set_idx, set)| {
@@ -56,15 +56,15 @@ pub fn workout_log(props: &Props) -> Html {
 
                                 html! {
                                     <div class={classes!(
-                                        "grid", "grid-cols-12", "gap-2", "items-center",
-                                        if completed { "opacity-60" } else { "" }
+                                        "grid", "grid-cols-12", "gap-2", "items-center", "transition-opacity",
+                                        if completed { "opacity-50" } else { "" }
                                     )}>
-                                        <div class="col-span-1 text-sm text-gray-400">{set_idx + 1}</div>
+                                        <div class="col-span-1 text-sm font-medium text-gray-400 dark:text-gray-500">{set_idx + 1}</div>
                                         <div class="col-span-4">
                                             <input
                                                 type="number"
                                                 step="0.5"
-                                                class="w-full px-2 py-1 bg-gray-700 rounded text-sm text-center"
+                                                class="w-full px-2 py-1 bg-white dark:bg-gray-700 border border-gray-300 dark:border-transparent rounded text-sm text-center text-gray-900 dark:text-gray-100 outline-none focus:ring-1 focus:ring-blue-500 transition-colors"
                                                 value={set.weight.to_string()}
                                                 onchange={Callback::from(move |e: Event| {
                                                     let input: web_sys::HtmlInputElement = e.target_unchecked_into();
@@ -82,7 +82,7 @@ pub fn workout_log(props: &Props) -> Html {
                                         <div class="col-span-3">
                                             <input
                                                 type="number"
-                                                class="w-full px-2 py-1 bg-gray-700 rounded text-sm text-center"
+                                                class="w-full px-2 py-1 bg-white dark:bg-gray-700 border border-gray-300 dark:border-transparent rounded text-sm text-center text-gray-900 dark:text-gray-100 outline-none focus:ring-1 focus:ring-blue-500 transition-colors"
                                                 value={set.reps.to_string()}
                                                 onchange={Callback::from(move |e: Event| {
                                                     let input: web_sys::HtmlInputElement = e.target_unchecked_into();
@@ -101,7 +101,7 @@ pub fn workout_log(props: &Props) -> Html {
                                             <input
                                                 type="checkbox"
                                                 checked={completed}
-                                                class="w-5 h-5 accent-green-500"
+                                                class="w-5 h-5 accent-blue-600 cursor-pointer"
                                                 onchange={Callback::from(move |_| {
                                                     let mut exs = exercises4.clone();
                                                     if let Some(we) = exs.get_mut(ex_idx) {
@@ -115,7 +115,7 @@ pub fn workout_log(props: &Props) -> Html {
                                         </div>
                                         <div class="col-span-2 flex justify-end">
                                             <button
-                                                class="text-red-400 text-xs hover:text-red-300"
+                                                class="text-red-600 dark:text-red-400 text-xs hover:text-red-500 dark:hover:text-red-300 p-1 transition-colors"
                                                 onclick={Callback::from(move |_| {
                                                     let mut exs = exercises5.clone();
                                                     if let Some(we) = exs.get_mut(ex_idx) {
@@ -130,7 +130,7 @@ pub fn workout_log(props: &Props) -> Html {
                             })}
                         </div>
                         <button
-                            class="mt-2 text-sm text-blue-400 hover:text-blue-300"
+                            class="mt-3 text-sm font-medium text-blue-600 dark:text-blue-400 hover:underline transition-colors"
                             onclick={{
                                 let exercises = exercises.clone();
                                 let on_update = on_update.clone();
@@ -155,7 +155,7 @@ pub fn workout_log(props: &Props) -> Html {
             })}
             { if props.workout_exercises.is_empty() {
                 html! {
-                    <p class="text-gray-500 text-center py-8">{"No exercises added yet. Tap \"+ Add Exercise\" to start."}</p>
+                    <p class="text-gray-500 dark:text-gray-500 text-center py-12 bg-gray-50 dark:bg-gray-800/20 rounded-2xl border border-dashed border-gray-200 dark:border-gray-700 transition-colors">{"No exercises added yet. Tap \"+ Add Exercise\" to start."}</p>
                 }
             } else {
                 html! {}

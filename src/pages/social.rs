@@ -187,8 +187,8 @@ pub fn social_page() -> Html {
     html! {
         <div class="px-4 py-4 pb-24 space-y-6">
             <div class="flex justify-between items-center">
-                <h1 class="text-2xl font-bold">{"Community"}</h1>
-                <div class="text-[10px] uppercase font-bold px-2 py-1 bg-green-900/30 text-green-400 rounded-full">
+                <h1 class="text-2xl font-bold text-gray-900 dark:text-gray-100">{"Community"}</h1>
+                <div class="text-[10px] uppercase font-bold px-2 py-1 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 rounded-full transition-colors">
                     {&*status}
                 </div>
             </div>
@@ -199,7 +199,7 @@ pub fn social_page() -> Html {
                     <div>
                         <div class="text-xs opacity-70 uppercase font-bold tracking-wider">{"My Stats (This Week)"}</div>
                         <input 
-                            class="text-xl font-bold bg-transparent border-none outline-none focus:ring-0 p-0 w-full"
+                            class="text-xl font-bold bg-transparent border-none outline-none focus:ring-0 p-0 w-full text-white placeholder-white/50"
                             value={user_config.nickname.clone()}
                             onchange={let uc = user_config.clone(); Callback::from(move |e: Event| {
                                 let input: web_sys::HtmlInputElement = e.target_unchecked_into();
@@ -241,11 +241,11 @@ pub fn social_page() -> Html {
 
             // Ranking / Friends List
             <div class="space-y-4">
-                <div class="flex justify-between items-center">
-                    <h2 class="text-lg font-bold">{"Friend Ranking"}</h2>
+                <div class="flex justify-between items-center px-1">
+                    <h2 class="text-lg font-bold text-gray-900 dark:text-gray-100">{"Friend Ranking"}</h2>
                     <button 
                         onclick={let s = show_add_friend.clone(); Callback::from(move |_| s.set(!*s))}
-                        class="text-sm px-3 py-1 bg-gray-800 rounded-full hover:bg-gray-700"
+                        class="text-sm px-3 py-1 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 border border-gray-200 dark:border-transparent transition-colors"
                     >
                         {if *show_add_friend { "Cancel" } else { "+ Add Friend" }}
                     </button>
@@ -253,11 +253,11 @@ pub fn social_page() -> Html {
 
                 { if *show_add_friend {
                     html! {
-                        <div class="bg-gray-800 p-4 rounded-xl space-y-3 border border-blue-500/30">
+                        <div class="bg-gray-100 dark:bg-gray-800 p-4 rounded-xl space-y-3 border border-blue-500/30 transition-colors">
                             <input 
                                 type="text"
                                 placeholder="Enter Friend Code"
-                                class="w-full bg-gray-900 border border-gray-700 rounded-lg p-2 text-sm font-mono outline-none focus:border-blue-500"
+                                class="w-full bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg p-2 text-sm font-mono outline-none focus:border-blue-500 text-gray-900 dark:text-white"
                                 oninput={let input = friend_id_input.clone(); Callback::from(move |e: InputEvent| {
                                     let i: web_sys::HtmlInputElement = e.target_unchecked_into();
                                     input.set(i.value());
@@ -265,7 +265,7 @@ pub fn social_page() -> Html {
                             />
                             <button 
                                 onclick={on_add_friend}
-                                class="w-full py-2 bg-blue-600 rounded-lg font-bold text-sm"
+                                class="w-full py-2 bg-blue-600 text-white rounded-lg font-bold text-sm hover:bg-blue-700 transition-colors"
                             >{"Add Friend"}</button>
                         </div>
                     }
@@ -274,28 +274,28 @@ pub fn social_page() -> Html {
                 <div class="space-y-2">
                     { if friends.is_empty() {
                         html! {
-                            <div class="text-center py-12 bg-gray-800/20 rounded-2xl border border-dashed border-gray-700">
+                            <div class="text-center py-12 bg-gray-50 dark:bg-gray-800/20 rounded-2xl border border-dashed border-gray-200 dark:border-gray-700 transition-colors">
                                 <span class="text-3xl block mb-2">{"👋"}</span>
                                 <p class="text-sm text-gray-500">{"No friends added yet."}</p>
-                                <p class="text-xs text-gray-600">{"Share your code or add a friend to see rankings."}</p>
+                                <p class="text-xs text-gray-600 dark:text-gray-500">{"Share your code or add a friend to see rankings."}</p>
                             </div>
                         }
                     } else {
                         html! {
                             { for friends.iter().map(|f| {
                                 html! {
-                                    <div class="bg-gray-800 p-3 rounded-xl flex justify-between items-center">
+                                    <div class="bg-gray-100 dark:bg-gray-800 p-3 rounded-xl flex justify-between items-center border border-gray-200 dark:border-transparent transition-colors">
                                         <div class="flex items-center gap-3">
-                                            <div class="w-10 h-10 bg-gray-700 rounded-full flex items-center justify-center font-bold">
+                                            <div class="w-10 h-10 bg-blue-100 dark:bg-gray-700 text-blue-600 dark:text-gray-100 rounded-full flex items-center justify-center font-bold">
                                                 {&f.name[..1]}
                                             </div>
                                             <div>
-                                                <div class="font-bold">{&f.name}</div>
-                                                <div class="text-[10px] text-gray-500 font-mono">{&f.id}</div>
+                                                <div class="font-bold text-gray-800 dark:text-gray-100">{&f.name}</div>
+                                                <div class="text-[10px] text-gray-500 dark:text-gray-500 font-mono">{&f.id}</div>
                                             </div>
                                         </div>
                                         <div class="text-right">
-                                            <div class="text-xs font-bold text-blue-400">{"Offline"}</div>
+                                            <div class="text-xs font-bold text-blue-600 dark:text-blue-400">{"Offline"}</div>
                                             <div class="text-[10px] text-gray-500">{"Last seen: -"}</div>
                                         </div>
                                     </div>
@@ -307,7 +307,7 @@ pub fn social_page() -> Html {
             </div>
 
             // Explanation
-            <div class="bg-gray-900/50 p-4 rounded-xl border border-gray-800">
+            <div class="bg-gray-50 dark:bg-gray-900/50 p-4 rounded-xl border border-gray-200 dark:border-gray-800 transition-colors">
                 <h3 class="text-xs font-bold uppercase tracking-widest text-gray-500 mb-2">{"How it works"}</h3>
                 <p class="text-[11px] text-gray-500 leading-relaxed">
                     {"Social features are purely Peer-to-Peer. Your stats are only visible to friends when you both have the app open at the same time. No data is ever stored on a social server."}

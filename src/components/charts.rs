@@ -12,10 +12,10 @@ pub struct StatCardProps {
 #[function_component(StatCard)]
 pub fn stat_card(props: &StatCardProps) -> Html {
     html! {
-        <div class="bg-gray-800 rounded-xl p-4 flex flex-col items-center gap-1">
+        <div class="bg-gray-100 dark:bg-gray-800 rounded-xl p-4 flex flex-col items-center gap-1 border border-gray-200 dark:border-transparent transition-colors">
             <span class="text-2xl">{&props.icon}</span>
-            <span class="text-xl font-bold text-white">{&props.value}</span>
-            <span class="text-xs text-gray-400 text-center">{&props.label}</span>
+            <span class="text-xl font-bold text-gray-900 dark:text-gray-100">{&props.value}</span>
+            <span class="text-xs text-gray-500 dark:text-gray-400 text-center">{&props.label}</span>
         </div>
     }
 }
@@ -37,7 +37,7 @@ pub struct BarChartProps {
 pub fn bar_chart(props: &BarChartProps) -> Html {
     if props.data.is_empty() {
         return html! {
-            <div class="text-gray-500 text-center py-8 text-sm">{"No data yet"}</div>
+            <div class="text-gray-500 dark:text-gray-400 text-center py-8 text-sm transition-colors">{"No data yet"}</div>
         };
     }
 
@@ -62,7 +62,7 @@ pub fn bar_chart(props: &BarChartProps) -> Html {
     html! {
         <div class="w-full">
             if !props.title.is_empty() {
-                <h3 class="text-sm font-semibold text-gray-300 mb-2">{&props.title}</h3>
+                <h3 class="text-sm font-semibold text-gray-600 dark:text-gray-300 mb-2 transition-colors">{&props.title}</h3>
             }
             <svg viewBox={viewbox} class="w-full" preserveAspectRatio="xMidYMid meet">
                 // baseline
@@ -70,7 +70,7 @@ pub fn bar_chart(props: &BarChartProps) -> Html {
                       y1={format!("{}", padding_top + draw_h)}
                       x2={format!("{}", padding_left + draw_w)}
                       y2={format!("{}", padding_top + draw_h)}
-                      stroke="#4b5563" stroke-width="1"/>
+                      stroke="currentColor" stroke-width="1" class="text-gray-300 dark:text-gray-600"/>
                 { for props.data.iter().enumerate().map(|(i, (label, val))| {
                     let bar_h = (val / max_val) * draw_h;
                     let x = padding_left + bar_gap + (i as f64) * (bar_w + bar_gap);
@@ -89,10 +89,10 @@ pub fn bar_chart(props: &BarChartProps) -> Html {
                                   width={format!("{}", bar_w)} height={format!("{}", bar_h)}
                                   fill={props.color.to_string()} rx="2"/>
                             <text x={format!("{}", label_x)} y={format!("{}", label_y)}
-                                  text-anchor="middle" fill="#9ca3af" font-size="9">{label}</text>
+                                  text-anchor="middle" fill="currentColor" font-size="9" class="text-gray-500 dark:text-gray-400">{label}</text>
                             if *val > 0.0 {
                                 <text x={format!("{}", label_x)} y={format!("{}", val_y)}
-                                      text-anchor="middle" fill="#d1d5db" font-size="9">{val_text}</text>
+                                      text-anchor="middle" fill="currentColor" font-size="9" class="text-gray-700 dark:text-gray-300">{val_text}</text>
                             }
                         </>
                     }
@@ -119,7 +119,7 @@ pub struct LineChartProps {
 pub fn line_chart(props: &LineChartProps) -> Html {
     if props.data.is_empty() {
         return html! {
-            <div class="text-gray-500 text-center py-8 text-sm">{"No data yet"}</div>
+            <div class="text-gray-500 dark:text-gray-400 text-center py-8 text-sm transition-colors">{"No data yet"}</div>
         };
     }
 
@@ -160,7 +160,7 @@ pub fn line_chart(props: &LineChartProps) -> Html {
     html! {
         <div class="w-full">
             if !props.title.is_empty() {
-                <h3 class="text-sm font-semibold text-gray-300 mb-2">{&props.title}</h3>
+                <h3 class="text-sm font-semibold text-gray-600 dark:text-gray-300 mb-2 transition-colors">{&props.title}</h3>
             }
             <svg viewBox={viewbox} class="w-full" preserveAspectRatio="xMidYMid meet">
                 // baseline
@@ -168,7 +168,7 @@ pub fn line_chart(props: &LineChartProps) -> Html {
                       y1={format!("{}", padding_top + draw_h)}
                       x2={format!("{}", padding_left + draw_w)}
                       y2={format!("{}", padding_top + draw_h)}
-                      stroke="#4b5563" stroke-width="1"/>
+                      stroke="currentColor" stroke-width="1" class="text-gray-300 dark:text-gray-600"/>
                 // line
                 <polyline points={polyline_points} fill="none"
                           stroke={props.color.to_string()} stroke-width="2"
@@ -190,9 +190,9 @@ pub fn line_chart(props: &LineChartProps) -> Html {
                             <circle cx={format!("{}", x)} cy={format!("{}", y)} r="3"
                                     fill={props.color.to_string()}/>
                             <text x={format!("{}", x)} y={format!("{}", label_y)}
-                                  text-anchor="middle" fill="#9ca3af" font-size="9">{label}</text>
+                                  text-anchor="middle" fill="currentColor" font-size="9" class="text-gray-500 dark:text-gray-400">{label}</text>
                             <text x={format!("{}", x)} y={format!("{}", y - 6.0)}
-                                  text-anchor="middle" fill="#d1d5db" font-size="8">{val_text}</text>
+                                  text-anchor="middle" fill="currentColor" font-size="8" class="text-gray-700 dark:text-gray-300">{val_text}</text>
                         </>
                     }
                 })}
@@ -215,7 +215,7 @@ pub struct HorizontalBarChartProps {
 pub fn horizontal_bar_chart(props: &HorizontalBarChartProps) -> Html {
     if props.data.is_empty() {
         return html! {
-            <div class="text-gray-500 text-center py-8 text-sm">{"No data yet"}</div>
+            <div class="text-gray-500 dark:text-gray-400 text-center py-8 text-sm transition-colors">{"No data yet"}</div>
         };
     }
 
@@ -225,7 +225,7 @@ pub fn horizontal_bar_chart(props: &HorizontalBarChartProps) -> Html {
     html! {
         <div class="w-full">
             if !props.title.is_empty() {
-                <h3 class="text-sm font-semibold text-gray-300 mb-2">{&props.title}</h3>
+                <h3 class="text-sm font-semibold text-gray-600 dark:text-gray-300 mb-2 transition-colors">{&props.title}</h3>
             }
             <div class="space-y-2">
                 { for props.data.iter().map(|(label, val, color)| {
@@ -238,8 +238,8 @@ pub fn horizontal_bar_chart(props: &HorizontalBarChartProps) -> Html {
                     };
                     html! {
                         <div class="flex items-center gap-2">
-                            <span class="text-xs text-gray-400 w-20 text-right">{label}</span>
-                            <div class="flex-1 bg-gray-700 rounded h-5 overflow-hidden">
+                            <span class="text-xs text-gray-500 dark:text-gray-400 w-20 text-right transition-colors">{label}</span>
+                            <div class="flex-1 bg-gray-200 dark:bg-gray-700 rounded h-5 overflow-hidden transition-colors">
                                 <div class="h-full rounded flex items-center pl-1"
                                      style={format!("{}; background-color: {}", width_style, color)}>
                                     if pct > 15.0 {
@@ -248,7 +248,7 @@ pub fn horizontal_bar_chart(props: &HorizontalBarChartProps) -> Html {
                                 </div>
                             </div>
                             if pct <= 15.0 {
-                                <span class="text-xs text-gray-400">{&count}</span>
+                                <span class="text-xs text-gray-600 dark:text-gray-400 transition-colors">{&count}</span>
                             }
                         </div>
                     }

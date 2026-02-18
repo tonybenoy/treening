@@ -187,20 +187,20 @@ pub fn analytics_page() -> Html {
         Callback::from(move |_: MouseEvent| active_tab.set(tab))
     };
 
-    let tab_class = |tab: u8| -> &'static str {
+    let tab_class = |tab: u8| -> String {
         if *active_tab == tab {
-            "flex-1 py-2 text-center text-sm font-semibold text-blue-400 border-b-2 border-blue-400"
+            "flex-1 py-2 text-center text-sm font-bold text-blue-600 dark:text-blue-400 border-b-2 border-blue-600 dark:border-blue-400 transition-colors".to_string()
         } else {
-            "flex-1 py-2 text-center text-sm font-semibold text-gray-500 border-b-2 border-transparent hover:text-gray-300"
+            "flex-1 py-2 text-center text-sm font-semibold text-gray-500 dark:text-gray-500 border-b-2 border-transparent hover:text-gray-700 dark:hover:text-gray-300 transition-colors".to_string()
         }
     };
 
     html! {
         <div class="px-4 py-4 space-y-4">
-            <h1 class="text-2xl font-bold">{"Analytics"}</h1>
+            <h1 class="text-2xl font-bold text-gray-900 dark:text-gray-100">{"Analytics"}</h1>
 
             // Tab bar
-            <div class="flex border-b border-gray-700">
+            <div class="flex border-b border-gray-200 dark:border-gray-700">
                 <button class={tab_class(0)} onclick={tab_click(0)}>{"Overview"}</button>
                 <button class={tab_class(1)} onclick={tab_click(1)}>{"Progress"}</button>
             </div>
@@ -230,10 +230,10 @@ fn overview_tab(props: &OverviewProps) -> Html {
 
     if workouts.is_empty() {
         return html! {
-            <div class="text-center text-gray-500 py-12">
+            <div class="text-center py-12 bg-gray-50 dark:bg-gray-800/20 rounded-2xl border border-dashed border-gray-200 dark:border-gray-700 transition-colors">
                 <p class="text-4xl mb-4">{"📊"}</p>
-                <p class="text-lg">{"No workouts yet"}</p>
-                <p class="text-sm mt-1">{"Complete your first workout to see analytics here."}</p>
+                <p class="text-lg font-bold text-gray-900 dark:text-gray-100">{"No workouts yet"}</p>
+                <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">{"Complete your first workout to see analytics here."}</p>
             </div>
         };
     }
@@ -321,31 +321,31 @@ fn overview_tab(props: &OverviewProps) -> Html {
             </div>
 
             // Workouts per week
-            <div class="bg-gray-800 rounded-xl p-4">
+            <div class="bg-gray-100 dark:bg-gray-800 rounded-xl p-4 border border-gray-200 dark:border-transparent transition-colors shadow-sm">
                 <BarChart data={workouts_per_week} title="Workouts Per Week" height={180} color="#3b82f6" />
             </div>
 
             // Volume over time
-            <div class="bg-gray-800 rounded-xl p-4">
+            <div class="bg-gray-100 dark:bg-gray-800 rounded-xl p-4 border border-gray-200 dark:border-transparent transition-colors shadow-sm">
                 <LineChart data={volume_per_week} title="Volume Per Week (kg)" height={180} color="#10b981" />
             </div>
 
             // Muscle group distribution
-            <div class="bg-gray-800 rounded-xl p-4">
+            <div class="bg-gray-100 dark:bg-gray-800 rounded-xl p-4 border border-gray-200 dark:border-transparent transition-colors shadow-sm">
                 <HorizontalBarChart data={muscle_data} title="Muscle Group Distribution" />
             </div>
 
             // Personal Records
             if !prs.is_empty() {
-                <div class="bg-gray-800 rounded-xl p-4">
-                    <h3 class="text-sm font-semibold text-gray-300 mb-3">{"Personal Records"}</h3>
+                <div class="bg-gray-100 dark:bg-gray-800 rounded-xl p-4 border border-gray-200 dark:border-transparent transition-colors shadow-sm">
+                    <h3 class="text-sm font-bold text-gray-900 dark:text-gray-100 mb-3 uppercase tracking-wider">{"Personal Records"}</h3>
                     <div class="space-y-2">
                         { for prs.iter().map(|pr| {
                             html! {
                                 <div class="flex justify-between items-center text-sm">
-                                    <span class="text-gray-300 truncate mr-2">{&pr.exercise_name}</span>
+                                    <span class="text-gray-700 dark:text-gray-300 truncate mr-2">{&pr.exercise_name}</span>
                                     <div class="flex items-center gap-2 flex-shrink-0">
-                                        <span class="text-yellow-400 font-bold">{format!("{:.1} kg", pr.max_weight)}</span>
+                                        <span class="text-yellow-600 dark:text-yellow-400 font-bold">{format!("{:.1} kg", pr.max_weight)}</span>
                                         <span class="text-gray-500 text-xs">{&pr.date}</span>
                                     </div>
                                 </div>
@@ -377,10 +377,10 @@ fn progress_tab(props: &ProgressProps) -> Html {
 
     if workouts.is_empty() {
         return html! {
-            <div class="text-center text-gray-500 py-12">
+            <div class="text-center py-12 bg-gray-50 dark:bg-gray-800/20 rounded-2xl border border-dashed border-gray-200 dark:border-gray-700 transition-colors">
                 <p class="text-4xl mb-4">{"📈"}</p>
-                <p class="text-lg">{"No workouts yet"}</p>
-                <p class="text-sm mt-1">{"Complete workouts to track your progress."}</p>
+                <p class="text-lg font-bold text-gray-900 dark:text-gray-100">{"No workouts yet"}</p>
+                <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">{"Complete workouts to track your progress."}</p>
             </div>
         };
     }
@@ -520,16 +520,16 @@ fn progress_tab(props: &ProgressProps) -> Html {
                 .collect();
 
             html! {
-                <div class="bg-gray-800 rounded-xl p-4">
+                <div class="bg-gray-100 dark:bg-gray-800 rounded-xl p-4 border border-gray-200 dark:border-transparent transition-colors shadow-sm">
                     <div class="flex justify-between items-start mb-2">
-                        <h4 class="font-medium text-gray-200">{&routine.name}</h4>
-                        <span class="text-xs text-gray-500">{format!("{} sessions", count)}</span>
+                        <h4 class="font-bold text-gray-900 dark:text-gray-100">{&routine.name}</h4>
+                        <span class="text-xs text-gray-500 font-medium">{format!("{} sessions", count)}</span>
                     </div>
-                    <div class="text-xs text-gray-500 mb-3">
+                    <div class="text-xs text-gray-500 dark:text-gray-500 mb-3 font-mono">
                         {"Last: "}{last_date}
                     </div>
                     if !exercise_trends.is_empty() {
-                        <div class="space-y-1">
+                        <div class="space-y-1.5 border-t border-gray-200 dark:border-gray-700 pt-3">
                             { for exercise_trends }
                         </div>
                     }
@@ -541,9 +541,9 @@ fn progress_tab(props: &ProgressProps) -> Html {
     html! {
         <div class="space-y-6">
             // Exercise progress selector
-            <div class="bg-gray-800 rounded-xl p-4 space-y-4">
-                <h3 class="text-sm font-semibold text-gray-300">{"Exercise Progress"}</h3>
-                <select class="w-full bg-gray-700 text-white rounded-lg px-3 py-2 text-sm"
+            <div class="bg-gray-100 dark:bg-gray-800 rounded-xl p-4 space-y-4 border border-gray-200 dark:border-transparent transition-colors shadow-sm">
+                <h3 class="text-sm font-bold text-gray-900 dark:text-gray-100 uppercase tracking-wider">{"Exercise Progress"}</h3>
+                <select class="w-full bg-white dark:bg-gray-700 text-gray-900 dark:text-white border border-gray-200 dark:border-transparent rounded-lg px-3 py-2 text-sm outline-none focus:ring-1 focus:ring-blue-500 transition-colors"
                         onchange={on_select}>
                     { for seen_ids.iter().map(|id| {
                         let name = find_exercise_name(exercises, id);
@@ -566,7 +566,7 @@ fn progress_tab(props: &ProgressProps) -> Html {
             // Routine tracking
             if !routine_stats.is_empty() {
                 <div class="space-y-3">
-                    <h3 class="text-sm font-semibold text-gray-300">{"Routine Tracking"}</h3>
+                    <h3 class="text-sm font-bold text-gray-900 dark:text-gray-100 px-1 uppercase tracking-wider">{"Routine Tracking"}</h3>
                     { for routine_stats }
                 </div>
             }

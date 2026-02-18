@@ -67,17 +67,18 @@ const FAQS: &[FaqItem] = &[
 #[function_component(FaqPage)]
 pub fn faq_page() -> Html {
     html! {
-        <div class="px-4 py-4 pb-24 max-w-lg mx-auto space-y-4">
-            <h1 class="text-2xl font-bold">{"FAQ"}</h1>
-            <p class="text-gray-400 text-sm">{"Frequently asked questions about Treening."}</p>
+        <div class="px-4 py-4 pb-24 max-w-lg mx-auto space-y-4 transition-colors duration-200">
+            <h1 class="text-2xl font-bold text-gray-900 dark:text-gray-100">{"FAQ"}</h1>
+            <p class="text-gray-500 dark:text-gray-400 text-sm">{"Frequently asked questions about Treening."}</p>
             <div class="space-y-3">
                 { for FAQS.iter().map(|faq| {
                     html! {
-                        <details class="bg-gray-800 rounded-lg">
-                            <summary class="px-4 py-3 cursor-pointer font-medium hover:text-blue-400 transition">
+                        <details class="group bg-gray-100 dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-transparent transition-colors shadow-sm">
+                            <summary class="px-4 py-3 cursor-pointer font-bold text-gray-800 dark:text-gray-200 hover:text-blue-600 dark:hover:text-blue-400 transition-colors list-none flex justify-between items-center">
                                 {faq.question}
+                                <span class="text-gray-400 group-open:rotate-180 transition-transform">{"\u{25be}"}</span>
                             </summary>
-                            <div class="px-4 pb-3 text-sm text-gray-400 leading-relaxed">
+                            <div class="px-4 pb-4 text-sm text-gray-600 dark:text-gray-400 leading-relaxed border-t border-gray-200 dark:border-gray-700 pt-3 mt-1">
                                 {faq.answer}
                             </div>
                         </details>

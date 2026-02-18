@@ -136,11 +136,11 @@ pub fn workout_page() -> Html {
 
     if *show_exercise_picker {
         return html! {
-            <div class="pb-20">
+            <div class="pb-20 transition-colors duration-200">
                 <div class="px-4 pt-4 pb-2 flex justify-between items-center">
-                    <h2 class="text-xl font-bold">{"Add Exercise"}</h2>
+                    <h2 class="text-xl font-bold text-gray-900 dark:text-gray-100">{"Add Exercise"}</h2>
                     <button
-                        class="text-gray-400 hover:text-gray-200"
+                        class="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 font-medium"
                         onclick={let s = show_exercise_picker.clone(); Callback::from(move |_| s.set(false))}
                     >{"Cancel"}</button>
                 </div>
@@ -155,12 +155,12 @@ pub fn workout_page() -> Html {
     }
 
     html! {
-        <div class="px-4 py-4 pb-24 space-y-4">
+        <div class="px-4 py-4 pb-24 space-y-6 transition-colors duration-200">
             <div class="flex justify-between items-center">
                 <div>
                     <input
                         type="text"
-                        class="text-2xl font-bold bg-transparent border-b border-gray-700 focus:border-blue-500 focus:outline-none"
+                        class="text-2xl font-bold bg-transparent border-b border-gray-200 dark:border-gray-700 focus:border-blue-500 focus:outline-none text-gray-900 dark:text-gray-100 transition-colors"
                         value={(*workout_name).clone()}
                         onchange={let n = workout_name.clone(); Callback::from(move |e: Event| {
                             let input: web_sys::HtmlInputElement = e.target_unchecked_into();
@@ -170,7 +170,7 @@ pub fn workout_page() -> Html {
                 </div>
                 { if *workout_active {
                     html! {
-                        <div class="text-xl font-mono text-blue-400">
+                        <div class="text-xl font-mono text-blue-600 dark:text-blue-400 font-bold">
                             {format_time(*elapsed_seconds)}
                         </div>
                     }
@@ -185,14 +185,14 @@ pub fn workout_page() -> Html {
             />
 
             <button
-                class="w-full py-3 bg-gray-800 rounded-lg text-blue-400 font-medium hover:bg-gray-700 border border-gray-700 border-dashed"
+                class="w-full py-4 bg-gray-100 dark:bg-gray-800/50 rounded-xl text-blue-600 dark:text-blue-400 font-bold hover:bg-gray-200 dark:hover:bg-gray-800 border border-gray-200 dark:border-gray-700 border-dashed transition-all"
                 onclick={let s = show_exercise_picker.clone(); Callback::from(move |_| s.set(true))}
             >{"+ Add Exercise"}</button>
 
             { if !workout_exercises.is_empty() {
                 html! {
                     <button
-                        class="w-full py-3 bg-green-700 rounded-lg font-bold text-lg hover:bg-green-600"
+                        class="w-full py-4 bg-green-600 text-white rounded-xl font-bold text-lg hover:bg-green-700 shadow-lg shadow-green-900/20 transition-all"
                         onclick={on_save}
                     >{"Finish & Save Workout"}</button>
                 }
