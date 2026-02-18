@@ -1,5 +1,6 @@
 use yew::prelude::*;
 use crate::components::settings::SettingsPanel;
+use crate::components::sync::SyncPanel;
 use crate::components::custom_exercise::CustomExerciseForm;
 use crate::models::Exercise;
 use crate::storage;
@@ -44,6 +45,8 @@ pub fn settings_page() -> Html {
     html! {
         <div class="px-4 py-4 pb-20 space-y-6">
             <h1 class="text-2xl font-bold">{"Settings"}</h1>
+
+            <SyncPanel />
 
             <SettingsPanel on_import_complete={on_import_complete} />
 

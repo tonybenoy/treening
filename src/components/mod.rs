@@ -5,5 +5,6 @@ pub mod workout_log;
 pub mod history;
 pub mod routine_editor;
 pub mod settings;
+pub mod sync;
 pub mod custom_exercise;
 pub mod charts;
