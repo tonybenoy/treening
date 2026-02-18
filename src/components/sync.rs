@@ -48,6 +48,56 @@ pub fn sync_panel() -> Html {
     
     let peer_ref = use_mut_ref(|| None::<Peer>);
 
+    // Handle Smart Link on mount
+    {
+        let mode = mode.clone();
+        let target_id = target_id.clone();
+        let connection_status = connection_status.clone();
+        let peer_ref = peer_ref.clone();
+        
+        use_effect_with((), move |_| {
+            let window = gloo::utils::window();
+            let location = window.location();
+            if let Ok(search) = location.search() {
+                let params = web_sys::UrlSearchParams::new_with_str(&search).unwrap();
+                if let Some(sync_id) = params.get("sync") {
+                    mode.set(SyncMode::Receiver);
+                    target_id.set(sync_id.clone());
+                    
+                    // Trigger connection after a short delay to ensure PeerJS is ready
+                    let status = connection_status.clone();
+                    let id = sync_id.clone();
+                    let pr = peer_ref.clone();
+                    
+                    gloo::timers::callback::Timeout::new(500, move || {
+                        status.set("Auto-connecting...".to_string());
+                        let peer = Peer::new(None);
+                        let pr_c = pr.clone();
+                        let status_c = status.clone();
+                        let target_id_c = id.clone();
+
+                        let on_open = Closure::wrap(Box::new(move |_id: String| {
+                            let conn = pr_c.borrow().as_ref().unwrap().connect(&target_id_c);
+                            let sc = status_c.clone();
+                            let on_data = Closure::wrap(Box::new(move |data: String| {
+                                match storage::merge_all_data(&data) {
+                                    Ok(_) => sc.set("Data merged successfully!".to_string()),
+                                    Err(e) => sc.set(format!("Error: {}", e)),
+                                }
+                            }) as Box<dyn FnMut(String)>);
+                            conn.on_conn("data", on_data.as_ref().unchecked_ref());
+                            on_data.forget();
+                        }) as Box<dyn FnMut(String)>);
+                        peer.on("open", on_open.as_ref().unchecked_ref());
+                        on_open.forget();
+                        *pr.borrow_mut() = Some(peer);
+                    }).forget();
+                }
+            }
+            || ()
+        });
+    }
+
     let start_sender = {
         let mode = mode.clone();
         let status = connection_status.clone();
@@ -229,12 +279,24 @@ pub fn sync_panel() -> Html {
                         { if !peer_id.is_empty() {
                             html! {
                                 <>
-                                    {render_qr(&peer_id)}
-                                    <div class="space-y-1">
+                                    {render_qr(&format!("https://tonybenoy.github.io/treening/#/settings?sync={}", *peer_id))}
+                                    <div class="space-y-2">
                                         <div class="text-xs text-gray-500 uppercase">{"Meeting ID"}</div>
-                                        <div class="text-2xl font-mono font-bold text-white tracking-widest">{&*peer_id}</div>
+                                        <div class="flex items-center justify-center gap-2">
+                                            <div class="text-2xl font-mono font-bold text-white tracking-widest">{&*peer_id}</div>
+                                            <button 
+                                                onclick={let id = (*peer_id).clone(); Callback::from(move |_| {
+                                                    let window = gloo::utils::window();
+                                                    let _ = window.navigator().clipboard().write_text(&id);
+                                                })}
+                                                class="p-2 bg-gray-700 rounded-lg hover:bg-gray-600 transition"
+                                                title="Copy ID"
+                                            >
+                                                {"📋"}
+                                            </button>
+                                        </div>
                                     </div>
-                                    <p class="text-sm text-gray-400">{"Scan this QR or enter the ID on your other device."}</p>
+                                    <p class="text-sm text-gray-400 px-4">{"Scan with any camera to connect instantly, or share the ID above."}</p>
                                 </>
                             }
                         } else {

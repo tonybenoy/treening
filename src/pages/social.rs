@@ -81,6 +81,24 @@ pub fn social_page() -> Html {
         let friends = friends.clone();
         
         use_effect_with((), move |_| {
+            // Handle Auto-Join from URL
+            let window = gloo::utils::window();
+            if let Ok(search) = window.location().search() {
+                let params = web_sys::UrlSearchParams::new_with_str(&search).unwrap();
+                if let Some(friend_id) = params.get("join") {
+                    let mut current = storage::load_friends();
+                    if !current.iter().any(|f| f.id == friend_id) {
+                        current.push(Friend {
+                            id: friend_id.clone(),
+                            name: "New Friend".to_string(),
+                            last_stats: None,
+                        });
+                        storage::save_friends(&current);
+                        friends.set(current);
+                    }
+                }
+            }
+
             let peer = Peer::new(Some(&user_config.peer_id));
             let status_c = status.clone();
             let my_stats_c = my_stats.clone();
@@ -183,7 +201,7 @@ pub fn social_page() -> Html {
                             })}
                         />
                     </div>
-                    {render_qr(&user_config.peer_id)}
+                    {render_qr(&format!("https://tonybenoy.github.io/treening/#/social?join={}", user_config.peer_id))}
                 </div>
                 
                 <div class="grid grid-cols-2 gap-4">
@@ -196,8 +214,19 @@ pub fn social_page() -> Html {
                         <div class="text-xl font-bold">{format!("{:.0}", my_stats.total_volume_kg)}</div>
                     </div>
                 </div>
-                <div class="mt-3 text-[10px] opacity-50 font-mono">
-                    {"Friend Code: "}{&user_config.peer_id}
+                <div class="mt-3 flex items-center justify-between">
+                    <div class="text-[10px] opacity-50 font-mono">
+                        {"Friend Code: "}{&user_config.peer_id}
+                    </div>
+                    <button 
+                        onclick={let id = user_config.peer_id.clone(); Callback::from(move |_| {
+                            let window = gloo::utils::window();
+                            let _ = window.navigator().clipboard().write_text(&id);
+                        })}
+                        class="text-[10px] bg-white/10 px-2 py-1 rounded hover:bg-white/20 transition"
+                    >
+                        {"Copy Link"}
+                    </button>
                 </div>
             </div>
 
