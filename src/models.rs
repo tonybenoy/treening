@@ -114,6 +114,8 @@ pub struct AppData {
     pub workouts: Vec<Workout>,
     pub routines: Vec<Routine>,
     pub custom_exercises: Vec<Exercise>,
+    pub friends: Vec<Friend>,
+    pub user_config: Option<UserConfig>,
 }
 
 #[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
@@ -142,6 +144,8 @@ impl Default for AppData {
             workouts: Vec::new(),
             routines: Vec::new(),
             custom_exercises: Vec::new(),
+            friends: Vec::new(),
+            user_config: None,
         }
     }
 }

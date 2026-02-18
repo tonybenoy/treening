@@ -59,6 +59,8 @@ pub fn export_all_data() -> String {
         workouts: load_workouts(),
         routines: load_routines(),
         custom_exercises: load_custom_exercises(),
+        friends: load_friends(),
+        user_config: Some(load_user_config()),
     };
     serde_json::to_string_pretty(&data).unwrap_or_default()
 }
@@ -68,6 +70,10 @@ pub fn import_all_data(json: &str) -> Result<(), String> {
     save_workouts(&data.workouts);
     save_routines(&data.routines);
     save_custom_exercises(&data.custom_exercises);
+    save_friends(&data.friends);
+    if let Some(config) = data.user_config {
+        save_user_config(&config);
+    }
     Ok(())
 }
 
@@ -100,6 +106,24 @@ pub fn merge_all_data(json: &str) -> Result<(), String> {
         }
     }
     save_custom_exercises(&current_custom);
+
+    // Merge Friends (deduplicate by ID)
+    let mut current_friends = load_friends();
+    for incoming_f in incoming.friends {
+        if !current_friends.iter().any(|f| f.id == incoming_f.id) {
+            current_friends.push(incoming_f);
+        }
+    }
+    save_friends(&current_friends);
+
+    // Merge User Config (keep local peer_id, but take incoming nickname if it's not default)
+    if let Some(incoming_config) = incoming.user_config {
+        let mut local_config = load_user_config();
+        if incoming_config.nickname != "Athlete" {
+            local_config.nickname = incoming_config.nickname;
+        }
+        save_user_config(&local_config);
+    }
 
     Ok(())
 }

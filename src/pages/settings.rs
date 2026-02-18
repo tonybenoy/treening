@@ -1,9 +1,11 @@
 use yew::prelude::*;
+use yew_router::prelude::*;
 use crate::components::settings::SettingsPanel;
 use crate::components::sync::SyncPanel;
 use crate::components::custom_exercise::CustomExerciseForm;
 use crate::models::Exercise;
 use crate::storage;
+use crate::Route;
 
 #[function_component(SettingsPage)]
 pub fn settings_page() -> Html {
@@ -49,6 +51,14 @@ pub fn settings_page() -> Html {
             <SyncPanel />
 
             <SettingsPanel on_import_complete={on_import_complete} />
+
+            <div class="bg-gray-800 rounded-lg p-4">
+                <h3 class="font-semibold mb-3">{"App Info"}</h3>
+                <Link<Route> to={Route::Faq} classes="flex items-center justify-between py-2 text-blue-400 hover:text-blue-300">
+                    <span>{"Frequently Asked Questions"}</span>
+                    <span>{"→"}</span>
+                </Link<Route>>
+            </div>
 
             <div>
                 <div class="flex justify-between items-center mb-3">

@@ -1,6 +1,8 @@
 use crate::models::{Category, Equipment, Exercise};
 
 fn ex(id: &str, name: &str, cat: Category, equip: Equipment, muscles: &[&str], desc: &str) -> Exercise {
+    // Default to .svg, but allowing contributors to easily change extensions here
+    let image_path = format!("icons/exercises/{}.svg", id);
     Exercise {
         id: id.to_string(),
         name: name.to_string(),
@@ -9,7 +11,7 @@ fn ex(id: &str, name: &str, cat: Category, equip: Equipment, muscles: &[&str], d
         muscle_groups: muscles.iter().map(|s| s.to_string()).collect(),
         description: desc.to_string(),
         is_custom: false,
-        image: Some(format!("icons/exercises/{}.svg", id)),
+        image: Some(image_path),
     }
 }
 
