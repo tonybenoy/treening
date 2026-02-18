@@ -1,5 +1,5 @@
 use gloo::storage::{LocalStorage, Storage};
-use crate::models::{AppData, Exercise, Friend, Routine, UserConfig, Workout, BodyMetric};
+use crate::models::{AppData, Exercise, Friend, Routine, TrustedDevice, UserConfig, Workout, BodyMetric};
 use crate::backup;
 use std::cell::Cell;
 
@@ -9,6 +9,7 @@ const CUSTOM_EXERCISES_KEY: &str = "treening_custom_exercises";
 const FRIENDS_KEY: &str = "treening_friends";
 const BODY_METRICS_KEY: &str = "treening_body_metrics";
 const USER_CONFIG_KEY: &str = "treening_user_config";
+const TRUSTED_DEVICES_KEY: &str = "treening_trusted_devices";
 
 const BACKUP_DEBOUNCE_MS: f64 = 5000.0;
 
@@ -116,6 +117,15 @@ pub fn save_custom_exercises(exercises: &[Exercise]) {
     trigger_backup_debounced();
 }
 
+pub fn load_trusted_devices() -> Vec<TrustedDevice> {
+    LocalStorage::get(TRUSTED_DEVICES_KEY).unwrap_or_default()
+}
+
+pub fn save_trusted_devices(devices: &[TrustedDevice]) {
+    check_save_result(LocalStorage::set(TRUSTED_DEVICES_KEY, devices));
+    trigger_backup_debounced();
+}
+
 fn csv_escape(s: &str) -> String {
     if s.contains(',') || s.contains('"') || s.contains('\n') {
         format!("\"{}\"", s.replace('"', "\"\""))
@@ -173,6 +183,7 @@ pub fn export_all_data() -> String {
         friends: load_friends(),
         body_metrics: load_body_metrics(),
         user_config: Some(load_user_config()),
+        trusted_devices: load_trusted_devices(),
     };
     serde_json::to_string_pretty(&data).unwrap_or_default()
 }
@@ -184,6 +195,7 @@ pub fn import_all_data(json: &str) -> Result<(), String> {
     save_custom_exercises(&data.custom_exercises);
     save_friends(&data.friends);
     save_body_metrics(&data.body_metrics);
+    save_trusted_devices(&data.trusted_devices);
     if let Some(config) = data.user_config {
         save_user_config(&config);
     }
@@ -275,6 +287,15 @@ pub fn merge_all_data(json: &str) -> Result<(), String> {
         }
     }
     save_body_metrics(&current_metrics);
+
+    // Merge Trusted Devices (deduplicate by peer_id)
+    let mut current_devices = load_trusted_devices();
+    for incoming_d in incoming.trusted_devices {
+        if !current_devices.iter().any(|d| d.peer_id == incoming_d.peer_id) {
+            current_devices.push(incoming_d);
+        }
+    }
+    save_trusted_devices(&current_devices);
 
     // Merge User Config (keep local peer_id, but take incoming profile info if it's set)
     if let Some(incoming_config) = incoming.user_config {

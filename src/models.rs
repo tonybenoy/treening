@@ -164,6 +164,13 @@ pub struct BodyMetric {
     pub body_fat: Option<f64>,
 }
 
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
+pub struct TrustedDevice {
+    pub peer_id: String,
+    pub name: String,
+    pub last_synced: Option<String>,
+}
+
 #[derive(Clone, Debug, Default, Serialize, Deserialize)]
 pub struct AppData {
     pub workouts: Vec<Workout>,
@@ -172,6 +179,8 @@ pub struct AppData {
     pub friends: Vec<Friend>,
     pub body_metrics: Vec<BodyMetric>,
     pub user_config: Option<UserConfig>,
+    #[serde(default)]
+    pub trusted_devices: Vec<TrustedDevice>,
 }
 
 #[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]

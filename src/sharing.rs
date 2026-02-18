@@ -31,7 +31,7 @@ const MAX_URL_LEN: usize = 2000;
 
 pub fn build_share_url(data: &ShareableData) -> Result<String, String> {
     let encoded = encode(data)?;
-    let url = format!("https://tonybenoy.github.io/treening/#/shared?d={}", encoded);
+    let url = format!("https://treen.ing/#/shared?d={}", encoded);
     if url.len() > MAX_URL_LEN {
         Err("URL too large to share as link".to_string())
     } else {
@@ -110,7 +110,7 @@ pub fn format_workout_text(workout: &Workout, exercises: &[Exercise]) -> String 
         lines.push(format!("Total volume: {:.0} kg", total_vol));
     }
     lines.push(String::new());
-    lines.push("Shared from Treening - https://tonybenoy.github.io/treening/".to_string());
+    lines.push("Shared from Treening - https://treen.ing/".to_string());
     lines.join("\n")
 }
 
@@ -124,7 +124,7 @@ pub fn format_routine_text(routine: &Routine, exercises: &[Exercise]) -> String 
         }
     }
     lines.push(String::new());
-    lines.push("Shared from Treening - https://tonybenoy.github.io/treening/".to_string());
+    lines.push("Shared from Treening - https://treen.ing/".to_string());
     lines.join("\n")
 }
 
@@ -141,6 +141,6 @@ pub fn format_exercise_text(exercise: &Exercise) -> String {
         lines.push(exercise.description.clone());
     }
     lines.push(String::new());
-    lines.push("Shared from Treening - https://tonybenoy.github.io/treening/".to_string());
+    lines.push("Shared from Treening - https://treen.ing/".to_string());
     lines.join("\n")
 }

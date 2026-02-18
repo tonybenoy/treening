@@ -34,7 +34,8 @@ Treening is a modern, offline-capable gym workout tracker built with Rust and We
 - **Routine Management:** Create and save your favorite workout routines for quick access.
 - **Advanced Analytics:** Detailed charts for exercise progress, muscle group distribution, and body metrics.
 - **Relative Ranking:** Compare intensity with friends using **Relative Volume** (Volume per kg of body weight) for a fairer competition.
-- **Direct P2P Sync:** Transfer your data directly between devices using WebRTC—completely private and server-less.
+- **Trusted Device Sync:** Pair your devices once, then data syncs automatically whenever both are open. Share a pairing link or enter a Device ID to connect.
+- **Share Links:** Share your Friend Code or Device Pairing link via the native share sheet (mobile) or clipboard — recipients are auto-added when they open the link.
 - **Auto Backup:** Automatic IndexedDB backup mirror with auto-restore if localStorage is cleared. Persistent storage is requested to prevent browser eviction.
 - **Storage Awareness:** Detects when localStorage quota is exceeded and shows a warning banner so you can export your data before anything is lost.
 - **Privacy Focused:** Your data stays on your device. No accounts, no tracking.

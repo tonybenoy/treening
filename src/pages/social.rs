@@ -353,7 +353,7 @@ pub fn social_page() -> Html {
                             })}
                         />
                     </div>
-                    {render_qr(&format!("https://tonybenoy.github.io/treening/#/social?join={}", user_config.peer_id))}
+                    {render_qr(&format!("https://treen.ing/#/social?join={}", user_config.peer_id))}
                 </div>
 
                 <div class="grid grid-cols-2 gap-4">
@@ -367,18 +367,43 @@ pub fn social_page() -> Html {
                     </div>
                 </div>
                 <div class="mt-3 flex items-center justify-between">
-                    <div class="text-[10px] opacity-50 font-mono">
+                    <div class="text-[10px] opacity-50 font-mono truncate mr-2">
                         {"Friend Code: "}{&user_config.peer_id}
                     </div>
-                    <button
-                        onclick={let id = user_config.peer_id.clone(); Callback::from(move |_| {
-                            let window = gloo::utils::window();
-                            let _ = window.navigator().clipboard().write_text(&id);
-                        })}
-                        class="text-[10px] bg-white/10 px-2 py-1 rounded hover:bg-white/20 transition"
-                    >
-                        {"Copy Code"}
-                    </button>
+                    <div class="flex gap-1 shrink-0">
+                        <button
+                            onclick={let id = user_config.peer_id.clone(); Callback::from(move |_| {
+                                let window = gloo::utils::window();
+                                let _ = window.navigator().clipboard().write_text(&id);
+                            })}
+                            class="text-[10px] bg-white/10 px-2 py-1 rounded hover:bg-white/20 transition"
+                        >
+                            {"Copy Code"}
+                        </button>
+                        <button
+                            onclick={let id = user_config.peer_id.clone(); Callback::from(move |_| {
+                                let url = format!("https://treen.ing/#/social?join={}", id);
+                                let window = gloo::utils::window();
+                                let navigator = window.navigator();
+                                // Try Web Share API first, fallback to clipboard
+                                let share_fn = js_sys::Reflect::get(&navigator, &"share".into()).ok();
+                                let can_share = share_fn.as_ref().map(|v| v.is_function()).unwrap_or(false);
+                                if can_share {
+                                    let data = js_sys::Object::new();
+                                    let _ = js_sys::Reflect::set(&data, &"title".into(), &"Add me on Treening!".into());
+                                    let _ = js_sys::Reflect::set(&data, &"text".into(), &format!("Add me as a friend on Treening!\n{}", url).into());
+                                    let _ = js_sys::Reflect::set(&data, &"url".into(), &url.into());
+                                    let share = share_fn.unwrap();
+                                    let _ = js_sys::Function::from(share).call1(&navigator, &data);
+                                } else {
+                                    let _ = navigator.clipboard().write_text(&url);
+                                }
+                            })}
+                            class="text-[10px] bg-white/10 px-2 py-1 rounded hover:bg-white/20 transition"
+                        >
+                            {"Share Link"}
+                        </button>
+                    </div>
                 </div>
             </div>
 

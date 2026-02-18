@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://tonybenoy.github.io/treening/sitemap.xml
+Sitemap: https://treen.ing/sitemap.xml
