@@ -62,8 +62,13 @@ fn switch(routes: Route) -> Html {
 fn app() -> Html {
     html! {
         <BrowserRouter>
-            <div class="min-h-screen pb-16">
-                <Switch<Route> render={switch} />
+            <div class="min-h-screen pb-20 flex flex-col">
+                <div class="flex-grow">
+                    <Switch<Route> render={switch} />
+                </div>
+                <footer class="mt-8 mb-4 px-4 text-center text-gray-500 text-sm">
+                    {"made with love by Tony using Claude Code & Gemini"}
+                </footer>
             </div>
             <BottomNav />
         </BrowserRouter>

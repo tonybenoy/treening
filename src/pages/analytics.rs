@@ -1,6 +1,6 @@
 use yew::prelude::*;
 use std::collections::HashMap;
-use chrono::NaiveDate;
+use chrono::{Datelike, NaiveDate};
 
 use crate::components::charts::{BarChart, HorizontalBarChart, LineChart, StatCard};
 use crate::data::default_exercises;
