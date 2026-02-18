@@ -13,6 +13,8 @@ Treening is a modern, offline-capable gym workout tracker built with Rust and We
 - **Advanced Analytics:** Detailed charts for exercise progress, muscle group distribution, and body metrics.
 - **Relative Ranking:** Compare intensity with friends using **Relative Volume** (Volume per kg of body weight) for a fairer competition.
 - **Direct P2P Sync:** Transfer your data directly between devices using WebRTC—completely private and server-less.
+- **Auto Backup:** Automatic IndexedDB backup mirror with auto-restore if localStorage is cleared. Persistent storage is requested to prevent browser eviction.
+- **Storage Awareness:** Detects when localStorage quota is exceeded and shows a warning banner so you can export your data before anything is lost.
 - **Privacy Focused:** Your data stays on your device. No accounts, no tracking.
 - **PWA Support:** Installable on iOS and Android for a native app-like experience.
 
@@ -22,7 +24,7 @@ Treening is a modern, offline-capable gym workout tracker built with Rust and We
 - **Styling:** [Tailwind CSS](https://tailwindcss.com/)
 - **Build Tool:** [Trunk](https://trunkrs.dev/)
 - **Connectivity:** [PeerJS](https://peerjs.com/) for P2P Signaling
-- **Storage:** Browser LocalStorage via [Gloo](https://github.com/rustwasm/gloo)
+- **Storage:** Browser LocalStorage + IndexedDB backup via [Gloo](https://github.com/rustwasm/gloo) and [web-sys](https://rustwasm.github.io/wasm-bindgen/api/web_sys/)
 - **Time/Date:** [Chrono](https://github.com/chronotope/chrono)
 
 ## Getting Started
@@ -72,6 +74,7 @@ The output will be in the `dist/` directory.
 - `src/pages/`: Main application views (Home, Exercises, Routines, Analytics).
 - `src/models.rs`: Data structures for workouts, exercises, and routines.
 - `src/storage.rs`: Logic for persisting data to the browser.
+- `src/backup.rs`: IndexedDB auto-backup and persistent storage request.
 - `src/data.rs`: Seed data and exercise definitions.
 - `icons/`: SVG icons for the app and exercise categories.
 

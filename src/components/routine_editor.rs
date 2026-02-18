@@ -1,5 +1,7 @@
 use yew::prelude::*;
 use crate::models::{Exercise, Routine};
+use crate::sharing::{self, ShareableData};
+use crate::components::share_modal::ShareModal;
 
 #[derive(Properties, PartialEq)]
 pub struct Props {
@@ -14,6 +16,7 @@ pub struct Props {
 pub fn routine_editor(props: &Props) -> Html {
     let editing = use_state(|| None::<Routine>);
     let show_exercise_picker = use_state(|| false);
+    let share_target = use_state(|| None::<(ShareableData, String)>);
 
     let find_exercise = |id: &str| -> String {
         props.all_exercises.iter()
@@ -186,6 +189,20 @@ pub fn routine_editor(props: &Props) -> Html {
                                             onclick={edit_existing(r3.clone())}
                                         >{"Edit"}</button>
                                         <button
+                                            class="px-3 py-2 bg-gray-700 rounded text-sm hover:bg-gray-600"
+                                            onclick={{
+                                                let share_target = share_target.clone();
+                                                let r = r.clone();
+                                                let all_ex = props.all_exercises.clone();
+                                                Callback::from(move |_| {
+                                                    let exercises = sharing::collect_routine_exercises(&r, &all_ex);
+                                                    let text = sharing::format_routine_text(&r, &exercises);
+                                                    let data = ShareableData::Routine { routine: r.clone(), exercises };
+                                                    share_target.set(Some((data, text)));
+                                                })
+                                            }}
+                                        >{"Share"}</button>
+                                        <button
                                             class="px-3 py-2 bg-red-900 rounded text-sm hover:bg-red-800"
                                             onclick={Callback::from(move |_| on_delete.emit(rid.clone()))}
                                         >{"Delete"}</button>
@@ -199,6 +216,16 @@ pub fn routine_editor(props: &Props) -> Html {
                     </>
                 }
             }}
+            { if let Some((ref data, ref text)) = *share_target {
+                let share_target = share_target.clone();
+                html! {
+                    <ShareModal
+                        shareable={data.clone()}
+                        formatted_text={text.clone()}
+                        on_close={Callback::from(move |_| share_target.set(None))}
+                    />
+                }
+            } else { html! {} }}
         </div>
     }
 }

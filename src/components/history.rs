@@ -1,5 +1,7 @@
 use yew::prelude::*;
 use crate::models::{Exercise, Workout, WorkoutSet};
+use crate::sharing::{self, ShareableData};
+use crate::components::share_modal::ShareModal;
 
 #[derive(Properties, PartialEq)]
 pub struct Props {
@@ -13,6 +15,7 @@ pub struct Props {
 pub fn history_list(props: &Props) -> Html {
     let expanded = use_state(|| None::<String>);
     let editing = use_state(|| None::<Workout>);
+    let share_target = use_state(|| None::<(ShareableData, String)>);
 
     let find_exercise = |id: &str| -> String {
         props.all_exercises.iter()
@@ -313,6 +316,21 @@ pub fn history_list(props: &Props) -> Html {
                                                 }}
                                             >{"Edit Workout"}</button>
                                             <button
+                                                class="text-green-600 dark:text-green-400 text-xs font-bold hover:underline transition-colors"
+                                                onclick={{
+                                                    let share_target = share_target.clone();
+                                                    let w = w.clone();
+                                                    let all_ex = props.all_exercises.clone();
+                                                    Callback::from(move |e: MouseEvent| {
+                                                        e.stop_propagation();
+                                                        let exercises = sharing::collect_workout_exercises(&w, &all_ex);
+                                                        let text = sharing::format_workout_text(&w, &exercises);
+                                                        let data = ShareableData::Workout { workout: w.clone(), exercises };
+                                                        share_target.set(Some((data, text)));
+                                                    })
+                                                }}
+                                            >{"Share"}</button>
+                                            <button
                                                 class="text-red-600 dark:text-red-400 text-xs font-bold hover:underline transition-colors"
                                                 onclick={Callback::from(move |e: MouseEvent| {
                                                     e.stop_propagation();
@@ -329,6 +347,16 @@ pub fn history_list(props: &Props) -> Html {
             })}
             { if workouts.is_empty() {
                 html! { <p class="text-gray-500 dark:text-gray-500 text-center py-12 bg-gray-50 dark:bg-gray-800/20 rounded-2xl border border-dashed border-gray-200 dark:border-gray-800 transition-colors">{"No workouts recorded yet."}</p> }
+            } else { html! {} }}
+            { if let Some((ref data, ref text)) = *share_target {
+                let share_target = share_target.clone();
+                html! {
+                    <ShareModal
+                        shareable={data.clone()}
+                        formatted_text={text.clone()}
+                        on_close={Callback::from(move |_| share_target.set(None))}
+                    />
+                }
             } else { html! {} }}
         </div>
     }

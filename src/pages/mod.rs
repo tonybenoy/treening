@@ -7,3 +7,4 @@ pub mod social;
 pub mod settings;
 pub mod faq;
 pub mod analytics;
+pub mod shared;

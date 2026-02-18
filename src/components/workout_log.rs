@@ -228,6 +228,26 @@ pub fn workout_log(props: &Props) -> Html {
                                 })
                             }}
                         >{"+ Add Set"}</button>
+                        <div class="mt-2">
+                            <input
+                                type="text"
+                                placeholder="Add notes..."
+                                class="w-full px-3 py-1.5 bg-white dark:bg-gray-700 border border-gray-300 dark:border-transparent rounded text-sm text-gray-900 dark:text-gray-100 outline-none focus:ring-1 focus:ring-blue-500 transition-colors"
+                                value={we.notes.clone()}
+                                onchange={{
+                                    let exercises = exercises.clone();
+                                    let on_update = on_update.clone();
+                                    Callback::from(move |e: Event| {
+                                        let input: web_sys::HtmlInputElement = e.target_unchecked_into();
+                                        let mut exs = exercises.clone();
+                                        if let Some(we) = exs.get_mut(ex_idx) {
+                                            we.notes = input.value();
+                                        }
+                                        on_update.emit(exs);
+                                    })
+                                }}
+                            />
+                        </div>
                     </div>
                 }
             })}

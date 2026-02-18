@@ -1,5 +1,7 @@
 use yew::prelude::*;
 use crate::models::{Category, Equipment, Exercise, ExerciseTrackingType};
+use gloo::file::callbacks::{self, FileReader};
+use web_sys::HtmlInputElement;
 
 #[derive(Properties, PartialEq)]
 pub struct Props {
@@ -15,6 +17,28 @@ pub fn custom_exercise_form(props: &Props) -> Html {
     let tracking_type = use_state(|| ExerciseTrackingType::Strength);
     let muscles = use_state(String::new);
     let description = use_state(String::new);
+    let image = use_state(|| None::<String>);
+    let reader = use_state(|| None::<FileReader>);
+
+    let on_file_select = {
+        let image = image.clone();
+        let reader = reader.clone();
+        Callback::from(move |e: Event| {
+            let input: HtmlInputElement = e.target_unchecked_into();
+            if let Some(file_list) = input.files() {
+                if let Some(file) = file_list.get(0) {
+                    let gloo_file = gloo::file::File::from(file);
+                    let image = image.clone();
+                    let fr = callbacks::read_as_data_url(&gloo_file, move |result| {
+                        if let Ok(data_url) = result {
+                            image.set(Some(data_url));
+                        }
+                    });
+                    reader.set(Some(fr));
+                }
+            }
+        })
+    };
 
     let on_save = {
         let name = name.clone();
@@ -23,6 +47,7 @@ pub fn custom_exercise_form(props: &Props) -> Html {
         let tracking_type = tracking_type.clone();
         let muscles = muscles.clone();
         let description = description.clone();
+        let image = image.clone();
         let cb = props.on_save.clone();
         Callback::from(move |_| {
             if !name.is_empty() {
@@ -37,7 +62,7 @@ pub fn custom_exercise_form(props: &Props) -> Html {
                         .collect(),
                     description: (*description).clone(),
                     is_custom: true,
-                    image: None,
+                    image: (*image).clone(),
                     tracking_type: (*tracking_type).clone(),
                 });
             }
@@ -161,6 +186,29 @@ pub fn custom_exercise_form(props: &Props) -> Html {
                             d.set(input.value());
                         })}
                     ></textarea>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-gray-500 mb-1">{"Image"}</label>
+                    <input
+                        type="file"
+                        accept="image/*"
+                        class="w-full text-sm text-gray-500 dark:text-gray-400 file:mr-3 file:py-1.5 file:px-3 file:rounded file:border-0 file:text-sm file:font-medium file:bg-blue-50 file:text-blue-600 dark:file:bg-blue-900/30 dark:file:text-blue-400 file:cursor-pointer"
+                        onchange={on_file_select}
+                    />
+                    { if let Some(ref data_url) = *image {
+                        let image_clear = image.clone();
+                        html! {
+                            <div class="mt-2 relative inline-block">
+                                <img src={data_url.clone()} class="w-24 h-24 object-cover rounded border border-gray-300 dark:border-gray-600" />
+                                <button
+                                    class="absolute -top-2 -right-2 w-5 h-5 bg-red-500 text-white rounded-full text-xs flex items-center justify-center hover:bg-red-600 transition-colors"
+                                    onclick={Callback::from(move |_| image_clear.set(None))}
+                                >{"\u{2715}"}</button>
+                            </div>
+                        }
+                    } else {
+                        html! {}
+                    }}
                 </div>
                 <div class="flex gap-2 pt-2">
                     <button

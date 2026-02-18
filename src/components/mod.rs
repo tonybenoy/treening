@@ -8,3 +8,4 @@ pub mod settings;
 pub mod sync;
 pub mod custom_exercise;
 pub mod charts;
+pub mod share_modal;

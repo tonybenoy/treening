@@ -36,11 +36,15 @@ const FAQS: &[FaqItem] = &[
     },
     FaqItem {
         question: "Where is my data stored?",
-        answer: "Everything is stored in your browser's localStorage. Your data never leaves your device. If you clear your browser data, your workouts will be lost \u{2014} use the Export feature in Settings to back up regularly.",
+        answer: "Your primary data lives in your browser's localStorage, and an automatic backup is kept in IndexedDB. If you clear all browser data both copies will be lost \u{2014} use the Export feature in Settings to keep an external backup.",
     },
     FaqItem {
         question: "How do I back up my data?",
-        answer: "Go to Settings and tap \"Export Data\". This downloads a JSON file with all your workouts, routines, and custom exercises. To restore, use \"Import Data\" and select the JSON file.",
+        answer: "Treening automatically mirrors every save to IndexedDB as a safety net. If localStorage is ever cleared, the app will auto-restore from the IndexedDB backup on next load. For extra safety, go to Settings and tap \"Export Data\" to download a JSON file you can keep offline.",
+    },
+    FaqItem {
+        question: "What does the 'Storage full' warning mean?",
+        answer: "It means your browser's localStorage quota has been exceeded and new data could not be saved. Go to Settings and export your data immediately, then free up space by clearing old browser data for other sites. The IndexedDB backup should still have your most recent data.",
     },
     FaqItem {
         question: "Can I transfer data to another device?",

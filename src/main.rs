@@ -1,6 +1,8 @@
 mod models;
 mod data;
 mod storage;
+mod backup;
+mod sharing;
 mod components;
 mod pages;
 
@@ -17,6 +19,7 @@ use pages::settings::SettingsPage;
 use pages::social::SocialPage;
 use pages::faq::FaqPage;
 use pages::analytics::AnalyticsPage;
+use pages::shared::SharedPage;
 use crate::models::Theme;
 
 #[function_component(ThemeManager)]
@@ -70,6 +73,8 @@ pub enum Route {
     Faq,
     #[at("/analytics")]
     Analytics,
+    #[at("/shared")]
+    Shared,
     #[not_found]
     #[at("/404")]
     NotFound,
@@ -86,16 +91,53 @@ fn switch(routes: Route) -> Html {
         Route::Social => html! { <SocialPage /> },
         Route::Faq => html! { <FaqPage /> },
         Route::Analytics => html! { <AnalyticsPage /> },
+        Route::Shared => html! { <SharedPage /> },
         Route::NotFound => html! { <HomePage /> },
     }
 }
 
 #[function_component(App)]
 fn app() -> Html {
+    let storage_warning = use_state(|| false);
+    let warning_dismissed = use_state(|| false);
+
+    // Startup: request persistent storage, try restore from backup, check save errors
+    {
+        let storage_warning = storage_warning.clone();
+        use_effect_with((), move |_| {
+            backup::request_persistent_storage();
+            storage::try_restore_from_backup();
+
+            // Check for save failures periodically
+            let interval = gloo::timers::callback::Interval::new(2_000, move || {
+                if storage::has_save_failed() {
+                    storage_warning.set(true);
+                }
+            });
+            move || drop(interval)
+        });
+    }
+
+    let on_dismiss = {
+        let warning_dismissed = warning_dismissed.clone();
+        Callback::from(move |_: MouseEvent| {
+            storage::clear_save_failed();
+            warning_dismissed.set(true);
+        })
+    };
+
     html! {
         <HashRouter>
             <ThemeManager />
             <div class="min-h-screen pb-20 flex flex-col bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 transition-colors duration-200">
+                if *storage_warning && !*warning_dismissed {
+                    <div class="bg-yellow-500 text-black px-4 py-2 text-sm flex items-center justify-between">
+                        <span>{"Storage full! Export your data in Settings to avoid data loss."}</span>
+                        <button onclick={on_dismiss} class="ml-4 font-bold text-lg leading-none hover:opacity-70">
+                            {"\u{00d7}"}
+                        </button>
+                    </div>
+                }
                 <div class="flex-grow">
                     <Switch<Route> render={switch} />
                 </div>

@@ -5,8 +5,43 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <title>Treening - Simple, Private Workout Tracker</title>
     <meta name="description" content="A simple, privacy-focused workout tracker. Log your exercises, track your progress, and manage your fitness routines without any tracking or data collection." />
-    <meta name="keywords" content="workout tracker, fitness app, exercise log, private fitness, open source workout, gym logger" />
+    <meta name="keywords" content="workout tracker, fitness app, exercise log, private fitness, open source workout, gym logger, free workout app, offline workout tracker, no sign up, no account, free fitness app, open source fitness, bodyweight tracker, gym log app" />
     <meta name="author" content="Tony Benoy" />
+
+    <link rel="canonical" href="https://tonybenoy.github.io/treening/" />
+
+    <!-- Structured Data (Schema.org) -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "SoftwareApplication",
+        "name": "Treening",
+        "description": "A simple, privacy-focused workout tracker. Log your exercises, track your progress, and manage your fitness routines without any tracking or data collection.",
+        "url": "https://tonybenoy.github.io/treening/",
+        "applicationCategory": "HealthApplication",
+        "operatingSystem": "Any (Web Browser)",
+        "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "USD"
+        },
+        "author": {
+            "@type": "Person",
+            "name": "Tony Benoy"
+        },
+        "license": "https://opensource.org/licenses/MIT",
+        "isAccessibleForFree": true,
+        "featureList": [
+            "Offline workout tracking",
+            "No account required",
+            "Privacy-focused - no data collection",
+            "Exercise logging with sets, reps, and weights",
+            "Progress analytics and charts",
+            "Peer-to-peer data sync",
+            "Open source"
+        ]
+    }
+    </script>
 
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website" />
@@ -34,6 +69,8 @@
     <link data-trunk rel="copy-file" href="sw.js" />
     <link data-trunk rel="copy-file" href="manifest.json" />
     <link data-trunk rel="copy-dir" href="icons" data-target-path="icons" />
+    <link data-trunk rel="copy-file" href="robots.txt" />
+    <link data-trunk rel="copy-file" href="sitemap.xml" />
 
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -61,6 +98,58 @@
     </style>
 </head>
 <body class="transition-colors duration-200">
+    <!-- Install Banner -->
+    <div id="install-banner" style="display:none; position:fixed; bottom:70px; left:12px; right:12px; z-index:9999; background:linear-gradient(135deg,#1e40af,#3b82f6); color:white; padding:14px 16px; border-radius:12px; box-shadow:0 4px 20px rgba(0,0,0,0.3); font-family:system-ui,sans-serif; animation:slideUp 0.3s ease-out;">
+        <div style="display:flex; align-items:center; gap:12px;">
+            <div style="flex:1;">
+                <div style="font-weight:600; font-size:15px;">Install Treening</div>
+                <div style="font-size:13px; opacity:0.9; margin-top:2px;">Add to home screen for offline use</div>
+            </div>
+            <button id="install-btn" style="background:white; color:#1e40af; border:none; padding:8px 16px; border-radius:8px; font-weight:600; font-size:14px; cursor:pointer; white-space:nowrap;">Install</button>
+            <button id="install-dismiss" style="background:none; border:none; color:white; opacity:0.7; font-size:20px; cursor:pointer; padding:4px 8px; line-height:1;">&times;</button>
+        </div>
+    </div>
+    <style>
+        @keyframes slideUp {
+            from { transform: translateY(100%); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+    </style>
+
+    <script>
+        // PWA Install Prompt
+        let deferredPrompt = null;
+        const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
+
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            if (!isStandalone && !localStorage.getItem('install-dismissed')) {
+                document.getElementById('install-banner').style.display = 'block';
+            }
+        });
+
+        document.getElementById('install-btn').addEventListener('click', async () => {
+            if (!deferredPrompt) return;
+            deferredPrompt.prompt();
+            const result = await deferredPrompt.userChoice;
+            if (result.outcome === 'accepted') {
+                document.getElementById('install-banner').style.display = 'none';
+            }
+            deferredPrompt = null;
+        });
+
+        document.getElementById('install-dismiss').addEventListener('click', () => {
+            document.getElementById('install-banner').style.display = 'none';
+            localStorage.setItem('install-dismissed', 'true');
+        });
+
+        window.addEventListener('appinstalled', () => {
+            document.getElementById('install-banner').style.display = 'none';
+            deferredPrompt = null;
+        });
+    </script>
+
     <script>
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
