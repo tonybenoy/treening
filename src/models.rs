@@ -67,19 +67,15 @@ impl fmt::Display for Equipment {
     }
 }
 
-#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
+#[derive(Clone, Debug, Default, PartialEq, Serialize, Deserialize)]
 pub enum ExerciseTrackingType {
+    #[default]
     Strength,   // Weight + Reps (Default)
     Cardio,     // Distance + Duration
     Duration,   // Duration only (e.g. Plank)
     Bodyweight, // Reps only
 }
 
-impl Default for ExerciseTrackingType {
-    fn default() -> Self {
-        Self::Strength
-    }
-}
 
 #[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 pub struct Exercise {
@@ -162,7 +158,7 @@ pub struct BodyMetric {
     pub body_fat: Option<f64>,
 }
 
-#[derive(Clone, Debug, Serialize, Deserialize)]
+#[derive(Clone, Debug, Default, Serialize, Deserialize)]
 pub struct AppData {
     pub workouts: Vec<Workout>,
     pub routines: Vec<Routine>,
@@ -188,18 +184,14 @@ pub struct FriendStats {
     pub body_weight: Option<f64>,
 }
 
-#[derive(Clone, Debug, Serialize, Deserialize, PartialEq)]
+#[derive(Clone, Debug, Default, Serialize, Deserialize, PartialEq)]
 pub enum Theme {
+    #[default]
     Dark,
     Light,
     System,
 }
 
-impl Default for Theme {
-    fn default() -> Self {
-        Self::Dark
-    }
-}
 
 #[derive(Clone, Debug, Serialize, Deserialize, PartialEq)]
 pub struct UserConfig {
@@ -221,15 +213,4 @@ fn default_social_enabled() -> bool {
     true
 }
 
-impl Default for AppData {
-    fn default() -> Self {
-        Self {
-            workouts: Vec::new(),
-            routines: Vec::new(),
-            custom_exercises: Vec::new(),
-            friends: Vec::new(),
-            body_metrics: Vec::new(),
-            user_config: None,
-        }
-    }
-}
+

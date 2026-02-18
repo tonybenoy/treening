@@ -39,7 +39,7 @@ extern "C" {
 
 #[function_component(SocialPage)]
 pub fn social_page() -> Html {
-    let user_config = use_state(|| storage::load_user_config());
+    let user_config = use_state(storage::load_user_config);
     let navigator = use_navigator().unwrap();
 
     // Redirect if social is disabled
@@ -48,9 +48,9 @@ pub fn social_page() -> Html {
         return html! {};
     }
 
-    let friends = use_state(|| storage::load_friends());
+    let friends = use_state(storage::load_friends);
     let show_add_friend = use_state(|| false);
-    let friend_id_input = use_state(|| String::new());
+    let friend_id_input = use_state(String::new);
     let status = use_state(|| "Offline".to_string());
     
     let peer_ref = use_mut_ref(|| None::<Peer>);

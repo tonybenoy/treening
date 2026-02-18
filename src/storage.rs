@@ -13,8 +13,8 @@ const USER_CONFIG_KEY: &str = "treening_user_config";
 const BACKUP_DEBOUNCE_MS: f64 = 5000.0;
 
 thread_local! {
-    static SAVE_FAILED: Cell<bool> = Cell::new(false);
-    static LAST_BACKUP_TIME: Cell<f64> = Cell::new(0.0);
+    static SAVE_FAILED: Cell<bool> = const { Cell::new(false) };
+    static LAST_BACKUP_TIME: Cell<f64> = const { Cell::new(0.0) };
 }
 
 pub fn has_save_failed() -> bool {
@@ -79,7 +79,7 @@ pub fn load_user_config() -> UserConfig {
     LocalStorage::get(USER_CONFIG_KEY).unwrap_or_else(|_| {
         let config = UserConfig {
             nickname: "Athlete".to_string(),
-            peer_id: format!("tr-{}", uuid::Uuid::new_v4().to_string()[..8].to_string()),
+            peer_id: format!("tr-{}", &uuid::Uuid::new_v4().to_string()[..8]),
             social_enabled: true,
             theme: crate::models::Theme::Dark,
             height: None,
@@ -137,13 +137,6 @@ pub fn import_all_data(json: &str) -> Result<(), String> {
         save_user_config(&config);
     }
     Ok(())
-}
-
-/// Force an immediate backup to IndexedDB (ignoring debounce).
-pub fn save_all_to_backup() {
-    let data = export_all_data();
-    backup::save_backup(&data);
-    LAST_BACKUP_TIME.with(|t| t.set(js_sys::Date::now()));
 }
 
 /// Check if LocalStorage appears empty; if so, try restoring from IndexedDB backup.

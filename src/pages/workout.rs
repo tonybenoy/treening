@@ -33,7 +33,7 @@ pub fn workout_page() -> Html {
         let workout_active = workout_active.clone();
         use_effect_with((), move |_| {
             if let Ok(routine_id) = LocalStorage::get::<String>("treening_active_routine") {
-                let _ = LocalStorage::delete("treening_active_routine");
+                LocalStorage::delete("treening_active_routine");
                 let routines = storage::load_routines();
                 if let Some(routine) = routines.iter().find(|r| r.id == routine_id) {
                     workout_name.set(routine.name.clone());

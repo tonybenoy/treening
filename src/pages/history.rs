@@ -6,7 +6,7 @@ use crate::data;
 
 #[function_component(HistoryPage)]
 pub fn history_page() -> Html {
-    let workouts = use_state(|| storage::load_workouts());
+    let workouts = use_state(storage::load_workouts);
 
     let custom_exercises = storage::load_custom_exercises();
     let all_exercises: Vec<Exercise> = {

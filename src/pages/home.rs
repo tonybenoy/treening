@@ -156,8 +156,8 @@ fn community_summary() -> Html {
 
 #[function_component(HomePage)]
 pub fn home_page() -> Html {
-    let workouts = use_state(|| storage::load_workouts());
-    let routines = use_state(|| storage::load_routines());
+    let workouts = use_state(storage::load_workouts);
+    let routines = use_state(storage::load_routines);
     let navigator = use_navigator().unwrap();
 
     let last_workout: Option<&Workout> = {

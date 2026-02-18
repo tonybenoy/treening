@@ -168,8 +168,8 @@ fn personal_records(workouts: &[Workout], exercises: &[Exercise]) -> Vec<Persona
 
 #[function_component(AnalyticsPage)]
 pub fn analytics_page() -> Html {
-    let workouts = use_state(|| storage::load_workouts());
-    let routines = use_state(|| storage::load_routines());
+    let workouts = use_state(storage::load_workouts);
+    let routines = use_state(storage::load_routines);
     let exercises = use_memo((), |_| all_exercises());
     let active_tab = use_state(|| 0u8); // 0 = Overview, 1 = Progress, 2 = Body
 
@@ -231,7 +231,7 @@ fn overview_tab(props: &OverviewProps) -> Html {
 
     // ── Stats ───────────────────────────────────────────────────────────
     let total_workouts = workouts.len();
-    let total_volume: f64 = workouts.iter().map(|w| workout_volume(w)).sum();
+    let total_volume: f64 = workouts.iter().map(workout_volume).sum();
     let streak = current_streak(workouts);
     let avg_duration: u32 = if total_workouts > 0 {
         let total_dur: u32 = workouts.iter().map(|w| w.duration_mins).sum();
@@ -364,7 +364,7 @@ fn progress_tab(props: &ProgressProps) -> Html {
     let exercises = &props.exercises;
     let routines = &props.routines;
 
-    let selected_exercise = use_state(|| String::new());
+    let selected_exercise = use_state(String::new);
 
     if workouts.is_empty() {
         return html! {

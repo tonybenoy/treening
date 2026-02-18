@@ -22,7 +22,7 @@ extern "C" {
 
 #[function_component(InstallButton)]
 fn install_button() -> Html {
-    let can_install = use_state(|| can_install_app());
+    let can_install = use_state(can_install_app);
     let is_standalone = is_app_standalone();
 
     // Re-check periodically in case beforeinstallprompt fires after mount
@@ -38,7 +38,7 @@ fn install_button() -> Html {
                 1000,
             ).unwrap();
             cb.forget();
-            move || { let _ = web_sys::window().unwrap().clear_interval_with_handle(id); }
+            move || { web_sys::window().unwrap().clear_interval_with_handle(id); }
         });
     }
 
@@ -71,7 +71,7 @@ fn install_button() -> Html {
 
 #[function_component(ProfileSection)]
 fn profile_section() -> Html {
-    let config = use_state(|| storage::load_user_config());
+    let config = use_state(storage::load_user_config);
     let nickname = use_state(|| config.nickname.clone());
     let height = use_state(|| config.height.map(|h| h.to_string()).unwrap_or_default());
     let birth_date = use_state(|| config.birth_date.clone().unwrap_or_default());
@@ -148,7 +148,7 @@ fn profile_section() -> Html {
 
 #[function_component(BodyMetricsSection)]
 fn body_metrics_section() -> Html {
-    let metrics = use_state(|| storage::load_body_metrics());
+    let metrics = use_state(storage::load_body_metrics);
     let weight = use_state(String::new);
     let body_fat = use_state(String::new);
     let show_form = use_state(|| false);
@@ -259,7 +259,7 @@ fn body_metrics_section() -> Html {
 
 #[function_component(SettingsPage)]
 pub fn settings_page() -> Html {
-    let custom_exercises = use_state(|| storage::load_custom_exercises());
+    let custom_exercises = use_state(storage::load_custom_exercises);
     let show_custom_form = use_state(|| false);
     let reload_trigger = use_state(|| 0u32);
 

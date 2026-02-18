@@ -10,7 +10,7 @@ use crate::data;
 
 #[function_component(ExercisesPage)]
 pub fn exercises_page() -> Html {
-    let custom_exercises = use_state(|| storage::load_custom_exercises());
+    let custom_exercises = use_state(storage::load_custom_exercises);
     let selected = use_state(|| None::<Exercise>);
     let show_custom_form = use_state(|| false);
     let share_target = use_state(|| None::<(ShareableData, String)>);

@@ -9,7 +9,7 @@ use crate::Route;
 
 #[function_component(RoutinesPage)]
 pub fn routines_page() -> Html {
-    let routines = use_state(|| storage::load_routines());
+    let routines = use_state(storage::load_routines);
     let navigator = use_navigator().unwrap();
 
     let custom_exercises = storage::load_custom_exercises();

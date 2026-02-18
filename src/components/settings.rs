@@ -11,7 +11,7 @@ pub struct Props {
 #[function_component(SettingsPanel)]
 pub fn settings_panel(props: &Props) -> Html {
     let import_status = use_state(|| None::<String>);
-    let config = use_state(|| storage::load_user_config());
+    let config = use_state(storage::load_user_config);
 
     let on_toggle_social = {
         let config = config.clone();

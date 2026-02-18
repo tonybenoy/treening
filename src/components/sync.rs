@@ -42,8 +42,8 @@ enum SyncMode {
 #[function_component(SyncPanel)]
 pub fn sync_panel() -> Html {
     let mode = use_state(|| SyncMode::Idle);
-    let peer_id = use_state(|| String::new());
-    let target_id = use_state(|| String::new());
+    let peer_id = use_state(String::new);
+    let target_id = use_state(String::new);
     let connection_status = use_state(|| "Ready".to_string());
     
     let peer_ref = use_mut_ref(|| None::<Peer>);
