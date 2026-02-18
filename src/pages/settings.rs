@@ -52,16 +52,16 @@ fn install_button() -> Html {
     // iOS doesn't support beforeinstallprompt — show manual instructions
     if is_ios() && !*can_install {
         return html! {
-            <div class="w-full py-3 px-4 bg-gradient-to-r from-blue-600 to-blue-500 text-white rounded-xl text-sm shadow-sm">
-                <div class="font-bold mb-1">{"Install Treening App"}</div>
-                <div class="text-xs opacity-90">
+            <div class="w-full py-3 px-4 bg-blue-50 dark:bg-blue-900/30 border border-blue-200 dark:border-blue-800 rounded-xl text-sm shadow-sm">
+                <div class="font-bold mb-1 text-blue-900 dark:text-blue-100">{"Install Treening App"}</div>
+                <div class="text-xs text-blue-700 dark:text-blue-300">
                     {"Tap the "}
                     <span class="inline-block align-middle">
                         <svg class="inline w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
                         </svg>
                     </span>
-                    {" Share button, then \"Add to Home Screen\""}
+                    {" Share button at the bottom of Safari, then tap \"Add to Home Screen\""}
                 </div>
             </div>
         };
