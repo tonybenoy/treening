@@ -215,9 +215,15 @@ pub struct UserConfig {
     pub birth_date: Option<String>,
     #[serde(default)]
     pub gender: Option<String>,
+    #[serde(default = "default_analytics_enabled")]
+    pub analytics_enabled: bool,
 }
 
 fn default_social_enabled() -> bool {
+    true
+}
+
+fn default_analytics_enabled() -> bool {
     true
 }
 

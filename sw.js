@@ -1,4 +1,4 @@
-const CACHE_NAME = 'treening-v8';
+const CACHE_NAME = 'treening-v9';
 
 const PRECACHE_URLS = [
     './',
@@ -45,6 +45,9 @@ self.addEventListener('fetch', event => {
                 });
             })
         );
+    } else if (url.hostname === 'hits.sh') {
+        // Analytics: always network, never cache
+        event.respondWith(fetch(event.request).catch(() => new Response('', { status: 204 })));
     } else {
         // External (Tailwind CDN etc): network first, cache fallback
         event.respondWith(

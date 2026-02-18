@@ -1,5 +1,7 @@
 # Treening - Workout Tracker
 
+[![Hits](https://hits.sh/tonybenoy.github.io/treening.svg?view=today-total&style=flat-square&label=users)](https://hits.sh/tonybenoy.github.io/treening/)
+
 Treening is a modern, offline-capable gym workout tracker built with Rust and WebAssembly. It is designed to be fast, private, and easy to use directly in your browser or installed as a Progressive Web App (PWA).
 
 ## Features
@@ -15,7 +17,7 @@ Treening is a modern, offline-capable gym workout tracker built with Rust and We
 - **Direct P2P Sync:** Transfer your data directly between devices using WebRTC—completely private and server-less.
 - **Auto Backup:** Automatic IndexedDB backup mirror with auto-restore if localStorage is cleared. Persistent storage is requested to prevent browser eviction.
 - **Storage Awareness:** Detects when localStorage quota is exceeded and shows a warning banner so you can export your data before anything is lost.
-- **Privacy Focused:** Your data stays on your device. No accounts, no tracking.
+- **Privacy Focused:** Your data stays on your device. No accounts, no tracking. An anonymous page-view counter (hits.sh) is used solely to measure usage \u{2014} it can be disabled in Settings.
 - **PWA Support:** Installable on iOS and Android for a native app-like experience.
 
 ## Tech Stack

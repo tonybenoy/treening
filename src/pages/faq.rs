@@ -71,6 +71,10 @@ const FAQS: &[FaqItem] = &[
         answer: "Yes. In the History tab, you can expand any workout and tap 'Edit Workout' to change the name, delete exercises, or update sets and reps.",
     },
     FaqItem {
+        question: "Does Treening collect any data?",
+        answer: "Treening uses a single anonymous page-view counter (hits.sh) to track how many people use the app. No personal data, workout data, or cookies are involved \u{2014} it simply counts visits. You can disable this entirely in Settings under 'Anonymous Analytics'.",
+    },
+    FaqItem {
         question: "Is it open source?",
         answer: "Yes! The source code is available on GitHub. It is built using Rust and WebAssembly for maximum performance and privacy.",
     },
