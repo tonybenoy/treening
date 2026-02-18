@@ -45,3 +45,36 @@ pub fn import_all_data(json: &str) -> Result<(), String> {
     save_custom_exercises(&data.custom_exercises);
     Ok(())
 }
+
+pub fn merge_all_data(json: &str) -> Result<(), String> {
+    let incoming: AppData = serde_json::from_str(json).map_err(|e| e.to_string())?;
+    
+    // Merge Workouts (deduplicate by ID)
+    let mut current_workouts = load_workouts();
+    for incoming_w in incoming.workouts {
+        if !current_workouts.iter().any(|w| w.id == incoming_w.id) {
+            current_workouts.push(incoming_w);
+        }
+    }
+    save_workouts(&current_workouts);
+
+    // Merge Routines (deduplicate by ID)
+    let mut current_routines = load_routines();
+    for incoming_r in incoming.routines {
+        if !current_routines.iter().any(|r| r.id == incoming_r.id) {
+            current_routines.push(incoming_r);
+        }
+    }
+    save_routines(&current_routines);
+
+    // Merge Custom Exercises (deduplicate by ID)
+    let mut current_custom = load_custom_exercises();
+    for incoming_ex in incoming.custom_exercises {
+        if !current_custom.iter().any(|e| e.id == incoming_ex.id) {
+            current_custom.push(incoming_ex);
+        }
+    }
+    save_custom_exercises(&current_custom);
+
+    Ok(())
+}
