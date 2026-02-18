@@ -66,8 +66,13 @@ fn app() -> Html {
                 <div class="flex-grow">
                     <Switch<Route> render={switch} />
                 </div>
-                <footer class="mt-8 mb-4 px-4 text-center text-gray-500 text-sm">
-                    {"made with love by Tony using Claude Code & Gemini"}
+                <footer class="mt-8 mb-4 px-4 text-center text-gray-500 text-xs">
+                    {"made with "} <span class="text-red-500">{"❤️"}</span> {" by "} 
+                    <a href="https://github.com/tonybenoy" target="_blank" class="hover:underline text-blue-400">{"Tony"}</a>
+                    {" using "}
+                    <a href="https://claude.ai" target="_blank" class="hover:underline text-blue-400">{"Claude Code"}</a>
+                    {" & "}
+                    <a href="https://gemini.google.com" target="_blank" class="hover:underline text-blue-400">{"Gemini"}</a>
                 </footer>
             </div>
             <BottomNav />

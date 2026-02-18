@@ -20,6 +20,16 @@ web-sys = { version = "0.3", features = [
     "Url",
     "BlobPropertyBag",
     "HtmlSelectElement",
+    "RtcPeerConnection",
+    "RtcDataChannel",
+    "RtcDataChannelInit",
+    "RtcSdpType",
+    "RtcSessionDescriptionInit",
+    "RtcIceCandidate",
+    "RtcIceCandidateInit",
+    "RtcConfiguration",
+    "RtcIceServer",
+    "RtcPeerConnectionIceEvent",
 ] }
 js-sys = "0.3"
 wasm-bindgen = "0.2"
