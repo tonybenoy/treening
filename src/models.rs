@@ -102,6 +102,8 @@ pub struct WorkoutSet {
     #[serde(default)]
     pub duration_secs: Option<u32>,
     pub completed: bool,
+    #[serde(default)]
+    pub note: Option<String>,
 }
 
 #[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
@@ -109,6 +111,8 @@ pub struct WorkoutExercise {
     pub exercise_id: String,
     pub sets: Vec<WorkoutSet>,
     pub notes: String,
+    #[serde(default)]
+    pub superset_group: Option<u32>,
 }
 
 impl WorkoutExercise {
@@ -207,6 +211,18 @@ pub struct UserConfig {
     pub birth_date: Option<String>,
     #[serde(default)]
     pub gender: Option<String>,
+    #[serde(default = "default_rest_seconds")]
+    pub rest_seconds: u32,
+    #[serde(default = "default_bar_weight")]
+    pub bar_weight: f64,
+}
+
+fn default_rest_seconds() -> u32 {
+    90
+}
+
+fn default_bar_weight() -> f64 {
+    20.0
 }
 
 fn default_social_enabled() -> bool {

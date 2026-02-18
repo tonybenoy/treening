@@ -232,7 +232,7 @@ pub fn history_list(props: &Props) -> Html {
                                                                 if let Some(we) = updated.exercises.get_mut(ex_idx) {
                                                                     let last = we.sets.last().cloned().unwrap_or(WorkoutSet {
                                                                         weight: 0.0, reps: 10, completed: false,
-                                                                        distance: None, duration_secs: None,
+                                                                        distance: None, duration_secs: None, note: None,
                                                                     });
                                                                     we.sets.push(WorkoutSet {
                                                                         weight: last.weight,
@@ -240,6 +240,7 @@ pub fn history_list(props: &Props) -> Html {
                                                                         completed: false,
                                                                         distance: last.distance,
                                                                         duration_secs: last.duration_secs,
+                                                                        note: None,
                                                                     });
                                                                 }
                                                                 editing.set(Some(updated));

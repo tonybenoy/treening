@@ -76,6 +76,8 @@ fn profile_section() -> Html {
     let height = use_state(|| config.height.map(|h| h.to_string()).unwrap_or_default());
     let birth_date = use_state(|| config.birth_date.clone().unwrap_or_default());
     let gender = use_state(|| config.gender.clone().unwrap_or_default());
+    let rest_seconds = use_state(|| config.rest_seconds.to_string());
+    let bar_weight = use_state(|| config.bar_weight.to_string());
 
     let on_save = {
         let config_state = config.clone();
@@ -83,12 +85,16 @@ fn profile_section() -> Html {
         let height = height.clone();
         let birth_date = birth_date.clone();
         let gender = gender.clone();
+        let rest_seconds = rest_seconds.clone();
+        let bar_weight = bar_weight.clone();
         Callback::from(move |_| {
             let mut new_config = (*config_state).clone();
             new_config.nickname = (*nickname).clone();
             new_config.height = height.parse::<f64>().ok();
             new_config.birth_date = Some((*birth_date).clone()).filter(|s| !s.is_empty());
             new_config.gender = Some((*gender).clone()).filter(|s| !s.is_empty());
+            new_config.rest_seconds = rest_seconds.parse::<u32>().unwrap_or(90);
+            new_config.bar_weight = bar_weight.parse::<f64>().unwrap_or(20.0);
             storage::save_user_config(&new_config);
             config_state.set(new_config);
         })
@@ -130,11 +136,29 @@ fn profile_section() -> Html {
                 </div>
                 <div class="col-span-2">
                     <label class="block text-[10px] uppercase font-bold text-gray-500 mb-1">{"Birth Date"}</label>
-                    <input 
-                        type="date" 
+                    <input
+                        type="date"
                         class="w-full bg-white dark:bg-gray-700 border border-gray-200 dark:border-transparent rounded-lg px-3 py-2 text-sm text-gray-900 dark:text-white outline-none focus:ring-1 focus:ring-blue-500"
                         value={(*birth_date).clone()}
                         oninput={let b = birth_date.clone(); Callback::from(move |e: InputEvent| b.set(e.target_unchecked_into::<web_sys::HtmlInputElement>().value()))}
+                    />
+                </div>
+                <div>
+                    <label class="block text-[10px] uppercase font-bold text-gray-500 mb-1">{"Rest Timer (sec)"}</label>
+                    <input
+                        type="number"
+                        class="w-full bg-white dark:bg-gray-700 border border-gray-200 dark:border-transparent rounded-lg px-3 py-2 text-sm text-gray-900 dark:text-white outline-none focus:ring-1 focus:ring-blue-500"
+                        value={(*rest_seconds).clone()}
+                        oninput={let r = rest_seconds.clone(); Callback::from(move |e: InputEvent| r.set(e.target_unchecked_into::<web_sys::HtmlInputElement>().value()))}
+                    />
+                </div>
+                <div>
+                    <label class="block text-[10px] uppercase font-bold text-gray-500 mb-1">{"Bar Weight (kg)"}</label>
+                    <input
+                        type="number" step="0.5"
+                        class="w-full bg-white dark:bg-gray-700 border border-gray-200 dark:border-transparent rounded-lg px-3 py-2 text-sm text-gray-900 dark:text-white outline-none focus:ring-1 focus:ring-blue-500"
+                        value={(*bar_weight).clone()}
+                        oninput={let bw = bar_weight.clone(); Callback::from(move |e: InputEvent| bw.set(e.target_unchecked_into::<web_sys::HtmlInputElement>().value()))}
                     />
                 </div>
             </div>

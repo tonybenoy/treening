@@ -2,7 +2,7 @@ use yew::prelude::*;
 use std::collections::HashMap;
 use chrono::{Datelike, NaiveDate};
 
-use crate::components::charts::{BarChart, HorizontalBarChart, LineChart, StatCard};
+use crate::components::charts::{BarChart, CalendarHeatmap, HorizontalBarChart, LineChart, StatCard};
 use crate::data::default_exercises;
 use crate::models::{Category, Exercise, Workout, WorkoutExercise};
 use crate::storage;
@@ -248,6 +248,12 @@ fn overview_tab(props: &OverviewProps) -> Html {
         format!("{:.0}", total_volume)
     };
 
+    // ── Calendar heatmap data ──────────────────────────────────────────
+    let mut heatmap_data: HashMap<String, u32> = HashMap::new();
+    for w in workouts {
+        *heatmap_data.entry(w.date.clone()).or_default() += 1;
+    }
+
     // ── Workouts per week (bar chart) ───────────────────────────────────
     let weeks = last_n_weeks(workouts, 8);
     let mut week_counts: HashMap<(i32, u32), f64> = HashMap::new();
@@ -309,6 +315,11 @@ fn overview_tab(props: &OverviewProps) -> Html {
                 <StatCard label="Total Volume (kg)" value={volume_display} icon="\u{1f4aa}" />
                 <StatCard label="Day Streak" value={format!("{}", streak)} icon="\u{1f525}" />
                 <StatCard label="Avg Duration" value={format!("{}m", avg_duration)} icon="\u{23f1}" />
+            </div>
+
+            // Calendar heatmap
+            <div class="bg-gray-100 dark:bg-gray-800 rounded-xl p-4 border border-gray-200 dark:border-transparent transition-colors shadow-sm">
+                <CalendarHeatmap data={heatmap_data} />
             </div>
 
             // Workouts per week

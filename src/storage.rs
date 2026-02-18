@@ -85,6 +85,8 @@ pub fn load_user_config() -> UserConfig {
             height: None,
             birth_date: None,
             gender: None,
+            rest_seconds: 90,
+            bar_weight: 20.0,
         };
         let _ = LocalStorage::set(USER_CONFIG_KEY, &config);
         config

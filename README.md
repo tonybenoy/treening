@@ -7,6 +7,14 @@ Treening is a modern, offline-capable gym workout tracker built with Rust and We
 
 - **Workout Logging:** Track your sets, reps, and weights in real-time.
 - **Specialized Tracking:** Different metrics for Strength (Weight+Reps), Cardio (Dist+Time), Duration (Time), and Bodyweight exercises.
+- **Rest Timer:** Automatic countdown timer after completing a set (configurable duration, +30s / Skip controls, vibration alert).
+- **1RM Calculator:** Estimated one-rep max shown for every completed strength set using the Epley formula.
+- **Previous Performance Overlay:** See your last workout's sets for each exercise displayed above the current sets.
+- **PR Highlights:** Yellow "PR" badge appears when you beat your all-time best weight for an exercise.
+- **Plate Calculator:** Tap the barbell icon next to any weight input to see the exact plates needed per side.
+- **Superset Support:** Group consecutive exercises into supersets with a purple border and badge.
+- **Per-Set Notes:** Add notes to individual sets (e.g., "felt easy", "pause rep").
+- **Calendar Heatmap:** GitHub-style workout frequency heatmap on the Analytics page.
 - **Personal Profile:** Track your height, age, and gender to personalize your experience.
 - **Body Progress:** Log your weight and body fat % over time with built-in progress charts.
 - **Adaptive UI:** Full support for **Light and Dark modes** based on your system preference or manual toggle.

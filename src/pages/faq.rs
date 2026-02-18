@@ -59,6 +59,38 @@ const FAQS: &[FaqItem] = &[
         answer: "No. Syncing uses an intelligent merge. It will combine the workouts, routines, and custom exercises from both devices, skipping any duplicates. It's safe to sync even if both devices have existing data.",
     },
     FaqItem {
+        question: "What is the Rest Timer?",
+        answer: "When you mark a set as complete, a countdown timer automatically starts at the bottom of the screen. The default is 90 seconds but you can change it in Settings under 'Rest Timer'. You can add 30 seconds or skip the timer at any time. Your phone will vibrate when the rest period ends.",
+    },
+    FaqItem {
+        question: "What is the 1RM estimate?",
+        answer: "For every completed strength set with more than 1 rep, Treening shows your estimated one-rep max (1RM) using the Epley formula: weight \u{00d7} (1 + reps/30). This helps you gauge your true maximal strength without actually testing it.",
+    },
+    FaqItem {
+        question: "How does 'Previous Performance' work?",
+        answer: "When you add an exercise to your workout, Treening looks up your most recent workout that included the same exercise and shows a summary of the sets (e.g., 'Last: S1: 80kg x8, S2: 85kg x6') in gray text above your current sets. This helps you decide what weights to use.",
+    },
+    FaqItem {
+        question: "What does the yellow 'PR' badge mean?",
+        answer: "A yellow 'PR' (Personal Record) badge appears next to a set when the weight you entered exceeds the heaviest weight you have ever completed for that exercise across all previous workouts. It is a quick way to see when you are hitting new highs.",
+    },
+    FaqItem {
+        question: "How does the Plate Calculator work?",
+        answer: "Tap the barbell icon next to any weight input to see the exact plates needed per side (25, 20, 15, 10, 5, 2.5, 1.25 kg). The calculation uses your configured bar weight (default 20 kg), which you can change in Settings under 'Bar Weight'.",
+    },
+    FaqItem {
+        question: "What are Supersets?",
+        answer: "Supersets let you group two or more exercises together to perform them back-to-back with minimal rest. Tap 'Group' on an exercise to link it with the exercise above. Grouped exercises display a purple left border and a 'Superset' badge. Tap 'Ungroup' to remove an exercise from the superset.",
+    },
+    FaqItem {
+        question: "Can I add notes to individual sets?",
+        answer: "Yes. Tap the note icon on any set row to expand an inline text field where you can write a note for that specific set (e.g., 'pause rep', 'felt easy'). The note is saved with the set and also included when you share a workout.",
+    },
+    FaqItem {
+        question: "What is the Calendar Heatmap?",
+        answer: "The Calendar Heatmap on the Analytics Overview tab is a GitHub-style grid showing the last 20 weeks of workout activity. Each cell represents a day: dark means no workout, light green means one workout, and bright green means two or more. It gives you a quick visual overview of your training consistency.",
+    },
+    FaqItem {
         question: "Can I add my own exercises?",
         answer: "Yes. Go to the Exercises tab and tap \"Add Custom Exercise\". You can also choose which metric to track (Strength, Cardio, etc.) for your custom moves.",
     },

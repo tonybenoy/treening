@@ -79,17 +79,24 @@ pub fn format_workout_text(workout: &Workout, exercises: &[Exercise]) -> String 
             .find(|e| e.id == we.exercise_id)
             .map(|e| e.name.as_str())
             .unwrap_or(&we.exercise_id);
-        lines.push(format!("  {}", name));
+        let superset_tag = if we.superset_group.is_some() { " [Superset]" } else { "" };
+        lines.push(format!("  {}{}", name, superset_tag));
         for (i, s) in we.sets.iter().enumerate() {
             if s.completed {
-                if let Some(dist) = s.distance {
+                let mut set_line = if let Some(dist) = s.distance {
                     let dur = s.duration_secs.unwrap_or(0);
-                    lines.push(format!("    Set {}: {:.1}km / {}:{:02}", i + 1, dist, dur / 60, dur % 60));
+                    format!("    Set {}: {:.1}km / {}:{:02}", i + 1, dist, dur / 60, dur % 60)
                 } else if let Some(secs) = s.duration_secs {
-                    lines.push(format!("    Set {}: {}:{:02}", i + 1, secs / 60, secs % 60));
+                    format!("    Set {}: {}:{:02}", i + 1, secs / 60, secs % 60)
                 } else {
-                    lines.push(format!("    Set {}: {}kg x {}", i + 1, s.weight, s.reps));
+                    format!("    Set {}: {}kg x {}", i + 1, s.weight, s.reps)
+                };
+                if let Some(ref note) = s.note {
+                    if !note.is_empty() {
+                        set_line.push_str(&format!(" ({})", note));
+                    }
                 }
+                lines.push(set_line);
             }
         }
         if !we.notes.is_empty() {

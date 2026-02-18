@@ -1,4 +1,6 @@
 use yew::prelude::*;
+use std::collections::HashMap;
+use chrono::Datelike;
 
 // ── StatCard ────────────────────────────────────────────────────────────────
 
@@ -254,6 +256,86 @@ pub fn horizontal_bar_chart(props: &HorizontalBarChartProps) -> Html {
                     }
                 })}
             </div>
+        </div>
+    }
+}
+
+// ── CalendarHeatmap ─────────────────────────────────────────────────────────
+
+#[derive(Properties, PartialEq)]
+pub struct CalendarHeatmapProps {
+    /// Map of "YYYY-MM-DD" -> workout count for that day
+    pub data: HashMap<String, u32>,
+}
+
+#[function_component(CalendarHeatmap)]
+pub fn calendar_heatmap(props: &CalendarHeatmapProps) -> Html {
+    let today = chrono::Local::now().date_naive();
+    // 20 columns (weeks) x 7 rows (days, Mon=0..Sun=6)
+    let cols = 20u32;
+    let rows = 7u32;
+    let cell = 14.0_f64;
+    let gap = 2.0_f64;
+    let padding_left = 24.0_f64;
+    let padding_top = 4.0_f64;
+    let total_w = padding_left + cols as f64 * (cell + gap);
+    let total_h = padding_top + rows as f64 * (cell + gap) + 2.0;
+    let viewbox = format!("0 0 {} {}", total_w, total_h);
+
+    // Start date: go back (cols * 7 - 1) days from today, align to Monday
+    let total_days = cols * rows;
+    let start = today - chrono::Duration::days(total_days as i64 - 1);
+    // Align to Monday (weekday 0 = Monday in chrono)
+    let weekday = start.weekday().num_days_from_monday();
+    let start = start - chrono::Duration::days(weekday as i64);
+
+    let day_labels = ["M", "", "W", "", "F", "", ""];
+
+    html! {
+        <div class="w-full">
+            <h3 class="text-sm font-semibold text-gray-600 dark:text-gray-300 mb-2 transition-colors">{"Workout Calendar"}</h3>
+            <svg viewBox={viewbox} class="w-full" preserveAspectRatio="xMidYMid meet">
+                // Day labels
+                { for (0..rows).map(|row| {
+                    let label = day_labels[row as usize];
+                    if label.is_empty() {
+                        return html! {};
+                    }
+                    let y = padding_top + row as f64 * (cell + gap) + cell * 0.75;
+                    html! {
+                        <text x="0" y={format!("{}", y)} fill="currentColor" font-size="8" class="text-gray-500 dark:text-gray-500">{label}</text>
+                    }
+                })}
+                // Cells
+                { for (0..cols).flat_map(|col| {
+                    (0..rows).map(move |row| {
+                        let day_offset = col * rows + row;
+                        let date = start + chrono::Duration::days(day_offset as i64);
+                        let date_str = date.format("%Y-%m-%d").to_string();
+                        let count = props.data.get(&date_str).copied().unwrap_or(0);
+                        let x = padding_left + col as f64 * (cell + gap);
+                        let y = padding_top + row as f64 * (cell + gap);
+
+                        let fill = if date > today {
+                            "transparent"
+                        } else {
+                            match count {
+                                0 => "#1f2937", // dark gray
+                                1 => "#166534", // light green
+                                _ => "#22c55e", // bright green
+                            }
+                        };
+
+                        html! {
+                            <rect
+                                x={format!("{}", x)} y={format!("{}", y)}
+                                width={format!("{}", cell)} height={format!("{}", cell)}
+                                rx="2" fill={fill}
+                            />
+                        }
+                    })
+                })}
+            </svg>
         </div>
     }
 }
