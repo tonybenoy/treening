@@ -110,6 +110,19 @@ pub fn home_page() -> Html {
                     </div>
                 }
             }}
+
+            <div class="pt-4 border-t border-gray-800">
+                <Link<Route> to={Route::Settings} classes="flex items-center justify-between p-4 bg-gray-800/50 rounded-xl hover:bg-gray-800 transition group">
+                    <div class="flex items-center gap-3">
+                        <span class="text-2xl group-hover:scale-110 transition-transform">{"📲"}</span>
+                        <div>
+                            <div class="font-medium text-gray-200">{"Sync Devices"}</div>
+                            <div class="text-xs text-gray-500">{"Private P2P transfer"}</div>
+                        </div>
+                    </div>
+                    <span class="text-gray-600 group-hover:text-gray-400">{"→"}</span>
+                </Link<Route>>
+            </div>
         </div>
     }
 }
