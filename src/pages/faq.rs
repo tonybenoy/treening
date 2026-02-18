@@ -107,6 +107,58 @@ const FAQS: &[FaqItem] = &[
         answer: "No. Treening does not collect any data. Everything stays on your device.",
     },
     FaqItem {
+        question: "Can I reorder exercises during a workout?",
+        answer: "Yes. Each exercise card has up and down arrow buttons in the header. Tap them to move an exercise up or down in your workout order.",
+    },
+    FaqItem {
+        question: "Can I set a different rest timer per exercise?",
+        answer: "Yes. Each strength exercise has a small rest-time input below the sets. Change it to override the global rest timer for that specific exercise. If you leave it at the default, the global setting from Settings is used.",
+    },
+    FaqItem {
+        question: "How does auto-fill from previous work?",
+        answer: "When you add an exercise (or load a routine), Treening looks up your most recent workout containing that exercise and pre-fills the first set with the same weight, reps, distance, or duration. This saves you from typing the same numbers every session.",
+    },
+    FaqItem {
+        question: "What are warm-up sets?",
+        answer: "For strength exercises where your first set weight is above the bar weight, a 'Warm-up Sets' button appears. Tapping it prepends four progressive warm-up sets at 40%, 60%, 75%, and 90% of your working weight (with 10, 6, 4, and 2 reps respectively), rounded to the nearest 2.5 kg.",
+    },
+    FaqItem {
+        question: "Is there an undo feature?",
+        answer: "Yes. When you remove an exercise or delete a set, a floating 'Undo' button appears at the bottom of the screen for 5 seconds. Tap it to restore the deleted item.",
+    },
+    FaqItem {
+        question: "What is the estimated 1RM progress chart?",
+        answer: "In the Progress tab of Analytics, alongside the max weight and volume charts, there is now an 'Est. 1RM Per Session' chart (pink line). It shows the highest estimated one-rep max from each session using the Epley formula, so you can track strength progress even when training with different rep ranges.",
+    },
+    FaqItem {
+        question: "What is 'Volume Per Muscle Group'?",
+        answer: "In the Analytics Overview tab, there is a collapsible 'Volume Per Muscle Group' section. It shows a line chart for each of your top 4 most-trained muscle groups, plotting weekly volume over the last 8 weeks. This helps you spot imbalances in your training.",
+    },
+    FaqItem {
+        question: "What are the milestone badges?",
+        answer: "The milestones row in Analytics Overview shows achievement badges at 1, 5, 10, 25, 50, 100, 250, and 500 total workouts. Achieved badges are highlighted in gold; unachieved ones are greyed out. Below the row, you can see how many workouts remain until your next milestone.",
+    },
+    FaqItem {
+        question: "What do the training frequency chips mean?",
+        answer: "If you haven't trained a muscle group in over 7 days, a yellow warning chip appears in Analytics Overview (e.g., 'Legs: 10d ago'). At 14+ days the chip turns red. Only muscle groups you have trained at least once are tracked.",
+    },
+    FaqItem {
+        question: "What is the confetti animation on PR?",
+        answer: "When you complete a set that is a new Personal Record (PR), the set row briefly flashes gold and gets a yellow ring highlight. This gives you instant visual feedback that you just hit a new best.",
+    },
+    FaqItem {
+        question: "Can I repeat a previous workout?",
+        answer: "Yes. In the History tab, expand any workout and tap 'Repeat'. This loads all exercises, sets, weights, and supersets from that workout into a new session with all sets marked as not completed, so you can do it again.",
+    },
+    FaqItem {
+        question: "Can I swipe to delete sets?",
+        answer: "Yes, on touch devices. Swipe a set row to the left; after 80 pixels a red 'Delete' background appears and the set is removed. On desktop, use the x button as usual. The undo pill appears in both cases.",
+    },
+    FaqItem {
+        question: "Can I export my data as CSV?",
+        answer: "Yes. Go to Settings and tap 'Export CSV'. This downloads a spreadsheet-friendly file with columns for date, workout name, duration, exercise, set number, weight, reps, distance, duration, completed status, and notes.",
+    },
+    FaqItem {
         question: "Is it open source?",
         answer: "Yes! The source code is available on GitHub. It is built using Rust and WebAssembly for maximum performance and privacy.",
     },

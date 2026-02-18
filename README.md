@@ -8,13 +8,26 @@ Treening is a modern, offline-capable gym workout tracker built with Rust and We
 - **Workout Logging:** Track your sets, reps, and weights in real-time.
 - **Specialized Tracking:** Different metrics for Strength (Weight+Reps), Cardio (Dist+Time), Duration (Time), and Bodyweight exercises.
 - **Rest Timer:** Automatic countdown timer after completing a set (configurable duration, +30s / Skip controls, vibration alert).
+- **Per-Exercise Rest Timer:** Override the global rest duration on a per-exercise basis.
 - **1RM Calculator:** Estimated one-rep max shown for every completed strength set using the Epley formula.
+- **1RM Progress Chart:** Track your estimated 1RM over time in the Analytics Progress tab.
 - **Previous Performance Overlay:** See your last workout's sets for each exercise displayed above the current sets.
+- **Auto-Fill from Previous:** New exercises and routines auto-populate weight/reps from your most recent session.
+- **Warm-Up Set Generator:** One-tap warm-up sets at 40%, 60%, 75%, and 90% of your working weight.
 - **PR Highlights:** Yellow "PR" badge appears when you beat your all-time best weight for an exercise.
+- **PR Animation:** Gold flash and ring highlight on sets that are new Personal Records.
 - **Plate Calculator:** Tap the barbell icon next to any weight input to see the exact plates needed per side.
+- **Reorder Exercises:** Move exercises up or down during a workout with arrow buttons.
 - **Superset Support:** Group consecutive exercises into supersets with a purple border and badge.
 - **Per-Set Notes:** Add notes to individual sets (e.g., "felt easy", "pause rep").
+- **Undo After Remove:** Floating undo pill (5s auto-dismiss) when you delete an exercise or set.
+- **Swipe to Delete:** Swipe set rows left on touch devices to delete; desktop x-button still works.
+- **Repeat Workout:** Tap "Repeat" on any past workout to reload it as a new session.
 - **Calendar Heatmap:** GitHub-style workout frequency heatmap on the Analytics page.
+- **Volume Per Muscle Group:** Weekly volume line charts for your top muscle groups (collapsible).
+- **Milestone Badges:** Achievement badges at 1, 5, 10, 25, 50, 100, 250, and 500 workouts.
+- **Training Frequency Warnings:** Yellow/red chips when a muscle group hasn't been trained in 7/14+ days.
+- **CSV Export:** Download all workout data as a spreadsheet-friendly CSV file.
 - **Personal Profile:** Track your height, age, and gender to personalize your experience.
 - **Body Progress:** Log your weight and body fat % over time with built-in progress charts.
 - **Adaptive UI:** Full support for **Light and Dark modes** based on your system preference or manual toggle.

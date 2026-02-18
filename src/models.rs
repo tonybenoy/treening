@@ -113,6 +113,8 @@ pub struct WorkoutExercise {
     pub notes: String,
     #[serde(default)]
     pub superset_group: Option<u32>,
+    #[serde(default)]
+    pub rest_seconds_override: Option<u32>,
 }
 
 impl WorkoutExercise {

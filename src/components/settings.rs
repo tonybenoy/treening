@@ -168,6 +168,28 @@ pub fn settings_panel(props: &Props) -> Html {
                     class="w-full py-2 bg-blue-600 text-white rounded font-medium hover:bg-blue-700 shadow-sm transition-colors"
                     onclick={on_export}
                 >{"Export JSON"}</button>
+                <button
+                    class="w-full py-2 mt-2 bg-green-600 text-white rounded font-medium hover:bg-green-700 shadow-sm transition-colors"
+                    onclick={Callback::from(|_| {
+                        let data = storage::export_csv();
+                        let blob_parts = js_sys::Array::new();
+                        blob_parts.push(&wasm_bindgen::JsValue::from_str(&data));
+                        let opts = web_sys::BlobPropertyBag::new();
+                        opts.set_type("text/csv");
+                        if let Ok(blob) = web_sys::Blob::new_with_str_sequence_and_options(&blob_parts, &opts) {
+                            if let Ok(url) = web_sys::Url::create_object_url_with_blob(&blob) {
+                                let document = gloo::utils::document();
+                                if let Ok(elem) = document.create_element("a") {
+                                    let anchor: web_sys::HtmlAnchorElement = elem.unchecked_into();
+                                    anchor.set_href(&url);
+                                    anchor.set_download("treening-export.csv");
+                                    anchor.click();
+                                    let _ = web_sys::Url::revoke_object_url(&url);
+                                }
+                            }
+                        }
+                    })}
+                >{"Export CSV"}</button>
             </div>
             <div class="bg-gray-100 dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-transparent">
                 <h3 class="font-semibold mb-2 text-gray-900 dark:text-gray-100">{"Import Data"}</h3>

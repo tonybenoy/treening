@@ -1,11 +1,11 @@
 use yew::prelude::*;
 use yew_router::prelude::*;
-use gloo::timers::callback::Interval;
+use gloo::timers::callback::{Interval, Timeout};
 use gloo::storage::{LocalStorage, Storage};
 use wasm_bindgen::prelude::*;
 use crate::components::exercise_list::ExerciseList;
 use crate::components::workout_log::WorkoutLog;
-use crate::models::{Exercise, Workout, WorkoutExercise, WorkoutSet};
+use crate::models::{Exercise, Workout, WorkoutExercise, WorkoutSet, ExerciseTrackingType};
 use crate::storage;
 use crate::data;
 use crate::Route;
@@ -19,7 +19,6 @@ extern "C" {
 fn try_vibrate() {
     let window = web_sys::window().unwrap();
     let navigator = window.navigator();
-    // Use js_sys to call vibrate
     let nav_val: JsValue = navigator.into();
     let _ = js_sys::Reflect::get(&nav_val, &"vibrate".into())
         .ok()
@@ -27,6 +26,65 @@ fn try_vibrate() {
             let func = js_sys::Function::from(f);
             func.call1(&nav_val, &JsValue::from(200)).ok()
         });
+}
+
+/// Auto-fill a set from the most recent previous workout containing this exercise.
+fn autofill_set(previous: &[Workout], exercise_id: &str, all_exercises: &[Exercise]) -> WorkoutSet {
+    let tracking = all_exercises.iter()
+        .find(|e| e.id == exercise_id)
+        .map(|e| e.tracking_type.clone())
+        .unwrap_or(ExerciseTrackingType::Strength);
+
+    let prev_set = previous.iter()
+        .rev()
+        .flat_map(|w| w.exercises.iter())
+        .find(|we| we.exercise_id == exercise_id)
+        .and_then(|we| we.sets.first());
+
+    match prev_set {
+        Some(s) => WorkoutSet {
+            weight: s.weight,
+            reps: s.reps,
+            distance: s.distance,
+            duration_secs: s.duration_secs,
+            completed: false,
+            note: None,
+        },
+        None => match tracking {
+            ExerciseTrackingType::Cardio => WorkoutSet {
+                weight: 0.0, reps: 0, completed: false,
+                distance: Some(0.0), duration_secs: Some(0), note: None,
+            },
+            ExerciseTrackingType::Duration => WorkoutSet {
+                weight: 0.0, reps: 0, completed: false,
+                distance: None, duration_secs: Some(0), note: None,
+            },
+            _ => WorkoutSet {
+                weight: 0.0, reps: 10, completed: false,
+                distance: None, duration_secs: None, note: None,
+            },
+        },
+    }
+}
+
+/// Generate warm-up sets for a given working weight.
+/// Percentages: [40%, 60%, 75%, 90%], reps: [10, 6, 4, 2], rounded to nearest 2.5kg
+pub fn generate_warmup_sets(working_weight: f64) -> Vec<WorkoutSet> {
+    let percentages = [0.40, 0.60, 0.75, 0.90];
+    let reps = [10u32, 6, 4, 2];
+
+    percentages.iter().zip(reps.iter()).map(|(&pct, &r)| {
+        let raw = working_weight * pct;
+        let rounded = (raw / 2.5).round() * 2.5;
+        WorkoutSet {
+            weight: rounded,
+            reps: r,
+            completed: false,
+            distance: None,
+            duration_secs: None,
+            note: None,
+        }
+    }).collect()
 }
 
 #[function_component(WorkoutPage)]
@@ -43,6 +101,10 @@ pub fn workout_page() -> Html {
     let rest_remaining = use_state(|| 0u32);
     let rest_active = use_state(|| false);
 
+    // Undo state
+    let undo_snapshot = use_state(|| None::<Vec<WorkoutExercise>>);
+    let undo_timeout = use_state(|| None::<Timeout>);
+
     let config = use_memo((), |_| storage::load_user_config());
     let previous_workouts = use_memo((), |_| storage::load_workouts());
 
@@ -58,6 +120,8 @@ pub fn workout_page() -> Html {
         let workout_exercises = workout_exercises.clone();
         let workout_name = workout_name.clone();
         let workout_active = workout_active.clone();
+        let previous = (*previous_workouts).clone();
+        let all_ex = all_exercises.clone();
         use_effect_with((), move |_| {
             if let Ok(routine_id) = LocalStorage::get::<String>("treening_active_routine") {
                 LocalStorage::delete("treening_active_routine");
@@ -65,15 +129,29 @@ pub fn workout_page() -> Html {
                 if let Some(routine) = routines.iter().find(|r| r.id == routine_id) {
                     workout_name.set(routine.name.clone());
                     let exs: Vec<WorkoutExercise> = routine.exercise_ids.iter().map(|eid| {
+                        let set = autofill_set(&previous, eid, &all_ex);
                         WorkoutExercise {
                             exercise_id: eid.clone(),
-                            sets: vec![WorkoutSet {
-                                weight: 0.0, reps: 10, completed: false,
-                                distance: None, duration_secs: None, note: None,
-                            }],
+                            sets: vec![set],
                             notes: String::new(),
                             superset_group: None,
+                            rest_seconds_override: None,
                         }
+                    }).collect();
+                    workout_exercises.set(exs);
+                    workout_active.set(true);
+                }
+            }
+            // Load from repeat if set
+            if let Ok(repeat_json) = LocalStorage::get::<String>("treening_active_repeat") {
+                LocalStorage::delete("treening_active_repeat");
+                if let Ok(exs) = serde_json::from_str::<Vec<WorkoutExercise>>(&repeat_json) {
+                    // Reset completed status on all sets
+                    let exs: Vec<WorkoutExercise> = exs.into_iter().map(|mut we| {
+                        for s in we.sets.iter_mut() {
+                            s.completed = false;
+                        }
+                        we
                     }).collect();
                     workout_exercises.set(exs);
                     workout_active.set(true);
@@ -128,12 +206,12 @@ pub fn workout_page() -> Html {
         format!("{:02}:{:02}", m, s)
     };
 
+    // on_set_completed now receives resolved rest seconds
     let on_set_completed = {
         let rest_remaining = rest_remaining.clone();
         let rest_active = rest_active.clone();
-        let config = config.clone();
-        Callback::from(move |()| {
-            rest_remaining.set(config.rest_seconds);
+        Callback::from(move |seconds: u32| {
+            rest_remaining.set(seconds);
             rest_active.set(true);
         })
     };
@@ -142,16 +220,17 @@ pub fn workout_page() -> Html {
         let we = workout_exercises.clone();
         let show = show_exercise_picker.clone();
         let active = workout_active.clone();
+        let previous = (*previous_workouts).clone();
+        let all_ex = all_exercises.clone();
         Callback::from(move |ex: Exercise| {
             let mut exs = (*we).clone();
+            let set = autofill_set(&previous, &ex.id, &all_ex);
             exs.push(WorkoutExercise {
                 exercise_id: ex.id,
-                sets: vec![WorkoutSet {
-                    weight: 0.0, reps: 10, completed: false,
-                    distance: None, duration_secs: None, note: None,
-                }],
+                sets: vec![set],
                 notes: String::new(),
                 superset_group: None,
+                rest_seconds_override: None,
             });
             we.set(exs);
             show.set(false);
@@ -168,12 +247,36 @@ pub fn workout_page() -> Html {
 
     let on_remove = {
         let we = workout_exercises.clone();
+        let undo_snapshot = undo_snapshot.clone();
+        let undo_timeout = undo_timeout.clone();
         Callback::from(move |idx: usize| {
             let mut exs = (*we).clone();
             if idx < exs.len() {
+                // Save snapshot for undo
+                undo_snapshot.set(Some((*we).clone()));
                 exs.remove(idx);
+                // Auto-dismiss undo after 5s
+                let snap = undo_snapshot.clone();
+                let timeout = Timeout::new(5000, move || {
+                    snap.set(None);
+                });
+                undo_timeout.set(Some(timeout));
             }
             we.set(exs);
+        })
+    };
+
+    // Undo callback for destructive actions (set deletions from WorkoutLog)
+    let on_before_destructive = {
+        let undo_snapshot = undo_snapshot.clone();
+        let undo_timeout = undo_timeout.clone();
+        Callback::from(move |snapshot: Vec<WorkoutExercise>| {
+            undo_snapshot.set(Some(snapshot));
+            let snap = undo_snapshot.clone();
+            let timeout = Timeout::new(5000, move || {
+                snap.set(None);
+            });
+            undo_timeout.set(Some(timeout));
         })
     };
 
@@ -254,6 +357,27 @@ pub fn workout_page() -> Html {
         html! {}
     };
 
+    // Undo pill
+    let undo_html = if undo_snapshot.is_some() {
+        let we = workout_exercises.clone();
+        let snap = undo_snapshot.clone();
+        html! {
+            <div class="fixed bottom-32 left-1/2 -translate-x-1/2 z-50">
+                <button
+                    class="bg-gray-900 dark:bg-gray-600 text-white px-4 py-2 rounded-full shadow-lg text-sm font-bold hover:bg-gray-800 dark:hover:bg-gray-500 transition-colors"
+                    onclick={Callback::from(move |_| {
+                        if let Some(ref snapshot) = *snap {
+                            we.set(snapshot.clone());
+                        }
+                        snap.set(None);
+                    })}
+                >{"Undo"}</button>
+            </div>
+        }
+    } else {
+        html! {}
+    };
+
     html! {
         <div class="px-4 py-4 pb-24 space-y-6 transition-colors duration-200">
             <div class="flex justify-between items-center">
@@ -286,6 +410,7 @@ pub fn workout_page() -> Html {
                 rest_seconds={config.rest_seconds}
                 bar_weight={config.bar_weight}
                 on_set_completed={on_set_completed}
+                on_before_destructive={on_before_destructive}
             />
 
             <button
@@ -303,6 +428,7 @@ pub fn workout_page() -> Html {
             } else { html! {} }}
 
             {rest_timer_html}
+            {undo_html}
         </div>
     }
 }

@@ -47,6 +47,11 @@ fn exercise_max_weight(we: &WorkoutExercise) -> f64 {
         .fold(0.0_f64, f64::max)
 }
 
+/// Epley formula for estimated 1RM
+fn estimate_1rm(weight: f64, reps: u32) -> f64 {
+    weight * (1.0 + reps as f64 / 30.0)
+}
+
 fn iso_week_label(d: NaiveDate) -> String {
     let iso = d.iso_week();
     format!("W{}", iso.week())
@@ -71,7 +76,6 @@ fn category_color(cat: &Category) -> &'static str {
 
 /// Build ordered list of last N weeks as (year, week) keys + labels.
 fn last_n_weeks(workouts: &[Workout], n: usize) -> Vec<((i32, u32), String)> {
-    // Find the latest date across all workouts
     let latest = workouts
         .iter()
         .filter_map(|w| parse_date(&w.date))
@@ -109,9 +113,7 @@ fn current_streak(workouts: &[Workout]) -> u32 {
     }
 
     let today = chrono::Local::now().date_naive();
-    // Start from today or the last workout date (whichever is earlier)
     let last = *dates.last().unwrap();
-    // If last workout is more than 1 day ago, streak is 0
     if (today - last).num_days() > 1 {
         return 0;
     }
@@ -164,6 +166,96 @@ fn personal_records(workouts: &[Workout], exercises: &[Exercise]) -> Vec<Persona
     records
 }
 
+// ── Volume per category per week ─────────────────────────────────────────────
+
+fn volume_per_category_per_week(
+    workouts: &[Workout],
+    exercises: &[Exercise],
+    weeks: &[((i32, u32), String)],
+) -> Vec<(Category, Vec<(String, f64)>)> {
+    let mut cat_week_vol: HashMap<String, HashMap<(i32, u32), f64>> = HashMap::new();
+
+    for w in workouts {
+        if let Some(d) = parse_date(&w.date) {
+            let wk = iso_week_key(d);
+            for we in &w.exercises {
+                if let Some(ex) = find_exercise(exercises, &we.exercise_id) {
+                    let vol = exercise_volume(we);
+                    *cat_week_vol
+                        .entry(ex.category.to_string())
+                        .or_default()
+                        .entry(wk)
+                        .or_default() += vol;
+                }
+            }
+        }
+    }
+
+    // Get top 4 categories by total volume
+    let mut cat_totals: Vec<(String, f64)> = cat_week_vol
+        .iter()
+        .map(|(cat, weeks_map)| (cat.clone(), weeks_map.values().sum::<f64>()))
+        .collect();
+    cat_totals.sort_by(|a, b| b.1.partial_cmp(&a.1).unwrap_or(std::cmp::Ordering::Equal));
+    cat_totals.truncate(4);
+
+    cat_totals
+        .into_iter()
+        .filter_map(|(cat_name, _)| {
+            let cat = Category::all().into_iter().find(|c| c.to_string() == cat_name)?;
+            let week_data = cat_week_vol.get(&cat_name)?;
+            let points: Vec<(String, f64)> = weeks
+                .iter()
+                .map(|(key, label)| (label.clone(), week_data.get(key).copied().unwrap_or(0.0)))
+                .collect();
+            Some((cat, points))
+        })
+        .collect()
+}
+
+// ── Days since last training per category ────────────────────────────────────
+
+fn days_since_category(workouts: &[Workout], exercises: &[Exercise]) -> Vec<(Category, i64)> {
+    let today = chrono::Local::now().date_naive();
+    let mut last_trained: HashMap<String, NaiveDate> = HashMap::new();
+
+    for w in workouts {
+        if let Some(d) = parse_date(&w.date) {
+            for we in &w.exercises {
+                if let Some(ex) = find_exercise(exercises, &we.exercise_id) {
+                    let cat = ex.category.to_string();
+                    let entry = last_trained.entry(cat).or_insert(d);
+                    if d > *entry {
+                        *entry = d;
+                    }
+                }
+            }
+        }
+    }
+
+    Category::all()
+        .into_iter()
+        .filter_map(|cat| {
+            last_trained
+                .get(&cat.to_string())
+                .map(|d| (cat, (today - *d).num_days()))
+        })
+        .collect()
+}
+
+// ── Milestone badges ─────────────────────────────────────────────────────────
+
+const MILESTONES: &[(u32, &str)] = &[
+    (1, "\u{1f3c6}"),   // 🏆
+    (5, "\u{2b50}"),     // ⭐
+    (10, "\u{1f4aa}"),   // 💪
+    (25, "\u{1f525}"),   // 🔥
+    (50, "\u{1f48e}"),   // 💎
+    (100, "\u{1f451}"),  // 👑
+    (250, "\u{26a1}"),   // ⚡
+    (500, "\u{1f680}"),  // 🚀
+];
+
 // ── Analytics Page ──────────────────────────────────────────────────────────
 
 #[function_component(AnalyticsPage)]
@@ -171,7 +263,7 @@ pub fn analytics_page() -> Html {
     let workouts = use_state(storage::load_workouts);
     let routines = use_state(storage::load_routines);
     let exercises = use_memo((), |_| all_exercises());
-    let active_tab = use_state(|| 0u8); // 0 = Overview, 1 = Progress, 2 = Body
+    let active_tab = use_state(|| 0u8);
 
     let tab_click = |tab: u8| {
         let active_tab = active_tab.clone();
@@ -190,7 +282,6 @@ pub fn analytics_page() -> Html {
         <div class="px-4 py-4 space-y-4">
             <h1 class="text-2xl font-bold text-gray-900 dark:text-gray-100">{"Analytics"}</h1>
 
-            // Tab bar
             <div class="flex border-b border-gray-200 dark:border-gray-700">
                 <button class={tab_class(0)} onclick={tab_click(0)}>{"Overview"}</button>
                 <button class={tab_class(1)} onclick={tab_click(1)}>{"Progress"}</button>
@@ -218,6 +309,7 @@ struct OverviewProps {
 fn overview_tab(props: &OverviewProps) -> Html {
     let workouts = &props.workouts;
     let exercises = &props.exercises;
+    let show_volume_cats = use_state(|| false);
 
     if workouts.is_empty() {
         return html! {
@@ -229,7 +321,7 @@ fn overview_tab(props: &OverviewProps) -> Html {
         };
     }
 
-    // ── Stats ───────────────────────────────────────────────────────────
+    // ── Stats
     let total_workouts = workouts.len();
     let total_volume: f64 = workouts.iter().map(workout_volume).sum();
     let streak = current_streak(workouts);
@@ -248,13 +340,13 @@ fn overview_tab(props: &OverviewProps) -> Html {
         format!("{:.0}", total_volume)
     };
 
-    // ── Calendar heatmap data ──────────────────────────────────────────
+    // ── Calendar heatmap data
     let mut heatmap_data: HashMap<String, u32> = HashMap::new();
     for w in workouts {
         *heatmap_data.entry(w.date.clone()).or_default() += 1;
     }
 
-    // ── Workouts per week (bar chart) ───────────────────────────────────
+    // ── Workouts per week (bar chart)
     let weeks = last_n_weeks(workouts, 8);
     let mut week_counts: HashMap<(i32, u32), f64> = HashMap::new();
     for w in workouts {
@@ -269,7 +361,7 @@ fn overview_tab(props: &OverviewProps) -> Html {
         })
         .collect();
 
-    // ── Volume per week (line chart) ────────────────────────────────────
+    // ── Volume per week (line chart)
     let mut week_volume: HashMap<(i32, u32), f64> = HashMap::new();
     for w in workouts {
         if let Some(d) = parse_date(&w.date) {
@@ -283,7 +375,7 @@ fn overview_tab(props: &OverviewProps) -> Html {
         })
         .collect();
 
-    // ── Muscle group distribution ───────────────────────────────────────
+    // ── Muscle group distribution
     let mut cat_counts: HashMap<String, f64> = HashMap::new();
     for w in workouts {
         for we in &w.exercises {
@@ -304,8 +396,19 @@ fn overview_tab(props: &OverviewProps) -> Html {
         })
         .collect();
 
-    // ── Personal Records ────────────────────────────────────────────────
+    // ── Personal Records
     let prs = personal_records(workouts, exercises);
+
+    // ── Milestone badges
+    let total = total_workouts as u32;
+    let next_milestone = MILESTONES.iter().find(|(threshold, _)| *threshold > total);
+
+    // ── Volume per category per week
+    let vol_cat_data = volume_per_category_per_week(workouts, exercises, &weeks);
+
+    // ── Training frequency warnings
+    let days_since = days_since_category(workouts, exercises);
+    let stale_cats: Vec<&(Category, i64)> = days_since.iter().filter(|(_, days)| *days > 7).collect();
 
     html! {
         <div class="space-y-6">
@@ -316,6 +419,62 @@ fn overview_tab(props: &OverviewProps) -> Html {
                 <StatCard label="Day Streak" value={format!("{}", streak)} icon="\u{1f525}" />
                 <StatCard label="Avg Duration" value={format!("{}m", avg_duration)} icon="\u{23f1}" />
             </div>
+
+            // Milestone badges
+            <div class="bg-gray-100 dark:bg-gray-800 rounded-xl p-4 border border-gray-200 dark:border-transparent transition-colors shadow-sm">
+                <h3 class="text-sm font-bold text-gray-900 dark:text-gray-100 mb-3 uppercase tracking-wider">{"Milestones"}</h3>
+                <div class="flex gap-2 overflow-x-auto pb-1">
+                    { for MILESTONES.iter().map(|(threshold, emoji)| {
+                        let achieved = total >= *threshold;
+                        html! {
+                            <div class={classes!(
+                                "flex-shrink-0", "flex", "flex-col", "items-center", "gap-1", "px-3", "py-2", "rounded-lg", "border",
+                                if achieved {
+                                    "bg-yellow-500/10 border-yellow-500/30 text-yellow-500"
+                                } else {
+                                    "bg-gray-200 dark:bg-gray-700 border-transparent text-gray-400 dark:text-gray-600 opacity-50"
+                                }
+                            )}>
+                                <span class="text-lg">{emoji}</span>
+                                <span class="text-[10px] font-bold">{threshold}</span>
+                            </div>
+                        }
+                    })}
+                </div>
+                { if let Some((next_threshold, _)) = next_milestone {
+                    let remaining = next_threshold - total;
+                    html! {
+                        <p class="text-xs text-gray-500 mt-2">
+                            {format!("Next: {} workouts ({} to go)", next_threshold, remaining)}
+                        </p>
+                    }
+                } else {
+                    html! { <p class="text-xs text-yellow-500 mt-2 font-bold">{"All milestones achieved!"}</p> }
+                }}
+            </div>
+
+            // Training frequency warnings
+            { if !stale_cats.is_empty() {
+                html! {
+                    <div class="flex flex-wrap gap-2">
+                        { for stale_cats.iter().map(|(cat, days)| {
+                            let is_critical = *days >= 14;
+                            html! {
+                                <span class={classes!(
+                                    "text-xs", "font-bold", "px-2", "py-1", "rounded-full",
+                                    if is_critical {
+                                        "bg-red-500/20 text-red-400"
+                                    } else {
+                                        "bg-yellow-500/20 text-yellow-500"
+                                    }
+                                )}>
+                                    {format!("{}: {}d ago", cat, days)}
+                                </span>
+                            }
+                        })}
+                    </div>
+                }
+            } else { html! {} }}
 
             // Calendar heatmap
             <div class="bg-gray-100 dark:bg-gray-800 rounded-xl p-4 border border-gray-200 dark:border-transparent transition-colors shadow-sm">
@@ -331,6 +490,35 @@ fn overview_tab(props: &OverviewProps) -> Html {
             <div class="bg-gray-100 dark:bg-gray-800 rounded-xl p-4 border border-gray-200 dark:border-transparent transition-colors shadow-sm">
                 <LineChart data={volume_per_week} title="Volume Per Week (kg)" height={180} color="#10b981" />
             </div>
+
+            // Volume per muscle group over time (collapsible)
+            { if !vol_cat_data.is_empty() {
+                let show = *show_volume_cats;
+                let toggle = show_volume_cats.clone();
+                html! {
+                    <div class="bg-gray-100 dark:bg-gray-800 rounded-xl p-4 border border-gray-200 dark:border-transparent transition-colors shadow-sm">
+                        <button
+                            class="w-full flex justify-between items-center text-sm font-bold text-gray-900 dark:text-gray-100 uppercase tracking-wider"
+                            onclick={Callback::from(move |_| toggle.set(!show))}
+                        >
+                            {"Volume Per Muscle Group"}
+                            <span class={classes!("text-gray-400", "transition-transform", if show { "rotate-180" } else { "" })}>{"\u{25be}"}</span>
+                        </button>
+                        { if show {
+                            html! {
+                                <div class="mt-4 space-y-4">
+                                    { for vol_cat_data.iter().map(|(cat, data)| {
+                                        let color = category_color(cat).to_string();
+                                        html! {
+                                            <LineChart data={data.clone()} title={cat.to_string()} height={140} color={color} />
+                                        }
+                                    })}
+                                </div>
+                            }
+                        } else { html! {} }}
+                    </div>
+                }
+            } else { html! {} }}
 
             // Muscle group distribution
             <div class="bg-gray-100 dark:bg-gray-800 rounded-xl p-4 border border-gray-200 dark:border-transparent transition-colors shadow-sm">
@@ -397,7 +585,6 @@ fn progress_tab(props: &ProgressProps) -> Html {
         }
     }
 
-    // Auto-select first if none selected
     if selected_exercise.is_empty() && !seen_ids.is_empty() {
         selected_exercise.set(seen_ids[0].clone());
     }
@@ -411,9 +598,10 @@ fn progress_tab(props: &ProgressProps) -> Html {
     };
 
     // Build data for selected exercise
-    let (weight_data, volume_data) = if !selected_exercise.is_empty() {
+    let (weight_data, volume_data, e1rm_data) = if !selected_exercise.is_empty() {
         let mut weight_points: Vec<(String, f64)> = Vec::new();
         let mut volume_points: Vec<(String, f64)> = Vec::new();
+        let mut e1rm_points: Vec<(String, f64)> = Vec::new();
 
         let mut relevant: Vec<&Workout> = workouts
             .iter()
@@ -426,14 +614,23 @@ fn progress_tab(props: &ProgressProps) -> Html {
                 if we.exercise_id == *selected_exercise {
                     let max_w = exercise_max_weight(we);
                     let vol = exercise_volume(we);
-                    // Use short date label (MM/DD)
                     let label = if w.date.len() >= 10 {
                         format!("{}/{}", &w.date[5..7], &w.date[8..10])
                     } else {
                         w.date.clone()
                     };
+
+                    // Compute max est. 1RM for this session
+                    let max_e1rm = we.sets.iter()
+                        .filter(|s| s.completed && s.weight > 0.0 && s.reps > 0)
+                        .map(|s| estimate_1rm(s.weight, s.reps))
+                        .fold(0.0_f64, f64::max);
+
                     weight_points.push((label.clone(), max_w));
-                    volume_points.push((label, vol));
+                    volume_points.push((label.clone(), vol));
+                    if max_e1rm > 0.0 {
+                        e1rm_points.push((label, max_e1rm));
+                    }
                 }
             }
         }
@@ -444,17 +641,20 @@ fn progress_tab(props: &ProgressProps) -> Html {
             weight_points = weight_points[n - 12..].to_vec();
             volume_points = volume_points[n - 12..].to_vec();
         }
+        let n2 = e1rm_points.len();
+        if n2 > 12 {
+            e1rm_points = e1rm_points[n2 - 12..].to_vec();
+        }
 
-        (weight_points, volume_points)
+        (weight_points, volume_points, e1rm_points)
     } else {
-        (vec![], vec![])
+        (vec![], vec![], vec![])
     };
 
     // Routine tracking
     let routine_stats: Vec<Html> = routines
         .iter()
         .map(|routine| {
-            // Count workouts that contain at least one exercise from this routine
             let matching_workouts: Vec<&Workout> = workouts
                 .iter()
                 .filter(|w| {
@@ -471,7 +671,6 @@ fn progress_tab(props: &ProgressProps) -> Html {
                 .max()
                 .unwrap_or("-");
 
-            // Per-exercise weight trend (latest vs first)
             let exercise_trends: Vec<Html> = routine
                 .exercise_ids
                 .iter()
@@ -563,6 +762,10 @@ fn progress_tab(props: &ProgressProps) -> Html {
                 if !volume_data.is_empty() {
                     <LineChart data={volume_data} title="Volume Per Session (kg)" height={180} color="#8b5cf6" />
                 }
+
+                if !e1rm_data.is_empty() {
+                    <LineChart data={e1rm_data} title="Est. 1RM Per Session (kg)" height={180} color="#ec4899" />
+                }
             </div>
 
             // Routine tracking
@@ -596,7 +799,7 @@ fn body_tab() -> Html {
     let mut weight_data: Vec<(String, f64)> = metrics.iter()
         .filter_map(|m| m.weight.map(|w| (m.date[5..].to_string(), w)))
         .collect();
-    weight_data.sort_by(|a, b| a.0.cmp(&b.0)); // Simple string date sort for same-year
+    weight_data.sort_by(|a, b| a.0.cmp(&b.0));
 
     let mut fat_data: Vec<(String, f64)> = metrics.iter()
         .filter_map(|m| m.body_fat.map(|f| (m.date[5..].to_string(), f)))

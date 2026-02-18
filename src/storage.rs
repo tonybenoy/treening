@@ -116,6 +116,55 @@ pub fn save_custom_exercises(exercises: &[Exercise]) {
     trigger_backup_debounced();
 }
 
+fn csv_escape(s: &str) -> String {
+    if s.contains(',') || s.contains('"') || s.contains('\n') {
+        format!("\"{}\"", s.replace('"', "\"\""))
+    } else {
+        s.to_string()
+    }
+}
+
+pub fn export_csv() -> String {
+    let workouts = load_workouts();
+    let mut lines = Vec::new();
+    lines.push("date,workout_name,duration_mins,exercise,set_number,weight_kg,reps,distance_km,duration_secs,completed,note".to_string());
+
+    let exercises = {
+        let mut exs = crate::data::default_exercises();
+        exs.extend(load_custom_exercises());
+        exs
+    };
+
+    for w in &workouts {
+        for we in &w.exercises {
+            let ex_name = exercises.iter()
+                .find(|e| e.id == we.exercise_id)
+                .map(|e| e.name.clone())
+                .unwrap_or_else(|| we.exercise_id.clone());
+            for (i, s) in we.sets.iter().enumerate() {
+                let dist = s.distance.map(|d| format!("{}", d)).unwrap_or_default();
+                let dur = s.duration_secs.map(|d| format!("{}", d)).unwrap_or_default();
+                let note = s.note.as_deref().unwrap_or("");
+                lines.push(format!(
+                    "{},{},{},{},{},{},{},{},{},{},{}",
+                    csv_escape(&w.date),
+                    csv_escape(&w.name),
+                    w.duration_mins,
+                    csv_escape(&ex_name),
+                    i + 1,
+                    s.weight,
+                    s.reps,
+                    dist,
+                    dur,
+                    s.completed,
+                    csv_escape(note),
+                ));
+            }
+        }
+    }
+    lines.join("\n")
+}
+
 pub fn export_all_data() -> String {
     let data = AppData {
         workouts: load_workouts(),

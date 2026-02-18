@@ -1,6 +1,7 @@
 use yew::prelude::*;
-use std::collections::HashSet;
+use std::collections::{HashSet, HashMap};
 use crate::models::{Exercise, Workout, WorkoutExercise, WorkoutSet, ExerciseTrackingType};
+use crate::pages::workout::generate_warmup_sets;
 
 /// Epley formula: weight * (1 + reps/30)
 fn estimate_1rm(weight: f64, reps: u32) -> f64 {
@@ -8,7 +9,6 @@ fn estimate_1rm(weight: f64, reps: u32) -> f64 {
 }
 
 /// Compute plates per side for a target weight given bar weight.
-/// Returns vec of (plate_weight, count) pairs.
 fn compute_plates(target: f64, bar: f64) -> Vec<(f64, u32)> {
     let available = [25.0, 20.0, 15.0, 10.0, 5.0, 2.5, 1.25];
     let mut remaining = (target - bar) / 2.0;
@@ -58,7 +58,9 @@ pub struct Props {
     #[prop_or(20.0)]
     pub bar_weight: f64,
     #[prop_or_default]
-    pub on_set_completed: Callback<()>,
+    pub on_set_completed: Callback<u32>,
+    #[prop_or_default]
+    pub on_before_destructive: Callback<Vec<WorkoutExercise>>,
 }
 
 #[function_component(WorkoutLog)]
@@ -66,9 +68,34 @@ pub fn workout_log(props: &Props) -> Html {
     let expanded_notes = use_state(HashSet::<(usize, usize)>::new);
     let plate_calc_target = use_state(|| None::<(usize, usize)>);
 
+    // Swipe state
+    let touch_start = use_state(|| None::<(f64, f64)>);
+    let swipe_offsets = use_state(HashMap::<(usize, usize), f64>::new);
+    let current_swiping = use_state(|| None::<(usize, usize)>);
+
+    // Inject confetti CSS once
+    {
+        use_effect_with((), |_| {
+            let document = gloo::utils::document();
+            if document.query_selector("#treening-confetti-style").ok().flatten().is_none() {
+                if let Ok(style) = document.create_element("style") {
+                    style.set_id("treening-confetti-style");
+                    style.set_text_content(Some(
+                        "@keyframes pr-flash { 0% { background-color: rgba(234,179,8,0.3); } 100% { background-color: transparent; } }
+                         .pr-flash { animation: pr-flash 1.5s ease-out; }"
+                    ));
+                    let _ = document.head().unwrap().append_child(&style);
+                }
+            }
+            || ()
+        });
+    }
+
     let get_exercise = |id: &str| -> Option<&Exercise> {
         props.all_exercises.iter().find(|e| e.id == id)
     };
+
+    let exercise_count = props.workout_exercises.len();
 
     html! {
         <div class="space-y-4">
@@ -81,6 +108,10 @@ pub fn workout_log(props: &Props) -> Html {
                 let on_remove = props.on_remove_exercise.clone();
                 let exercises = props.workout_exercises.clone();
                 let on_set_completed = props.on_set_completed.clone();
+                let on_before_destructive = props.on_before_destructive.clone();
+
+                // Resolve rest seconds for this exercise
+                let resolved_rest = we.rest_seconds_override.unwrap_or(props.rest_seconds);
 
                 // Superset styling
                 let is_superset = we.superset_group.is_some();
@@ -105,6 +136,13 @@ pub fn workout_log(props: &Props) -> Html {
                 // PR weight for this exercise
                 let pr_weight = exercise_pr_weight(&props.previous_workouts, &we.exercise_id);
 
+                // Warm-up: show button for strength exercises when first set weight > bar_weight
+                let show_warmup = matches!(tracking_type, ExerciseTrackingType::Strength)
+                    && we.sets.first().map(|s| s.weight > props.bar_weight).unwrap_or(false);
+
+                // Per-exercise rest override
+                let rest_override_val = we.rest_seconds_override;
+
                 html! {
                     <div class={classes!("bg-gray-100", "dark:bg-gray-800", "rounded-lg", "p-4", "border", "border-gray-200", "dark:border-transparent", "transition-colors", "shadow-sm", superset_border)}>
                         <div class="flex justify-between items-center mb-1">
@@ -115,6 +153,37 @@ pub fn workout_log(props: &Props) -> Html {
                                 } else { html! {} }}
                             </div>
                             <div class="flex items-center gap-2">
+                                // Reorder buttons
+                                { if ex_idx > 0 {
+                                    let exercises_c = exercises.clone();
+                                    let on_update_c = on_update.clone();
+                                    html! {
+                                        <button
+                                            class="text-gray-400 hover:text-gray-200 text-sm transition-colors"
+                                            title="Move up"
+                                            onclick={Callback::from(move |_| {
+                                                let mut exs = exercises_c.clone();
+                                                exs.swap(ex_idx, ex_idx - 1);
+                                                on_update_c.emit(exs);
+                                            })}
+                                        >{"\u{2191}"}</button>
+                                    }
+                                } else { html! {} }}
+                                { if ex_idx < exercise_count - 1 {
+                                    let exercises_c = exercises.clone();
+                                    let on_update_c = on_update.clone();
+                                    html! {
+                                        <button
+                                            class="text-gray-400 hover:text-gray-200 text-sm transition-colors"
+                                            title="Move down"
+                                            onclick={Callback::from(move |_| {
+                                                let mut exs = exercises_c.clone();
+                                                exs.swap(ex_idx, ex_idx + 1);
+                                                on_update_c.emit(exs);
+                                            })}
+                                        >{"\u{2193}"}</button>
+                                    }
+                                } else { html! {} }}
                                 // Superset buttons
                                 { if ex_idx > 0 && !is_superset {
                                     let exercises_c = exercises.clone();
@@ -124,7 +193,6 @@ pub fn workout_log(props: &Props) -> Html {
                                             class="text-purple-500 text-[10px] font-bold hover:text-purple-400 transition-colors"
                                             onclick={Callback::from(move |_| {
                                                 let mut exs = exercises_c.clone();
-                                                // Find group of exercise above, or create new group
                                                 let above_group = exs[ex_idx - 1].superset_group;
                                                 let group = above_group.unwrap_or_else(|| {
                                                     let max_g = exs.iter().filter_map(|e| e.superset_group).max().unwrap_or(0);
@@ -151,7 +219,6 @@ pub fn workout_log(props: &Props) -> Html {
                                                 if let Some(current) = exs.get_mut(ex_idx) {
                                                     let old_group = current.superset_group;
                                                     current.superset_group = None;
-                                                    // If only one exercise left in group, ungroup it too
                                                     if let Some(g) = old_group {
                                                         let count = exs.iter().filter(|e| e.superset_group == Some(g)).count();
                                                         if count == 1 {
@@ -215,9 +282,11 @@ pub fn workout_log(props: &Props) -> Html {
                                 let on_update4 = on_update.clone();
                                 let exercises5 = exercises.clone();
                                 let on_update5 = on_update.clone();
+                                let on_before_destructive2 = on_before_destructive.clone();
                                 let completed = set.completed;
                                 let tt = tracking_type.clone();
                                 let on_set_completed2 = on_set_completed.clone();
+                                let resolved_rest2 = resolved_rest;
 
                                 // 1RM calculation for completed strength sets
                                 let show_1rm = completed && set.weight > 0.0 && set.reps > 1
@@ -242,12 +311,89 @@ pub fn workout_log(props: &Props) -> Html {
                                 };
                                 let bar_weight = props.bar_weight;
 
+                                // Swipe state for this row
+                                let offset = swipe_offsets.get(&(ex_idx, set_idx)).copied().unwrap_or(0.0);
+                                let swipe_style = if offset < -10.0 {
+                                    format!("transform: translateX({}px); transition: transform 0.1s;", offset)
+                                } else {
+                                    String::new()
+                                };
+                                let show_delete_bg = offset < -40.0;
+
+                                // Touch handlers
+                                let touch_start_c = touch_start.clone();
+                                let current_swiping_c = current_swiping.clone();
+                                let ontouchstart = {
+                                    let touch_start = touch_start_c.clone();
+                                    let current_swiping = current_swiping_c.clone();
+                                    Callback::from(move |e: TouchEvent| {
+                                        if let Some(touch) = e.touches().get(0) {
+                                            touch_start.set(Some((touch.client_x() as f64, touch.client_y() as f64)));
+                                            current_swiping.set(Some((ex_idx, set_idx)));
+                                        }
+                                    })
+                                };
+                                let ontouchmove = {
+                                    let touch_start = touch_start_c.clone();
+                                    let swipe_offsets = swipe_offsets.clone();
+                                    let current_swiping = current_swiping_c.clone();
+                                    Callback::from(move |e: TouchEvent| {
+                                        if *current_swiping != Some((ex_idx, set_idx)) { return; }
+                                        if let (Some((sx, sy)), Some(touch)) = (*touch_start, e.touches().get(0)) {
+                                            let dx = touch.client_x() as f64 - sx;
+                                            let dy = touch.client_y() as f64 - sy;
+                                            // Only horizontal swipes
+                                            if dx.abs() > dy.abs() && dx < 0.0 {
+                                                e.prevent_default();
+                                                let mut offsets = (*swipe_offsets).clone();
+                                                offsets.insert((ex_idx, set_idx), dx.max(-120.0));
+                                                swipe_offsets.set(offsets);
+                                            }
+                                        }
+                                    })
+                                };
+                                let ontouchend = {
+                                    let touch_start = touch_start_c;
+                                    let swipe_offsets = swipe_offsets.clone();
+                                    let current_swiping = current_swiping_c;
+                                    let exercises_swipe = exercises.clone();
+                                    let on_update_swipe = on_update.clone();
+                                    let on_before_destructive_swipe = on_before_destructive.clone();
+                                    Callback::from(move |_: TouchEvent| {
+                                        let cur_offset = swipe_offsets.get(&(ex_idx, set_idx)).copied().unwrap_or(0.0);
+                                        if cur_offset < -80.0 {
+                                            // Delete the set
+                                            on_before_destructive_swipe.emit(exercises_swipe.clone());
+                                            let mut exs = exercises_swipe.clone();
+                                            if let Some(we) = exs.get_mut(ex_idx) { we.sets.remove(set_idx); }
+                                            on_update_swipe.emit(exs);
+                                        }
+                                        // Reset swipe
+                                        let mut offsets = (*swipe_offsets).clone();
+                                        offsets.remove(&(ex_idx, set_idx));
+                                        swipe_offsets.set(offsets);
+                                        touch_start.set(None);
+                                        current_swiping.set(None);
+                                    })
+                                };
+
                                 html! {
                                     <>
-                                    <div class={classes!(
-                                        "grid", "grid-cols-12", "gap-2", "items-center", "transition-opacity",
-                                        if completed { "opacity-50" } else { "" }
-                                    )}>
+                                    <div class="relative overflow-hidden rounded">
+                                        { if show_delete_bg {
+                                            html! { <div class="absolute inset-0 bg-red-600 flex items-center justify-end pr-4 rounded"><span class="text-white text-xs font-bold">{"Delete"}</span></div> }
+                                        } else { html! {} }}
+                                        <div
+                                            class={classes!(
+                                                "grid", "grid-cols-12", "gap-2", "items-center", "transition-opacity", "relative", "bg-gray-100", "dark:bg-gray-800",
+                                                if completed { "opacity-50" } else { "" },
+                                                if is_pr { "pr-flash ring-2 ring-yellow-400 rounded" } else { "" }
+                                            )}
+                                            style={swipe_style}
+                                            ontouchstart={ontouchstart}
+                                            ontouchmove={ontouchmove}
+                                            ontouchend={ontouchend}
+                                        >
                                         <div class="col-span-1 text-sm font-medium text-gray-400 dark:text-gray-500 flex items-center gap-0.5">
                                             {set_idx + 1}
                                             { if is_pr {
@@ -380,7 +526,7 @@ pub fn workout_log(props: &Props) -> Html {
                                                             let was_completed = s.completed;
                                                             s.completed = !s.completed;
                                                             if !was_completed && s.completed {
-                                                                on_set_completed2.emit(());
+                                                                on_set_completed2.emit(resolved_rest2);
                                                             }
                                                         }
                                                     }
@@ -417,12 +563,14 @@ pub fn workout_log(props: &Props) -> Html {
                                             <button
                                                 class="text-red-600 dark:text-red-400 text-xs hover:text-red-500 dark:hover:text-red-300 p-1 transition-colors"
                                                 onclick={Callback::from(move |_| {
+                                                    on_before_destructive2.emit(exercises5.clone());
                                                     let mut exs = exercises5.clone();
                                                     if let Some(we) = exs.get_mut(ex_idx) { we.sets.remove(set_idx); }
                                                     on_update5.emit(exs);
                                                 })}
                                             >{"\u{2715}"}</button>
                                         </div>
+                                    </div>
                                     </div>
 
                                     // 1RM estimate
@@ -483,6 +631,30 @@ pub fn workout_log(props: &Props) -> Html {
                                 }
                             })}
                         </div>
+
+                        // Warm-up button
+                        { if show_warmup {
+                            let exercises_wu = exercises.clone();
+                            let on_update_wu = on_update.clone();
+                            html! {
+                                <button
+                                    class="mt-2 text-xs font-bold text-orange-500 hover:text-orange-400 transition-colors"
+                                    onclick={Callback::from(move |_| {
+                                        let mut exs = exercises_wu.clone();
+                                        if let Some(we) = exs.get_mut(ex_idx) {
+                                            let working_weight = we.sets.first().map(|s| s.weight).unwrap_or(0.0);
+                                            let warmup = generate_warmup_sets(working_weight);
+                                            // Prepend warmup sets
+                                            let mut new_sets = warmup;
+                                            new_sets.append(&mut we.sets);
+                                            we.sets = new_sets;
+                                        }
+                                        on_update_wu.emit(exs);
+                                    })}
+                                >{"Warm-up Sets"}</button>
+                            }
+                        } else { html! {} }}
+
                         <button
                             class="mt-3 text-sm font-medium text-blue-600 dark:text-blue-400 hover:underline transition-colors"
                             onclick={{
@@ -507,6 +679,34 @@ pub fn workout_log(props: &Props) -> Html {
                                 })
                             }}
                         >{"+ Add Set"}</button>
+
+                        // Per-exercise rest override
+                        { if matches!(tracking_type, ExerciseTrackingType::Strength) {
+                            let exercises_rest = exercises.clone();
+                            let on_update_rest = on_update.clone();
+                            let default_rest = props.rest_seconds;
+                            html! {
+                                <div class="mt-2 flex items-center gap-2">
+                                    <span class="text-[10px] text-gray-500 uppercase font-bold">{"Rest:"}</span>
+                                    <input
+                                        type="number"
+                                        class="w-16 px-1 py-0.5 bg-white dark:bg-gray-700 border border-gray-300 dark:border-transparent rounded text-xs text-center text-gray-900 dark:text-gray-100 outline-none focus:ring-1 focus:ring-blue-500"
+                                        value={rest_override_val.unwrap_or(default_rest).to_string()}
+                                        onchange={Callback::from(move |e: Event| {
+                                            let input: web_sys::HtmlInputElement = e.target_unchecked_into();
+                                            let val: u32 = input.value().parse().unwrap_or(default_rest);
+                                            let mut exs = exercises_rest.clone();
+                                            if let Some(we) = exs.get_mut(ex_idx) {
+                                                we.rest_seconds_override = if val == default_rest { None } else { Some(val) };
+                                            }
+                                            on_update_rest.emit(exs);
+                                        })}
+                                    />
+                                    <span class="text-[10px] text-gray-500">{"s"}</span>
+                                </div>
+                            }
+                        } else { html! {} }}
+
                         <div class="mt-2">
                             <input
                                 type="text"

@@ -1,7 +1,10 @@
 use yew::prelude::*;
+use yew_router::prelude::*;
+use gloo::storage::{LocalStorage, Storage};
 use crate::models::{Exercise, Workout, WorkoutSet};
 use crate::sharing::{self, ShareableData};
 use crate::components::share_modal::ShareModal;
+use crate::Route;
 
 #[derive(Properties, PartialEq)]
 pub struct Props {
@@ -16,6 +19,7 @@ pub fn history_list(props: &Props) -> Html {
     let expanded = use_state(|| None::<String>);
     let editing = use_state(|| None::<Workout>);
     let share_target = use_state(|| None::<(ShareableData, String)>);
+    let navigator = use_navigator().unwrap();
 
     let find_exercise = |id: &str| -> String {
         props.all_exercises.iter()
@@ -39,7 +43,6 @@ pub fn history_list(props: &Props) -> Html {
                 let wid2 = w.id.clone();
                 let total_sets: usize = w.exercises.iter().map(|e| e.sets.len()).sum();
 
-                // Use the editing version if we're editing this workout
                 let display_workout = if is_editing {
                     editing.as_ref().unwrap().clone()
                 } else {
@@ -70,13 +73,11 @@ pub fn history_list(props: &Props) -> Html {
                         </div>
                         { if *expanded == Some(w.id.clone()) {
                             if is_editing {
-                                // Edit mode
                                 let edit_workout = display_workout.clone();
                                 let editing_state = editing.clone();
 
                                 html! {
                                     <div class="px-4 pb-4 border-t border-gray-200 dark:border-gray-700 pt-3 space-y-4">
-                                        // Workout name
                                         <div>
                                             <label class="block text-[10px] uppercase font-bold text-gray-500 dark:text-gray-500 mb-1 tracking-wider">{"Workout Name"}</label>
                                             <input
@@ -97,7 +98,6 @@ pub fn history_list(props: &Props) -> Html {
                                             />
                                         </div>
 
-                                        // Exercises
                                         { for edit_workout.exercises.iter().enumerate().map(|(ex_idx, we)| {
                                             let name = find_exercise(&we.exercise_id);
                                             let editing = editing_state.clone();
@@ -251,7 +251,6 @@ pub fn history_list(props: &Props) -> Html {
                                             }
                                         })}
 
-                                        // Save / Cancel buttons
                                         <div class="flex gap-2 pt-1">
                                             <button
                                                 class="flex-1 py-2.5 bg-blue-600 text-white rounded-lg text-sm font-bold hover:bg-blue-700 shadow-sm transition-colors"
@@ -280,6 +279,8 @@ pub fn history_list(props: &Props) -> Html {
                                 }
                             } else {
                                 // View mode
+                                let nav = navigator.clone();
+                                let repeat_workout = w.clone();
                                 html! {
                                     <div class="px-4 pb-4 border-t border-gray-200 dark:border-gray-700 pt-3 transition-colors">
                                         { for display_workout.exercises.iter().map(|we| {
@@ -316,6 +317,21 @@ pub fn history_list(props: &Props) -> Html {
                                                     })
                                                 }}
                                             >{"Edit Workout"}</button>
+                                            <button
+                                                class="text-orange-500 dark:text-orange-400 text-xs font-bold hover:underline transition-colors"
+                                                onclick={{
+                                                    let nav = nav.clone();
+                                                    let w = repeat_workout.clone();
+                                                    Callback::from(move |e: MouseEvent| {
+                                                        e.stop_propagation();
+                                                        // Store exercises JSON for repeat
+                                                        if let Ok(json) = serde_json::to_string(&w.exercises) {
+                                                            let _ = LocalStorage::set("treening_active_repeat", json);
+                                                        }
+                                                        nav.push(&Route::Workout);
+                                                    })
+                                                }}
+                                            >{"Repeat"}</button>
                                             <button
                                                 class="text-green-600 dark:text-green-400 text-xs font-bold hover:underline transition-colors"
                                                 onclick={{
