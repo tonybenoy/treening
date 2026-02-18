@@ -4,6 +4,7 @@ pub mod exercises;
 pub mod workout;
 pub mod history;
 pub mod routines;
+pub mod social;
 pub mod settings;
 pub mod faq;
 pub mod analytics;

@@ -116,6 +116,26 @@ pub struct AppData {
     pub custom_exercises: Vec<Exercise>,
 }
 
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
+pub struct Friend {
+    pub id: String, // PeerID
+    pub name: String,
+    pub last_stats: Option<FriendStats>,
+}
+
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
+pub struct FriendStats {
+    pub workouts_this_week: u32,
+    pub total_volume_kg: f64,
+    pub last_active: String,
+}
+
+#[derive(Clone, Debug, Serialize, Deserialize)]
+pub struct UserConfig {
+    pub nickname: String,
+    pub peer_id: String,
+}
+
 impl Default for AppData {
     fn default() -> Self {
         Self {

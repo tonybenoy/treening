@@ -15,6 +15,7 @@ use pages::workout::WorkoutPage;
 use pages::history::HistoryPage;
 use pages::routines::RoutinesPage;
 use pages::settings::SettingsPage;
+use pages::social::SocialPage;
 use pages::faq::FaqPage;
 use pages::analytics::AnalyticsPage;
 
@@ -34,6 +35,8 @@ pub enum Route {
     Routines,
     #[at("/settings")]
     Settings,
+    #[at("/social")]
+    Social,
     #[at("/faq")]
     Faq,
     #[at("/analytics")]
@@ -52,6 +55,7 @@ fn switch(routes: Route) -> Html {
         Route::History => html! { <HistoryPage /> },
         Route::Routines => html! { <RoutinesPage /> },
         Route::Settings => html! { <SettingsPage /> },
+        Route::Social => html! { <SocialPage /> },
         Route::Faq => html! { <FaqPage /> },
         Route::Analytics => html! { <AnalyticsPage /> },
         Route::NotFound => html! { <LandingPage /> },

@@ -1,9 +1,11 @@
 use gloo::storage::{LocalStorage, Storage};
-use crate::models::{AppData, Exercise, Routine, Workout};
+use crate::models::{AppData, Exercise, Friend, Routine, UserConfig, Workout};
 
 const WORKOUTS_KEY: &str = "treening_workouts";
 const ROUTINES_KEY: &str = "treening_routines";
 const CUSTOM_EXERCISES_KEY: &str = "treening_custom_exercises";
+const FRIENDS_KEY: &str = "treening_friends";
+const USER_CONFIG_KEY: &str = "treening_user_config";
 
 pub fn load_workouts() -> Vec<Workout> {
     LocalStorage::get(WORKOUTS_KEY).unwrap_or_default()
@@ -11,6 +13,29 @@ pub fn load_workouts() -> Vec<Workout> {
 
 pub fn save_workouts(workouts: &[Workout]) {
     let _ = LocalStorage::set(WORKOUTS_KEY, workouts);
+}
+
+pub fn load_friends() -> Vec<Friend> {
+    LocalStorage::get(FRIENDS_KEY).unwrap_or_default()
+}
+
+pub fn save_friends(friends: &[Friend]) {
+    let _ = LocalStorage::set(FRIENDS_KEY, friends);
+}
+
+pub fn load_user_config() -> UserConfig {
+    LocalStorage::get(USER_CONFIG_KEY).unwrap_or_else(|_| {
+        let config = UserConfig {
+            nickname: "Athlete".to_string(),
+            peer_id: format!("tr-{}", uuid::Uuid::new_v4().to_string()[..8].to_string()),
+        };
+        let _ = LocalStorage::set(USER_CONFIG_KEY, &config);
+        config
+    })
+}
+
+pub fn save_user_config(config: &UserConfig) {
+    let _ = LocalStorage::set(USER_CONFIG_KEY, config);
 }
 
 pub fn load_routines() -> Vec<Routine> {

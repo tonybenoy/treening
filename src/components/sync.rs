@@ -118,7 +118,6 @@ pub fn sync_panel() -> Html {
             
             let peer = peer_ref.borrow().as_ref().unwrap().clone();
             let status_c = status.clone();
-            let id_c = id.clone();
             
             let peer_for_open = peer.clone();
             let status_for_open = status_c.clone();
@@ -213,20 +212,21 @@ pub fn sync_panel() -> Html {
                         </div>
                     </div>
                 },
-                        <div class="space-y-4 text-center">
-                            <div class="flex justify-between items-center mb-2">
-                                <span class="text-sm font-medium text-blue-400 uppercase tracking-wider">{"Sending Mode"}</span>
-                                <button onclick={let m = mode.clone(); Callback::from(move |_| m.set(SyncMode::Idle))} class="text-gray-500 hover:text-white">{"✕"}</button>
-                            </div>
+                SyncMode::Sender => html! {
+                    <div class="space-y-4 text-center">
+                        <div class="flex justify-between items-center mb-2">
+                            <span class="text-sm font-medium text-blue-400 uppercase tracking-wider">{"Sending Mode"}</span>
+                            <button onclick={let m = mode.clone(); Callback::from(move |_| m.set(SyncMode::Idle))} class="text-gray-500 hover:text-white">{"✕"}</button>
+                        </div>
 
-                            <div class="bg-blue-900/20 p-3 rounded-lg text-xs text-blue-300 text-left space-y-2">
-                                <p class="font-bold uppercase tracking-widest text-[10px]">{"Instructions:"}</p>
-                                <p>{"1. Open Treening on the other device."}</p>
-                                <p>{"2. Go to Sync and tap \"Receive\"."}</p>
-                                <p>{"3. Scan this QR code or enter the Meeting ID below."}</p>
-                            </div>
-                            
-                            { if !peer_id.is_empty() {
+                        <div class="bg-blue-900/20 p-3 rounded-lg text-xs text-blue-300 text-left space-y-2">
+                            <p class="font-bold uppercase tracking-widest text-[10px]">{"Instructions:"}</p>
+                            <p>{"1. Open Treening on the other device."}</p>
+                            <p>{"2. Go to Sync and tap \"Receive\"."}</p>
+                            <p>{"3. Scan this QR code or enter the Meeting ID below."}</p>
+                        </div>
+                        
+                        { if !peer_id.is_empty() {
                             html! {
                                 <>
                                     {render_qr(&peer_id)}
