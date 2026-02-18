@@ -22,7 +22,9 @@ use crate::models::Theme;
 
 #[function_component(ThemeManager)]
 fn theme_manager() -> Html {
-    use_effect(move || {
+    let route = use_route::<Route>().unwrap_or(Route::Landing);
+    
+    use_effect_with(route, move |_| {
         let config = storage::load_user_config();
         let document = gloo::utils::document();
         let html = document.document_element().unwrap();

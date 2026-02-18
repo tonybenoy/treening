@@ -5,7 +5,6 @@ use crate::Route;
 #[function_component(BottomNav)]
 pub fn bottom_nav() -> Html {
     let route: Route = use_route().unwrap_or(Route::Landing);
-    let config = use_state(|| crate::storage::load_user_config());
 
     let nav_item = |r: Route, label: &str, icon: &str| {
         let active = route == r;
@@ -26,11 +25,7 @@ pub fn bottom_nav() -> Html {
         <nav class="fixed bottom-0 left-0 right-0 bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 px-1 py-2 flex justify-around items-center z-50 safe-bottom transition-colors duration-200">
             {nav_item(Route::Home, "Home", "🏠")}
             {nav_item(Route::Exercises, "Exercises", "💪")}
-            { if config.social_enabled {
-                nav_item(Route::Social, "Social", "🏆")
-            } else {
-                nav_item(Route::Routines, "Routines", "📋")
-            }}
+            {nav_item(Route::Routines, "Routines", "📋")}
             {nav_item(Route::Workout, "Log", "🏋️")}
             {nav_item(Route::History, "History", "📅")}
             {nav_item(Route::Settings, "Settings", "⚙️")}

@@ -1,4 +1,5 @@
 use yew::prelude::*;
+use yew_router::prelude::*;
 use wasm_bindgen::prelude::*;
 use wasm_bindgen::JsCast;
 use crate::storage;
@@ -39,6 +40,14 @@ extern "C" {
 #[function_component(SocialPage)]
 pub fn social_page() -> Html {
     let user_config = use_state(|| storage::load_user_config());
+    let navigator = use_navigator().unwrap();
+
+    // Redirect if social is disabled
+    if !user_config.social_enabled {
+        navigator.replace(&crate::Route::Home);
+        return html! {};
+    }
+
     let friends = use_state(|| storage::load_friends());
     let show_add_friend = use_state(|| false);
     let friend_id_input = use_state(|| String::new());
