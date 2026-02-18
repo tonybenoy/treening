@@ -1,11 +1,11 @@
-const CACHE_NAME = 'treening-v2';
+const CACHE_NAME = 'treening-v3';
 
 const PRECACHE_URLS = [
-    './',
-    './index.html',
-    './manifest.json',
-    './icons/icon-192.svg',
-    './icons/icon-512.svg',
+    '/treening/',
+    '/treening/index.html',
+    '/treening/manifest.json',
+    '/treening/icons/icon-192.svg',
+    '/treening/icons/icon-512.svg',
 ];
 
 self.addEventListener('install', event => {

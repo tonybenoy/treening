@@ -61,7 +61,7 @@ fn switch(routes: Route) -> Html {
 #[function_component(App)]
 fn app() -> Html {
     html! {
-        <BrowserRouter>
+        <HashRouter>
             <div class="min-h-screen pb-20 flex flex-col">
                 <div class="flex-grow">
                     <Switch<Route> render={switch} />
@@ -76,7 +76,7 @@ fn app() -> Html {
                 </footer>
             </div>
             <BottomNav />
-        </BrowserRouter>
+        </HashRouter>
     }
 }
 
