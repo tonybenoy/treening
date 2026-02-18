@@ -72,7 +72,7 @@ const FAQS: &[FaqItem] = &[
     },
     FaqItem {
         question: "Does Treening collect any data?",
-        answer: "Treening uses a single anonymous page-view counter (hits.sh) to track how many people use the app. No personal data, workout data, or cookies are involved \u{2014} it simply counts visits. You can disable this entirely in Settings under 'Anonymous Analytics'.",
+        answer: "No. Treening does not collect any data. Everything stays on your device.",
     },
     FaqItem {
         question: "Is it open source?",

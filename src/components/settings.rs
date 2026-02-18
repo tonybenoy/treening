@@ -23,16 +23,6 @@ pub fn settings_panel(props: &Props) -> Html {
         })
     };
 
-    let on_toggle_analytics = {
-        let config = config.clone();
-        Callback::from(move |_| {
-            let mut new_config = (*config).clone();
-            new_config.analytics_enabled = !new_config.analytics_enabled;
-            storage::save_user_config(&new_config);
-            config.set(new_config);
-        })
-    };
-
     let on_change_theme = {
         let config = config.clone();
         Callback::from(move |e: Event| {
@@ -161,26 +151,6 @@ pub fn settings_panel(props: &Props) -> Html {
                     </select>
                 </div>
 
-                <div class="pt-4 mt-4 border-t border-gray-200 dark:border-gray-700/50 flex items-center justify-between">
-                    <div>
-                        <div class="font-medium text-gray-800 dark:text-gray-200">{"Anonymous Analytics"}</div>
-                        <div class="text-sm text-gray-500 dark:text-gray-400">{"Help improve Treening with anonymous usage counting"}</div>
-                    </div>
-                    <button
-                        onclick={on_toggle_analytics}
-                        class={classes!(
-                            "relative", "inline-flex", "h-6", "w-11", "items-center", "rounded-full", "transition-colors", "focus:outline-none",
-                            if config.analytics_enabled { "bg-blue-600" } else { "bg-gray-300 dark:bg-gray-700" }
-                        )}
-                    >
-                        <span
-                            class={classes!(
-                                "inline-block", "h-4", "w-4", "transform", "rounded-full", "bg-white", "transition-transform",
-                                if config.analytics_enabled { "translate-x-6" } else { "translate-x-1" }
-                            )}
-                        />
-                    </button>
-                </div>
 
                 <p class="text-[10px] text-gray-500 dark:text-gray-500 mt-3 italic">
                     { if config.social_enabled {

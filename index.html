@@ -98,20 +98,6 @@
     </style>
 </head>
 <body class="transition-colors duration-200">
-    <!-- Anonymous analytics (opt-out in Settings) -->
-    <script>
-        try {
-            var cfg = JSON.parse(localStorage.getItem('treening_user_config') || '{}');
-            if (cfg.analytics_enabled !== false) {
-                var img = document.createElement('img');
-                img.src = 'https://hits.sh/tonybenoy.github.io/treening.svg?view=today-total&style=flat-square';
-                img.alt = '';
-                img.style.cssText = 'position:absolute;left:-9999px';
-                img.setAttribute('aria-hidden', 'true');
-                document.body.appendChild(img);
-            }
-        } catch(e) {}
-    </script>
     <!-- Install Banner -->
     <div id="install-banner" style="display:none; position:fixed; bottom:70px; left:12px; right:12px; z-index:9999; background:linear-gradient(135deg,#1e40af,#3b82f6); color:white; padding:14px 16px; border-radius:12px; box-shadow:0 4px 20px rgba(0,0,0,0.3); font-family:system-ui,sans-serif; animation:slideUp 0.3s ease-out;">
         <div style="display:flex; align-items:center; gap:12px;">
