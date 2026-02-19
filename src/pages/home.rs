@@ -74,17 +74,17 @@ fn summary_stats() -> Html {
                 </Link<Route>>
             </div>
             <div class="grid grid-cols-3 gap-3">
-                <div class="bg-gray-100 dark:bg-gray-800/50 rounded-xl p-3 border border-gray-200 dark:border-gray-700/50 text-center transition-colors">
+                <div class="bg-gray-100 dark:bg-gray-800/50 rounded-xl p-3 neu-flat text-center transition-colors">
                     <div class="text-xl mb-1">{"🏋️"}</div>
                     <div class="text-lg font-bold text-gray-800 dark:text-gray-200">{total_workouts}</div>
                     <div class="text-[10px] text-gray-500 dark:text-gray-500 uppercase font-bold">{"Sessions"}</div>
                 </div>
-                <div class="bg-gray-100 dark:bg-gray-800/50 rounded-xl p-3 border border-gray-200 dark:border-gray-700/50 text-center transition-colors">
+                <div class="bg-gray-100 dark:bg-gray-800/50 rounded-xl p-3 neu-flat text-center transition-colors">
                     <div class="text-xl mb-1">{"💪"}</div>
                     <div class="text-lg font-bold text-gray-800 dark:text-gray-200">{volume_display}</div>
                     <div class="text-[10px] text-gray-500 dark:text-gray-500 uppercase font-bold">{volume_label}</div>
                 </div>
-                <div class="bg-gray-100 dark:bg-gray-800/50 rounded-xl p-3 border border-gray-200 dark:border-gray-700/50 text-center transition-colors">
+                <div class="bg-gray-100 dark:bg-gray-800/50 rounded-xl p-3 neu-flat text-center transition-colors">
                     <div class="text-xl mb-1">{"🔥"}</div>
                     <div class="text-lg font-bold text-gray-800 dark:text-gray-200">{streak}</div>
                     <div class="text-[10px] text-gray-500 dark:text-gray-500 uppercase font-bold">{"Day Streak"}</div>
@@ -101,7 +101,7 @@ fn community_summary() -> Html {
 
     if !config.social_enabled {
         return html! {
-            <div class="bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-900 rounded-2xl p-4 border border-gray-200 dark:border-gray-700/50 transition-colors">
+            <div class="bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-900 rounded-2xl p-4 neu-flat transition-colors">
                 <div class="flex justify-between items-center mb-3">
                     <h2 class="text-lg font-semibold text-gray-900 dark:text-gray-100">{"Community"}</h2>
                     <span class="px-2 py-0.5 bg-blue-100 dark:bg-blue-900/40 text-blue-600 dark:text-blue-400 text-[10px] font-bold rounded-full uppercase tracking-wider">{"Optional"}</span>
@@ -123,7 +123,7 @@ fn community_summary() -> Html {
                 </Link<Route>>
             </div>
 
-            <div class="bg-gray-100 dark:bg-gray-800/50 rounded-2xl p-4 border border-gray-200 dark:border-gray-700/50 transition-colors">
+            <div class="bg-gray-100 dark:bg-gray-800/50 rounded-2xl p-4 neu-flat transition-colors">
                 { if friends.is_empty() {
                     html! {
                         <div class="text-center py-4">
@@ -228,7 +228,7 @@ pub fn home_page() -> Html {
             </div>
 
             <button
-                class="w-full py-4 bg-blue-600 rounded-xl text-lg font-bold hover:bg-blue-700 active:bg-blue-800 transition shadow-lg shadow-blue-900/20 btn-press"
+                class="w-full py-4 bg-blue-600 rounded-xl text-lg font-bold hover:bg-blue-700 active:bg-blue-800 transition neu-btn btn-press"
                 onclick={start_empty}
             >{"Start New Workout"}</button>
 
@@ -253,7 +253,7 @@ pub fn home_page() -> Html {
                                 let routine = r.clone();
                                 html! {
                                     <button
-                                        class="w-full py-4 bg-gray-100 dark:bg-gray-800/50 rounded-xl text-left px-5 hover:bg-gray-200 dark:hover:bg-gray-800 border border-gray-200 dark:border-gray-700/50 transition flex justify-between items-center group shadow-sm"
+                                        class="w-full py-4 bg-gray-100 dark:bg-gray-800/50 rounded-xl text-left px-5 hover:bg-gray-200 dark:hover:bg-gray-800 transition flex justify-between items-center group neu-flat"
                                         onclick={Callback::from(move |_| {
                                             // Store routine ID to load on workout page
                                             let _ = LocalStorage::set("treening_active_routine", routine.id.clone());
@@ -283,7 +283,7 @@ pub fn home_page() -> Html {
                                 {"History →"}
                             </Link<Route>>
                         </div>
-                        <div class="bg-gray-100 dark:bg-gray-800/50 rounded-2xl p-4 border border-gray-200 dark:border-gray-700/50 shadow-sm transition-colors">
+                        <div class="bg-gray-100 dark:bg-gray-800/50 rounded-2xl p-4 neu-flat transition-colors">
                             <div class="flex justify-between mb-3 items-start">
                                 <div>
                                     <span class="font-bold text-gray-800 dark:text-gray-200 block">{&w.name}</span>
@@ -318,7 +318,7 @@ pub fn home_page() -> Html {
                             <p class="mt-2 text-gray-600 dark:text-gray-400">{"Your privacy-first, offline workout tracker."}</p>
                         </div>
 
-                        <div class="bg-gray-100 dark:bg-gray-800/30 border border-gray-200 dark:border-gray-800 rounded-2xl p-6 space-y-6 shadow-sm">
+                        <div class="bg-gray-100 dark:bg-gray-800/30 rounded-2xl p-6 space-y-6 neu-flat">
                             <h3 class="font-bold text-gray-800 dark:text-gray-200">{"Quick Start Guide"}</h3>
                             <div class="space-y-4">
                                 <div class="flex gap-4">
@@ -356,7 +356,7 @@ pub fn home_page() -> Html {
             }}
 
             <div class="pt-4 border-t border-gray-200 dark:border-gray-800">
-                <Link<Route> to={Route::Settings} classes="flex items-center justify-between p-4 bg-gray-100 dark:bg-gray-800/50 rounded-xl hover:bg-gray-200 dark:hover:bg-gray-800 transition group border border-gray-200 dark:border-gray-700/50 shadow-sm transition-colors">
+                <Link<Route> to={Route::Settings} classes="flex items-center justify-between p-4 bg-gray-100 dark:bg-gray-800/50 rounded-xl hover:bg-gray-200 dark:hover:bg-gray-800 transition group neu-flat transition-colors">
                     <div class="flex items-center gap-3">
                         <span class="text-2xl group-hover:scale-110 transition-transform">{"⚙️"}</span>
                         <div>

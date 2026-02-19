@@ -469,7 +469,7 @@ pub fn sync_panel() -> Html {
     };
 
     html! {
-        <div class="bg-gray-100 dark:bg-gray-800 rounded-lg p-4 space-y-4 border border-gray-200 dark:border-transparent transition-colors shadow-sm">
+        <div class="bg-gray-100 dark:bg-gray-800 rounded-xl p-4 space-y-4 neu-flat transition-colors">
             <div class="flex items-center justify-between">
                 <h3 class="font-bold text-lg flex items-center gap-2 text-gray-900 dark:text-gray-100">
                     <span>{"📲"}</span> {"Trusted Devices"}

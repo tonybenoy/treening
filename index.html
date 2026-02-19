@@ -157,6 +157,67 @@
         .treen .dark\:bg-blue-600\/20 { background-color: rgba(218,165,32,0.2) !important; }
         .treen .bg-blue-100, .treen .dark\:bg-blue-900\/40 { background-color: rgba(218,165,32,0.15) !important; }
         .treen .shadow-blue-900\/20 { --tw-shadow-color: rgba(44,24,16,0.3) !important; }
+        /* Neumorphic utilities */
+        .neu-flat {
+            box-shadow: 5px 5px 10px #d1d5db, -5px -5px 10px #ffffff;
+        }
+        .dark .neu-flat {
+            box-shadow: 5px 5px 10px rgba(0,0,0,0.3), -5px -5px 10px rgba(55,65,81,0.3);
+        }
+        .amoled .neu-flat {
+            box-shadow: 5px 5px 10px rgba(0,0,0,0.5), -5px -5px 10px rgba(30,30,30,0.3);
+        }
+        .treen .neu-flat {
+            box-shadow: 5px 5px 10px rgba(20,10,5,0.4), -5px -5px 10px rgba(74,45,30,0.3);
+        }
+        .neu-pressed {
+            box-shadow: inset 3px 3px 6px #d1d5db, inset -3px -3px 6px #ffffff;
+        }
+        .dark .neu-pressed {
+            box-shadow: inset 3px 3px 6px rgba(0,0,0,0.3), inset -3px -3px 6px rgba(55,65,81,0.3);
+        }
+        .amoled .neu-pressed {
+            box-shadow: inset 3px 3px 6px rgba(0,0,0,0.5), inset -3px -3px 6px rgba(30,30,30,0.3);
+        }
+        .treen .neu-pressed {
+            box-shadow: inset 3px 3px 6px rgba(20,10,5,0.4), inset -3px -3px 6px rgba(74,45,30,0.3);
+        }
+        .neu-btn {
+            box-shadow: 4px 4px 8px #d1d5db, -4px -4px 8px #ffffff;
+        }
+        .dark .neu-btn {
+            box-shadow: 4px 4px 8px rgba(0,0,0,0.3), -4px -4px 8px rgba(55,65,81,0.3);
+        }
+        .amoled .neu-btn {
+            box-shadow: 4px 4px 8px rgba(0,0,0,0.5), -4px -4px 8px rgba(30,30,30,0.3);
+        }
+        .treen .neu-btn {
+            box-shadow: 4px 4px 8px rgba(20,10,5,0.4), -4px -4px 8px rgba(74,45,30,0.3);
+        }
+        .neu-btn:active {
+            box-shadow: inset 2px 2px 4px #d1d5db, inset -2px -2px 4px #ffffff;
+        }
+        .dark .neu-btn:active {
+            box-shadow: inset 2px 2px 4px rgba(0,0,0,0.3), inset -2px -2px 4px rgba(55,65,81,0.3);
+        }
+        .amoled .neu-btn:active {
+            box-shadow: inset 2px 2px 4px rgba(0,0,0,0.5), inset -2px -2px 4px rgba(30,30,30,0.3);
+        }
+        .treen .neu-btn:active {
+            box-shadow: inset 2px 2px 4px rgba(20,10,5,0.4), inset -2px -2px 4px rgba(74,45,30,0.3);
+        }
+        .neu-nav {
+            box-shadow: 0 -5px 10px #d1d5db;
+        }
+        .dark .neu-nav {
+            box-shadow: 0 -5px 10px rgba(0,0,0,0.3);
+        }
+        .amoled .neu-nav {
+            box-shadow: 0 -5px 10px rgba(0,0,0,0.5);
+        }
+        .treen .neu-nav {
+            box-shadow: 0 -5px 10px rgba(20,10,5,0.4);
+        }
     </style>
     <script>
         // Capture beforeinstallprompt early (before Yew replaces body)

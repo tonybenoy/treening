@@ -114,7 +114,7 @@ pub fn history_list(props: &Props) -> Html {
                 };
 
                 html! {
-                    <div class="bg-gray-100 dark:bg-gray-800 rounded-lg overflow-hidden border border-gray-200 dark:border-transparent transition-colors shadow-sm">
+                    <div class="bg-gray-100 dark:bg-gray-800 rounded-xl overflow-hidden neu-flat transition-colors">
                         <div
                             class="p-4 cursor-pointer hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
                             onclick={Callback::from(move |_| {

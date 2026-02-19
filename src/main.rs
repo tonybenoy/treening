@@ -127,7 +127,7 @@ fn floating_log_button() -> Html {
 
     html! {
         <button
-            class="fixed bottom-20 right-4 z-50 bg-blue-600 hover:bg-blue-700 active:scale-95 text-white rounded-full shadow-lg flex items-center gap-1.5 px-4 py-3 text-sm font-bold transition-all"
+            class="fixed bottom-20 right-4 z-50 bg-blue-600 hover:bg-blue-700 active:scale-95 text-white rounded-full neu-btn flex items-center gap-1.5 px-4 py-3 text-sm font-bold transition-all"
             {onclick}
             aria-label="Log workout"
         >
@@ -169,7 +169,7 @@ fn app() -> Html {
     html! {
         <HashRouter>
             <ThemeManager />
-            <div class="min-h-screen pb-20 flex flex-col bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 transition-colors duration-200">
+            <div class="min-h-screen pb-20 flex flex-col bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100 transition-colors duration-200">
                 if *storage_warning && !*warning_dismissed {
                     <div class="bg-yellow-500 text-black px-4 py-2 text-sm flex items-center justify-between">
                         <span>{"Storage full! Export your data in Settings to avoid data loss."}</span>

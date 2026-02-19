@@ -27,7 +27,7 @@ pub fn bottom_nav() -> Html {
     };
 
     html! {
-        <nav class="fixed bottom-0 left-0 right-0 bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 px-1 py-2 flex justify-around items-center z-50 safe-bottom transition-colors duration-200">
+        <nav class="fixed bottom-0 left-0 right-0 bg-gray-100 dark:bg-gray-800 neu-nav px-1 py-2 flex justify-around items-center z-50 safe-bottom transition-colors duration-200">
             {nav_item(Route::Home, "Home", "🏠")}
             {nav_item(Route::Exercises, "Exercises", "💪")}
             {nav_item(Route::Routines, "Routines", "📋")}

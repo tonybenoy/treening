@@ -56,14 +56,14 @@ pub fn routine_editor(props: &Props) -> Html {
                 let show_picker = show_exercise_picker.clone();
 
                 html! {
-                    <div class="bg-gray-100 dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-transparent transition-colors">
+                    <div class="bg-gray-100 dark:bg-gray-800 rounded-xl p-4 neu-flat transition-colors">
                         <h3 class="text-lg font-semibold mb-3 text-gray-900 dark:text-gray-100">
                             { if routine.name.is_empty() { "New Routine" } else { "Edit Routine" } }
                         </h3>
                         <input
                             type="text"
                             placeholder="Routine name (e.g., Push Day)"
-                            class="w-full px-3 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-transparent rounded mb-3 text-gray-900 dark:text-gray-100 outline-none focus:ring-1 focus:ring-blue-500"
+                            class="w-full px-3 py-2 bg-white dark:bg-gray-700 rounded mb-3 text-gray-900 dark:text-gray-100 outline-none neu-pressed"
                             value={routine.name.clone()}
                             onchange={{
                                 let editing = editing2.clone();
@@ -170,7 +170,7 @@ pub fn routine_editor(props: &Props) -> Html {
                             let on_start = props.on_start_workout.clone();
                             let rid = r.id.clone();
                             html! {
-                                <div class="bg-gray-800 rounded-lg p-4">
+                                <div class="bg-gray-100 dark:bg-gray-800 rounded-xl p-4 neu-flat transition-colors">
                                     <div class="flex justify-between items-start mb-2">
                                         <h3 class="font-semibold">{&r.name}</h3>
                                         <span class="text-sm text-gray-400">{r.exercise_ids.len()}{" exercises"}</span>

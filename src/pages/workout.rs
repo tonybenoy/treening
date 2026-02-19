@@ -433,15 +433,23 @@ pub fn workout_page() -> Html {
         })
     };
 
-    if *show_exercise_picker {
+    // Show exercise picker as a full page when explicitly opened OR when workout is empty
+    let show_picker = *show_exercise_picker || (workout_exercises.is_empty() && !*saved);
+    if show_picker {
         return html! {
             <div class="pb-20 transition-colors duration-200">
                 <div class="px-4 pt-4 pb-2 flex justify-between items-center">
-                    <h2 class="text-xl font-bold text-gray-900 dark:text-gray-100">{"Add Exercise"}</h2>
-                    <button
-                        class="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 font-medium"
-                        onclick={let s = show_exercise_picker.clone(); Callback::from(move |_| s.set(false))}
-                    >{"Cancel"}</button>
+                    <h2 class="text-xl font-bold text-gray-900 dark:text-gray-100">
+                        { if workout_exercises.is_empty() { "Start Workout" } else { "Add Exercise" } }
+                    </h2>
+                    { if !workout_exercises.is_empty() {
+                        html! {
+                            <button
+                                class="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 font-medium"
+                                onclick={let s = show_exercise_picker.clone(); Callback::from(move |_| s.set(false))}
+                            >{"Cancel"}</button>
+                        }
+                    } else { html! {} }}
                 </div>
                 <ExerciseList
                     exercises={all_exercises.clone()}

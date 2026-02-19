@@ -431,7 +431,7 @@ fn overview_tab(props: &OverviewProps) -> Html {
             </div>
 
             // Milestone badges
-            <div class="bg-gray-100 dark:bg-gray-800 rounded-xl p-4 border border-gray-200 dark:border-transparent transition-colors shadow-sm">
+            <div class="bg-gray-100 dark:bg-gray-800 rounded-xl p-4 neu-flat transition-colors">
                 <h3 class="text-sm font-bold text-gray-900 dark:text-gray-100 mb-3 uppercase tracking-wider">{"Milestones"}</h3>
                 <div class="flex gap-2 overflow-x-auto pb-1">
                     { for MILESTONES.iter().map(|(threshold, emoji)| {
@@ -487,17 +487,17 @@ fn overview_tab(props: &OverviewProps) -> Html {
             } else { html! {} }}
 
             // Calendar heatmap
-            <div class="bg-gray-100 dark:bg-gray-800 rounded-xl p-4 border border-gray-200 dark:border-transparent transition-colors shadow-sm">
+            <div class="bg-gray-100 dark:bg-gray-800 rounded-xl p-4 neu-flat transition-colors">
                 <CalendarHeatmap data={heatmap_data} />
             </div>
 
             // Workouts per week
-            <div class="bg-gray-100 dark:bg-gray-800 rounded-xl p-4 border border-gray-200 dark:border-transparent transition-colors shadow-sm">
+            <div class="bg-gray-100 dark:bg-gray-800 rounded-xl p-4 neu-flat transition-colors">
                 <BarChart data={workouts_per_week} title="Workouts Per Week" height={180} color="#3b82f6" />
             </div>
 
             // Volume over time
-            <div class="bg-gray-100 dark:bg-gray-800 rounded-xl p-4 border border-gray-200 dark:border-transparent transition-colors shadow-sm">
+            <div class="bg-gray-100 dark:bg-gray-800 rounded-xl p-4 neu-flat transition-colors">
                 <LineChart data={volume_per_week} title={format!("Volume Per Week ({})", props.units.weight_label())} height={180} color="#10b981" />
             </div>
 
@@ -506,7 +506,7 @@ fn overview_tab(props: &OverviewProps) -> Html {
                 let show = *show_volume_cats;
                 let toggle = show_volume_cats.clone();
                 html! {
-                    <div class="bg-gray-100 dark:bg-gray-800 rounded-xl p-4 border border-gray-200 dark:border-transparent transition-colors shadow-sm">
+                    <div class="bg-gray-100 dark:bg-gray-800 rounded-xl p-4 neu-flat transition-colors">
                         <button
                             class="w-full flex justify-between items-center text-sm font-bold text-gray-900 dark:text-gray-100 uppercase tracking-wider"
                             onclick={Callback::from(move |_| toggle.set(!show))}
@@ -531,13 +531,13 @@ fn overview_tab(props: &OverviewProps) -> Html {
             } else { html! {} }}
 
             // Muscle group distribution
-            <div class="bg-gray-100 dark:bg-gray-800 rounded-xl p-4 border border-gray-200 dark:border-transparent transition-colors shadow-sm">
+            <div class="bg-gray-100 dark:bg-gray-800 rounded-xl p-4 neu-flat transition-colors">
                 <HorizontalBarChart data={muscle_data} title="Muscle Group Distribution" />
             </div>
 
             // Personal Records
             if !prs.is_empty() {
-                <div class="bg-gray-100 dark:bg-gray-800 rounded-xl p-4 border border-gray-200 dark:border-transparent transition-colors shadow-sm">
+                <div class="bg-gray-100 dark:bg-gray-800 rounded-xl p-4 neu-flat transition-colors">
                     <h3 class="text-sm font-bold text-gray-900 dark:text-gray-100 mb-3 uppercase tracking-wider">{"Personal Records"}</h3>
                     <div class="space-y-2">
                         { for prs.iter().map(|pr| {
@@ -742,7 +742,7 @@ fn progress_tab(props: &ProgressProps) -> Html {
                 .collect();
 
             html! {
-                <div class="bg-gray-100 dark:bg-gray-800 rounded-xl p-4 border border-gray-200 dark:border-transparent transition-colors shadow-sm">
+                <div class="bg-gray-100 dark:bg-gray-800 rounded-xl p-4 neu-flat transition-colors">
                     <div class="flex justify-between items-start mb-2">
                         <h4 class="font-bold text-gray-900 dark:text-gray-100">{&routine.name}</h4>
                         <span class="text-xs text-gray-500 font-medium">{format!("{} sessions", count)}</span>
@@ -763,9 +763,9 @@ fn progress_tab(props: &ProgressProps) -> Html {
     html! {
         <div class="space-y-6">
             // Exercise progress selector
-            <div class="bg-gray-100 dark:bg-gray-800 rounded-xl p-4 space-y-4 border border-gray-200 dark:border-transparent transition-colors shadow-sm">
+            <div class="bg-gray-100 dark:bg-gray-800 rounded-xl p-4 space-y-4 neu-flat transition-colors">
                 <h3 class="text-sm font-bold text-gray-900 dark:text-gray-100 uppercase tracking-wider">{"Exercise Progress"}</h3>
-                <select class="w-full bg-white dark:bg-gray-700 text-gray-900 dark:text-white border border-gray-200 dark:border-transparent rounded-lg px-3 py-2 text-sm outline-none focus:ring-1 focus:ring-blue-500 transition-colors"
+                <select class="w-full bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg px-3 py-2 text-sm outline-none neu-pressed transition-colors"
                         onchange={on_select}>
                     { for seen_ids.iter().map(|id| {
                         let name = find_exercise_name(exercises, id);
@@ -846,13 +846,13 @@ fn body_tab() -> Html {
             </div>
 
             if !weight_data.is_empty() {
-                <div class="bg-gray-100 dark:bg-gray-800 rounded-xl p-4 border border-gray-200 dark:border-transparent transition-colors shadow-sm">
+                <div class="bg-gray-100 dark:bg-gray-800 rounded-xl p-4 neu-flat transition-colors">
                     <LineChart data={weight_data} title={format!("Weight Progress ({})", units.weight_label())} height={180} color="#3b82f6" />
                 </div>
             }
 
             if !fat_data.is_empty() {
-                <div class="bg-gray-100 dark:bg-gray-800 rounded-xl p-4 border border-gray-200 dark:border-transparent transition-colors shadow-sm">
+                <div class="bg-gray-100 dark:bg-gray-800 rounded-xl p-4 neu-flat transition-colors">
                     <LineChart data={fat_data} title="Body Fat %" height={180} color="#ef4444" />
                 </div>
             }

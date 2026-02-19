@@ -157,14 +157,14 @@ fn profile_section() -> Html {
     };
 
     html! {
-        <div class="bg-gray-100 dark:bg-gray-800 rounded-2xl p-4 border border-gray-200 dark:border-transparent space-y-4 shadow-sm transition-colors">
+        <div class="bg-gray-100 dark:bg-gray-800 rounded-2xl p-4 space-y-4 neu-flat transition-colors">
             <h2 class="text-lg font-bold text-gray-900 dark:text-gray-100">{"Personal Profile"}</h2>
             <div class="grid grid-cols-2 gap-4">
                 <div class="col-span-2">
                     <label class="block text-[10px] uppercase font-bold text-gray-500 mb-1">{"Nickname"}</label>
                     <input
                         type="text"
-                        class="w-full bg-white dark:bg-gray-700 border border-gray-200 dark:border-transparent rounded-lg px-3 py-2 text-sm text-gray-900 dark:text-white outline-none focus:ring-1 focus:ring-blue-500"
+                        class="w-full bg-white dark:bg-gray-700 rounded-lg px-3 py-2 text-sm text-gray-900 dark:text-white outline-none neu-pressed"
                         value={(*nickname).clone()}
                         oninput={let n = nickname.clone(); Callback::from(move |e: InputEvent| n.set(e.target_unchecked_into::<web_sys::HtmlInputElement>().value()))}
                     />
@@ -172,7 +172,7 @@ fn profile_section() -> Html {
                 <div class="col-span-2">
                     <label class="block text-[10px] uppercase font-bold text-gray-500 mb-1">{"Units"}</label>
                     <select
-                        class="w-full bg-white dark:bg-gray-700 border border-gray-200 dark:border-transparent rounded-lg px-3 py-2 text-sm text-gray-900 dark:text-white outline-none focus:ring-1 focus:ring-blue-500"
+                        class="w-full bg-white dark:bg-gray-700 rounded-lg px-3 py-2 text-sm text-gray-900 dark:text-white outline-none neu-pressed"
                         onchange={let u = unit_system.clone(); Callback::from(move |e: Event| {
                             let val = e.target_unchecked_into::<web_sys::HtmlSelectElement>().value();
                             u.set(if val == "Imperial" { UnitSystem::Imperial } else { UnitSystem::Metric });
@@ -186,7 +186,7 @@ fn profile_section() -> Html {
                     <label class="block text-[10px] uppercase font-bold text-gray-500 mb-1">{format!("Height ({})", unit_system.height_label())}</label>
                     <input
                         type="number" autocomplete="off"
-                        class="w-full bg-white dark:bg-gray-700 border border-gray-200 dark:border-transparent rounded-lg px-3 py-2 text-sm text-gray-900 dark:text-white outline-none focus:ring-1 focus:ring-blue-500"
+                        class="w-full bg-white dark:bg-gray-700 rounded-lg px-3 py-2 text-sm text-gray-900 dark:text-white outline-none neu-pressed"
                         value={(*height).clone()}
                         onchange={let h = height.clone(); Callback::from(move |e: Event| h.set(e.target_unchecked_into::<web_sys::HtmlInputElement>().value()))}
                     />
@@ -194,7 +194,7 @@ fn profile_section() -> Html {
                 <div>
                     <label class="block text-[10px] uppercase font-bold text-gray-500 mb-1">{"Gender"}</label>
                     <select
-                        class="w-full bg-white dark:bg-gray-700 border border-gray-200 dark:border-transparent rounded-lg px-3 py-2 text-sm text-gray-900 dark:text-white outline-none focus:ring-1 focus:ring-blue-500"
+                        class="w-full bg-white dark:bg-gray-700 rounded-lg px-3 py-2 text-sm text-gray-900 dark:text-white outline-none neu-pressed"
                         onchange={let g = gender.clone(); Callback::from(move |e: Event| g.set(e.target_unchecked_into::<web_sys::HtmlSelectElement>().value()))}
                     >
                         <option value="" selected={gender.is_empty()}>{"Select..."}</option>
@@ -207,7 +207,7 @@ fn profile_section() -> Html {
                     <label class="block text-[10px] uppercase font-bold text-gray-500 mb-1">{"Birth Date"}</label>
                     <input
                         type="date"
-                        class="w-full bg-white dark:bg-gray-700 border border-gray-200 dark:border-transparent rounded-lg px-3 py-2 text-sm text-gray-900 dark:text-white outline-none focus:ring-1 focus:ring-blue-500"
+                        class="w-full bg-white dark:bg-gray-700 rounded-lg px-3 py-2 text-sm text-gray-900 dark:text-white outline-none neu-pressed"
                         value={(*birth_date).clone()}
                         oninput={let b = birth_date.clone(); Callback::from(move |e: InputEvent| b.set(e.target_unchecked_into::<web_sys::HtmlInputElement>().value()))}
                     />
@@ -216,7 +216,7 @@ fn profile_section() -> Html {
                     <label class="block text-[10px] uppercase font-bold text-gray-500 mb-1">{"Rest Timer (sec)"}</label>
                     <input
                         type="number" autocomplete="off"
-                        class="w-full bg-white dark:bg-gray-700 border border-gray-200 dark:border-transparent rounded-lg px-3 py-2 text-sm text-gray-900 dark:text-white outline-none focus:ring-1 focus:ring-blue-500"
+                        class="w-full bg-white dark:bg-gray-700 rounded-lg px-3 py-2 text-sm text-gray-900 dark:text-white outline-none neu-pressed"
                         value={(*rest_seconds).clone()}
                         onchange={let r = rest_seconds.clone(); Callback::from(move |e: Event| r.set(e.target_unchecked_into::<web_sys::HtmlInputElement>().value()))}
                     />
@@ -225,7 +225,7 @@ fn profile_section() -> Html {
                     <label class="block text-[10px] uppercase font-bold text-gray-500 mb-1">{format!("Bar Weight ({})", unit_system.weight_label())}</label>
                     <input
                         type="number" step="0.5" autocomplete="off"
-                        class="w-full bg-white dark:bg-gray-700 border border-gray-200 dark:border-transparent rounded-lg px-3 py-2 text-sm text-gray-900 dark:text-white outline-none focus:ring-1 focus:ring-blue-500"
+                        class="w-full bg-white dark:bg-gray-700 rounded-lg px-3 py-2 text-sm text-gray-900 dark:text-white outline-none neu-pressed"
                         value={(*bar_weight).clone()}
                         onchange={let bw = bar_weight.clone(); Callback::from(move |e: Event| bw.set(e.target_unchecked_into::<web_sys::HtmlInputElement>().value()))}
                     />
@@ -302,13 +302,13 @@ fn body_metrics_section() -> Html {
 
             { if *show_form {
                 html! {
-                    <div class="bg-gray-100 dark:bg-gray-800 rounded-xl p-4 border border-blue-500/30 space-y-3 shadow-sm transition-colors">
+                    <div class="bg-gray-100 dark:bg-gray-800 rounded-xl p-4 border border-blue-500/30 space-y-3 neu-flat transition-colors">
                         <div class="grid grid-cols-2 gap-3">
                             <div>
                                 <label class="block text-[10px] uppercase font-bold text-gray-500 mb-1">{format!("Weight ({})", units.weight_label())}</label>
                                 <input
                                     type="number" step="0.1"
-                                    class="w-full bg-white dark:bg-gray-700 border border-gray-200 dark:border-transparent rounded-lg px-3 py-2 text-sm text-gray-900 dark:text-white outline-none focus:ring-1 focus:ring-blue-500"
+                                    class="w-full bg-white dark:bg-gray-700 rounded-lg px-3 py-2 text-sm text-gray-900 dark:text-white outline-none neu-pressed"
                                     value={(*weight).clone()}
                                     onchange={let w = weight.clone(); Callback::from(move |e: Event| w.set(e.target_unchecked_into::<web_sys::HtmlInputElement>().value()))}
                                 />
@@ -317,7 +317,7 @@ fn body_metrics_section() -> Html {
                                 <label class="block text-[10px] uppercase font-bold text-gray-500 mb-1">{"Body Fat %"}</label>
                                 <input
                                     type="number" step="0.1"
-                                    class="w-full bg-white dark:bg-gray-700 border border-gray-200 dark:border-transparent rounded-lg px-3 py-2 text-sm text-gray-900 dark:text-white outline-none focus:ring-1 focus:ring-blue-500"
+                                    class="w-full bg-white dark:bg-gray-700 rounded-lg px-3 py-2 text-sm text-gray-900 dark:text-white outline-none neu-pressed"
                                     value={(*body_fat).clone()}
                                     onchange={let bf = body_fat.clone(); Callback::from(move |e: Event| bf.set(e.target_unchecked_into::<web_sys::HtmlInputElement>().value()))}
                                 />
@@ -336,7 +336,7 @@ fn body_metrics_section() -> Html {
                     let id = m.id.clone();
                     let on_del = on_delete.clone();
                     html! {
-                        <div class="bg-gray-100 dark:bg-gray-800 rounded-xl p-3 flex justify-between items-center border border-gray-200 dark:border-transparent transition-colors shadow-xs">
+                        <div class="bg-gray-100 dark:bg-gray-800 rounded-xl p-3 flex justify-between items-center neu-flat transition-colors">
                             <div>
                                 <div class="text-sm font-bold text-gray-900 dark:text-gray-100">
                                     {m.weight.map(|w| format!("{:.1} {}", units.display_weight(w), units.weight_label())).unwrap_or_else(|| "--".to_string())}
@@ -435,7 +435,7 @@ pub fn settings_page() -> Html {
 
             <SettingsPanel on_import_complete={on_import_complete} />
 
-            <div class="bg-gray-100 dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-transparent">
+            <div class="bg-gray-100 dark:bg-gray-800 rounded-xl p-4 neu-flat transition-colors">
                 <h3 class="font-semibold mb-3 text-gray-900 dark:text-gray-100">{"App Info"}</h3>
                 <Link<Route> to={Route::Faq} classes="flex items-center justify-between py-2 text-blue-600 dark:text-blue-400 hover:text-blue-500 dark:hover:text-blue-300">
                     <span>{"Frequently Asked Questions"}</span>
@@ -472,7 +472,7 @@ pub fn settings_page() -> Html {
                         let on_delete = on_delete_custom.clone();
                         let eid = ex.id.clone();
                         html! {
-                            <div class="bg-gray-100 dark:bg-gray-800 rounded-lg p-3 flex justify-between items-center border border-gray-200 dark:border-transparent transition-colors">
+                            <div class="bg-gray-100 dark:bg-gray-800 rounded-xl p-3 flex justify-between items-center neu-flat transition-colors">
                                 <div>
                                     <div class="font-medium text-gray-800 dark:text-gray-200">{&ex.name}</div>
                                     <div class="text-sm text-gray-500 dark:text-gray-400">
@@ -500,7 +500,7 @@ pub fn settings_page() -> Html {
                 </a>
             </div>
 
-            <details class="group bg-gray-100 dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-transparent shadow-sm transition-colors">
+            <details class="group bg-gray-100 dark:bg-gray-800 rounded-2xl neu-flat transition-colors">
                 <summary class="px-4 py-4 cursor-pointer font-semibold text-gray-900 dark:text-gray-100 list-none flex justify-between items-center">
                     {"About Treening"}
                     <span class="text-gray-400 group-open:rotate-180 transition-transform">{"\u{25be}"}</span>

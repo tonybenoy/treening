@@ -14,7 +14,7 @@ pub struct StatCardProps {
 #[function_component(StatCard)]
 pub fn stat_card(props: &StatCardProps) -> Html {
     html! {
-        <div class="bg-gray-100 dark:bg-gray-800 rounded-xl p-4 flex flex-col items-center gap-1 border border-gray-200 dark:border-transparent transition-colors">
+        <div class="bg-gray-100 dark:bg-gray-800 rounded-xl p-4 flex flex-col items-center gap-1 neu-flat transition-colors">
             <span class="text-2xl">{&props.icon}</span>
             <span class="text-xl font-bold text-gray-900 dark:text-gray-100">{&props.value}</span>
             <span class="text-xs text-gray-500 dark:text-gray-400 text-center">{&props.label}</span>
