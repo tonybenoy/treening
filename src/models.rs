@@ -10,6 +10,7 @@ pub enum Category {
     Arms,
     Core,
     Cardio,
+    Machines,
 }
 
 impl fmt::Display for Category {
@@ -22,6 +23,7 @@ impl fmt::Display for Category {
             Category::Arms => write!(f, "Arms"),
             Category::Core => write!(f, "Core"),
             Category::Cardio => write!(f, "Cardio"),
+            Category::Machines => write!(f, "Machines"),
         }
     }
 }
@@ -36,6 +38,7 @@ impl Category {
             Category::Arms,
             Category::Core,
             Category::Cardio,
+            Category::Machines,
         ]
     }
 }

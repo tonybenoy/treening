@@ -11,32 +11,140 @@ pub struct Props {
     pub show_add_button: bool,
 }
 
+/// Simple fuzzy match: checks if all characters of the query appear in order
+/// in the target string, allowing gaps. Returns true if the query fuzzy-matches.
+fn fuzzy_match(target: &str, query: &str) -> bool {
+    let mut target_chars = target.chars();
+    for qc in query.chars() {
+        loop {
+            match target_chars.next() {
+                Some(tc) if tc == qc => break,
+                Some(_) => continue,
+                None => return false,
+            }
+        }
+    }
+    true
+}
+
+/// Score a fuzzy match — lower is better. Returns None if no match.
+/// Prefers: exact substring > prefix > fuzzy with fewer gaps.
+fn fuzzy_score(target: &str, query: &str) -> Option<u32> {
+    let t = target.to_lowercase();
+    let q = query.to_lowercase();
+
+    // Exact substring match
+    if t.contains(&q) {
+        if t.starts_with(&q) {
+            return Some(0); // prefix match — best
+        }
+        return Some(1); // substring match
+    }
+
+    // Fuzzy: chars appear in order with gaps
+    if fuzzy_match(&t, &q) {
+        // Count total gap size
+        let mut gap = 0u32;
+        let mut t_iter = t.chars().enumerate();
+        for qc in q.chars() {
+            loop {
+                match t_iter.next() {
+                    Some((_, tc)) if tc == qc => break,
+                    Some(_) => gap += 1,
+                    None => return None,
+                }
+            }
+        }
+        return Some(10 + gap);
+    }
+
+    // Typo tolerance: check if edit distance on any word is <= 2
+    let query_words: Vec<&str> = q.split_whitespace().collect();
+    let target_words: Vec<&str> = t.split_whitespace().collect();
+    let mut all_matched = !query_words.is_empty();
+    let mut total_dist = 0u32;
+    for qw in &query_words {
+        if let Some(best) = target_words.iter().map(|tw| edit_distance(qw, tw)).min() {
+            if best <= 2 {
+                total_dist += best;
+            } else {
+                all_matched = false;
+                break;
+            }
+        } else {
+            all_matched = false;
+            break;
+        }
+    }
+    if all_matched {
+        return Some(100 + total_dist);
+    }
+
+    None
+}
+
+/// Simple edit distance (Levenshtein) for short strings.
+fn edit_distance(a: &str, b: &str) -> u32 {
+    let a: Vec<char> = a.chars().collect();
+    let b: Vec<char> = b.chars().collect();
+    let n = b.len();
+    let mut prev = (0..=n as u32).collect::<Vec<_>>();
+    let mut curr = vec![0u32; n + 1];
+    for (i, ac) in a.iter().enumerate() {
+        curr[0] = (i + 1) as u32;
+        for (j, bc) in b.iter().enumerate() {
+            let cost = if *ac == *bc { 0 } else { 1 };
+            curr[j + 1] = (prev[j + 1] + 1)
+                .min(curr[j] + 1)
+                .min(prev[j] + cost);
+        }
+        std::mem::swap(&mut prev, &mut curr);
+    }
+    prev[n]
+}
+
+/// Score an exercise against a search query. Returns the best (lowest) score
+/// across name, muscle groups, equipment, and category.
+fn exercise_score(e: &Exercise, query: &str) -> Option<u32> {
+    let mut best: Option<u32> = None;
+    let mut consider = |s: &str| {
+        if let Some(score) = fuzzy_score(s, query) {
+            best = Some(best.map_or(score, |b: u32| b.min(score)));
+        }
+    };
+    consider(&e.name);
+    for m in &e.muscle_groups {
+        consider(m);
+    }
+    consider(&e.equipment.to_string());
+    consider(&e.category.to_string());
+    best
+}
+
 #[function_component(ExerciseList)]
 pub fn exercise_list(props: &Props) -> Html {
     let search = use_state(String::new);
     let category_filter = use_state(|| None::<Category>);
 
-    let filtered: Vec<&Exercise> = props
+    let mut scored: Vec<(&Exercise, u32)> = props
         .exercises
         .iter()
-        .filter(|e| {
-            let search_match = if search.is_empty() {
-                true
-            } else {
-                let s = search.to_lowercase();
-                e.name.to_lowercase().contains(&s)
-                    || e.muscle_groups
-                        .iter()
-                        .any(|m| m.to_lowercase().contains(&s))
-                    || e.equipment.to_string().to_lowercase().contains(&s)
-            };
+        .filter_map(|e| {
             let cat_match = match &*category_filter {
                 Some(cat) => e.category == *cat,
                 None => true,
             };
-            search_match && cat_match
+            if !cat_match {
+                return None;
+            }
+            if search.is_empty() {
+                return Some((e, 0));
+            }
+            exercise_score(e, &search).map(|s| (e, s))
         })
         .collect();
+    scored.sort_by_key(|(_, s)| *s);
+    let filtered: Vec<&Exercise> = scored.into_iter().map(|(e, _)| e).collect();
 
     let on_search = {
         let search = search.clone();

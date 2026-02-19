@@ -73,6 +73,7 @@ fn category_color(cat: &Category) -> &'static str {
         Category::Arms => "#a855f7",
         Category::Core => "#ec4899",
         Category::Cardio => "#06b6d4",
+        Category::Machines => "#64748b",
     }
 }
 
