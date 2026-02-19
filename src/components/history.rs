@@ -66,10 +66,18 @@ pub fn history_list(props: &Props) -> Html {
             let parts: Vec<&str> = key.split('-').collect();
             if parts.len() == 2 {
                 let month_name = match parts[1] {
-                    "01" => "January", "02" => "February", "03" => "March",
-                    "04" => "April", "05" => "May", "06" => "June",
-                    "07" => "July", "08" => "August", "09" => "September",
-                    "10" => "October", "11" => "November", "12" => "December",
+                    "01" => "January",
+                    "02" => "February",
+                    "03" => "March",
+                    "04" => "April",
+                    "05" => "May",
+                    "06" => "June",
+                    "07" => "July",
+                    "08" => "August",
+                    "09" => "September",
+                    "10" => "October",
+                    "11" => "November",
+                    "12" => "December",
                     _ => parts[1],
                 };
                 return format!("{} {}", month_name, parts[0]);

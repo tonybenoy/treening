@@ -1,0 +1,15 @@
+#!/bin/sh
+
+echo "Running cargo fmt check..."
+cargo fmt -- --check
+if [ $? -ne 0 ]; then
+    echo "cargo fmt check failed. Run 'cargo fmt' to fix."
+    exit 1
+fi
+
+echo "Running cargo clippy..."
+cargo clippy --target wasm32-unknown-unknown -- -D warnings
+if [ $? -ne 0 ]; then
+    echo "cargo clippy failed. Fix the warnings above."
+    exit 1
+fi
