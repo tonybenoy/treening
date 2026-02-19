@@ -171,9 +171,9 @@ pub fn exercise_list(props: &Props) -> Html {
                         html! {
                             <button
                                 class={if cf.is_none() {
-                                    "px-3 py-1 rounded-full text-sm bg-blue-600 text-white font-medium shadow-sm transition-colors"
+                                    "px-3 py-1 rounded-full text-sm bg-blue-600 text-white font-medium neu-chip-active transition-colors"
                                 } else {
-                                    "px-3 py-1 rounded-full text-sm bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 border border-gray-200 dark:border-transparent hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
+                                    "px-3 py-1 rounded-full text-sm bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 neu-chip hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
                                 }}
                                 onclick={let cf = cf.clone(); Callback::from(move |_| cf.set(None))}
                             >{"All"}</button>
@@ -188,9 +188,9 @@ pub fn exercise_list(props: &Props) -> Html {
                     html! {
                         <button
                             class={if active {
-                                "px-3 py-1 rounded-full text-sm bg-blue-600 text-white whitespace-nowrap font-medium shadow-sm transition-colors"
+                                "px-3 py-1 rounded-full text-sm bg-blue-600 text-white whitespace-nowrap font-medium neu-chip-active transition-colors"
                             } else {
-                                "px-3 py-1 rounded-full text-sm bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 border border-gray-200 dark:border-transparent whitespace-nowrap hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
+                                "px-3 py-1 rounded-full text-sm bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 whitespace-nowrap neu-chip hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
                             }}
                             onclick={Callback::from(move |_| cf.set(Some(cat_clone.clone())))}
                         >{label}</button>
@@ -207,7 +207,7 @@ pub fn exercise_list(props: &Props) -> Html {
                     let ex3 = ex.clone();
                     let delay = format!("animation-delay: {}ms", i.min(10) * 30);
                     html! {
-                        <div class="bg-gray-100 dark:bg-gray-800 rounded-lg p-3 flex justify-between items-center border border-gray-200 dark:border-transparent transition-colors shadow-sm list-item-enter" style={delay}>
+                        <div class="bg-gray-100 dark:bg-gray-800 rounded-xl p-3 flex justify-between items-center neu-flat transition-colors list-item-enter" style={delay}>
                             <div class="flex-1 cursor-pointer flex items-center gap-3" onclick={Callback::from(move |_| on_select.emit(ex2.clone()))}>
                                 { if let Some(ref img) = ex.image {
                                     html! {
@@ -232,7 +232,7 @@ pub fn exercise_list(props: &Props) -> Html {
                             { if show_add {
                                 html! {
                                     <button
-                                        class="ml-2 px-3 py-1 bg-blue-600 text-white rounded text-sm font-bold hover:bg-blue-700 shadow-sm transition-colors"
+                                        class="ml-2 px-3 py-1 bg-blue-600 text-white rounded-lg text-sm font-bold hover:bg-blue-700 neu-btn transition-colors"
                                         onclick={
                                             let on_add = on_add.clone();
                                             Callback::from(move |_| {

@@ -211,7 +211,7 @@ pub fn rest_timer(props: &RestTimerProps) -> Html {
 
     html! {
         <div class="fixed bottom-16 left-0 right-0 z-50 px-4 pb-2">
-            <div class="bg-gray-900 dark:bg-gray-700 rounded-xl px-4 py-3 flex items-center justify-between shadow-lg border border-gray-700 dark:border-gray-600">
+            <div class="bg-gray-900 dark:bg-gray-700 rounded-2xl px-4 py-3 flex items-center justify-between neu-flat">
                 <div class="flex items-center gap-3">
                     <span class="text-xs text-gray-400 uppercase font-bold">{"Rest"}</span>
                     <span class="text-xl font-mono text-white font-bold">{format_time(r)}</span>
@@ -517,14 +517,14 @@ pub fn workout_page() -> Html {
             />
 
             <button
-                class="w-full py-4 bg-gray-100 dark:bg-gray-800/50 rounded-xl text-blue-600 dark:text-blue-400 font-bold hover:bg-gray-200 dark:hover:bg-gray-800 border border-gray-200 dark:border-gray-700 border-dashed transition-all"
+                class="w-full py-4 bg-gray-100 dark:bg-gray-800/50 rounded-xl text-blue-600 dark:text-blue-400 font-bold hover:bg-gray-200 dark:hover:bg-gray-800 neu-pressed transition-all"
                 onclick={let s = show_exercise_picker.clone(); Callback::from(move |_| s.set(true))}
             >{"+ Add Exercise"}</button>
 
             { if !workout_exercises.is_empty() {
                 html! {
                     <button
-                        class="w-full py-4 bg-green-600 text-white rounded-xl font-bold text-lg hover:bg-green-700 shadow-lg shadow-green-900/20 transition-all"
+                        class="w-full py-4 bg-green-600 text-white rounded-2xl font-bold text-lg hover:bg-green-700 neu-btn transition-all"
                         onclick={on_save}
                     >{"Finish & Save Workout"}</button>
                 }

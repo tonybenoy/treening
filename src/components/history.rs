@@ -144,7 +144,7 @@ pub fn history_list(props: &Props) -> Html {
                                             <label class="block text-[10px] uppercase font-bold text-gray-500 dark:text-gray-500 mb-1 tracking-wider">{"Workout Name"}</label>
                                             <input
                                                 type="text"
-                                                class="w-full px-3 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-transparent rounded text-gray-900 dark:text-gray-100 outline-none focus:ring-1 focus:ring-blue-500 transition-colors"
+                                                class="w-full px-3 py-2 bg-white dark:bg-gray-700 rounded text-gray-900 dark:text-gray-100 outline-none neu-pressed transition-colors"
                                                 value={edit_workout.name.clone()}
                                                 onclick={Callback::from(|e: MouseEvent| e.stop_propagation())}
                                                 onchange={{
@@ -167,7 +167,7 @@ pub fn history_list(props: &Props) -> Html {
                                             let workout = edit_workout.clone();
 
                                             html! {
-                                                <div class="bg-white dark:bg-gray-700/50 border border-gray-200 dark:border-gray-700 rounded-lg p-3 transition-colors">
+                                                <div class="bg-white dark:bg-gray-700/50 rounded-xl p-3 neu-pressed transition-colors">
                                                     <div class="flex justify-between items-center mb-2">
                                                         <span class="font-bold text-sm text-gray-800 dark:text-gray-200">{name}</span>
                                                         <button
@@ -217,7 +217,7 @@ pub fn history_list(props: &Props) -> Html {
                                                             let editing4 = editing.clone();
                                                             let workout4 = workout.clone();
                                                             let tt = tt.clone();
-                                                            let input_class = "w-full px-2 py-1 bg-white dark:bg-gray-600 border border-gray-300 dark:border-transparent rounded text-xs text-center text-gray-900 dark:text-white outline-none focus:ring-1 focus:ring-blue-500 transition-colors";
+                                                            let input_class = "w-full px-2 py-1 bg-white dark:bg-gray-600 rounded text-xs text-center text-gray-900 dark:text-white outline-none neu-pressed transition-colors";
 
                                                             html! {
                                                                 <div class="grid grid-cols-12 gap-2 items-center">
@@ -401,7 +401,7 @@ pub fn history_list(props: &Props) -> Html {
 
                                         <div class="flex gap-2 pt-1">
                                             <button
-                                                class="flex-1 py-2.5 bg-blue-600 text-white rounded-lg text-sm font-bold hover:bg-blue-700 shadow-sm transition-colors"
+                                                class="flex-1 py-2.5 bg-blue-600 text-white rounded-lg text-sm font-bold hover:bg-blue-700 neu-btn transition-colors"
                                                 onclick={{
                                                     let editing = editing_state.clone();
                                                     let w = edit_workout.clone();
@@ -413,7 +413,7 @@ pub fn history_list(props: &Props) -> Html {
                                                 }}
                                             >{"Save Changes"}</button>
                                             <button
-                                                class="flex-1 py-2.5 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 border border-gray-300 dark:border-transparent rounded-lg text-sm font-bold hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors"
+                                                class="flex-1 py-2.5 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 rounded-lg text-sm font-bold hover:bg-gray-200 dark:hover:bg-gray-600 neu-btn transition-colors"
                                                 onclick={{
                                                     let editing = editing_state.clone();
                                                     Callback::from(move |e: MouseEvent| {

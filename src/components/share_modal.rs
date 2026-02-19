@@ -70,7 +70,7 @@ pub fn share_modal(props: &Props) -> Html {
         let label = if *copied_link { "Copied!" } else { "Copy Link" };
         html! {
             <button
-                class="w-full py-2.5 bg-blue-600 text-white rounded-lg text-sm font-bold hover:bg-blue-700 shadow-sm transition-colors"
+                class="w-full py-2.5 bg-blue-600 text-white rounded-lg text-sm font-bold hover:bg-blue-700 neu-btn transition-colors"
                 onclick={onclick}
             >{label}</button>
         }
@@ -125,7 +125,7 @@ pub fn share_modal(props: &Props) -> Html {
                 <div class="space-y-2">
                     {copy_link_btn}
                     <button
-                        class="w-full py-2.5 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 border border-gray-300 dark:border-gray-600 rounded-lg text-sm font-bold hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors"
+                        class="w-full py-2.5 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 rounded-lg text-sm font-bold hover:bg-gray-200 dark:hover:bg-gray-600 neu-btn transition-colors"
                         onclick={copy_text_click}
                     >{text_label}</button>
                 </div>

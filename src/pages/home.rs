@@ -107,7 +107,7 @@ fn community_summary() -> Html {
                     <span class="px-2 py-0.5 bg-blue-100 dark:bg-blue-900/40 text-blue-600 dark:text-blue-400 text-[10px] font-bold rounded-full uppercase tracking-wider">{"Optional"}</span>
                 </div>
                 <p class="text-sm text-gray-600 dark:text-gray-400 mb-4">{"Train with friends, share stats, and see your rankings in the community."}</p>
-                <Link<Route> to={Route::Social} classes="flex items-center justify-center w-full py-2 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 text-gray-900 dark:text-white border border-gray-200 dark:border-transparent rounded-lg text-sm font-bold transition shadow-sm">
+                <Link<Route> to={Route::Social} classes="flex items-center justify-center w-full py-2 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-900 dark:text-white rounded-lg text-sm font-bold transition neu-btn">
                     {"🚀 Join Community"}
                 </Link<Route>>
             </div>

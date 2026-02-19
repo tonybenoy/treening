@@ -209,7 +209,7 @@ pub fn faq_page() -> Html {
             <div class="space-y-3">
                 { for FAQS.iter().map(|faq| {
                     html! {
-                        <details class="group bg-gray-100 dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-transparent transition-colors shadow-sm">
+                        <details class="group bg-gray-100 dark:bg-gray-800 rounded-xl neu-flat transition-colors">
                             <summary class="px-4 py-3 cursor-pointer font-bold text-gray-800 dark:text-gray-200 hover:text-blue-600 dark:hover:text-blue-400 transition-colors list-none flex justify-between items-center">
                                 {faq.question}
                                 <span class="text-gray-400 group-open:rotate-180 transition-transform">{"\u{25be}"}</span>

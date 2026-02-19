@@ -107,7 +107,7 @@ pub fn achievement_badges() -> Html {
                 { for badges.iter().map(|b| {
                     let opacity = if b.earned { "" } else { "opacity-30 grayscale" };
                     html! {
-                        <div class={format!("flex flex-col items-center p-2 bg-gray-100 dark:bg-gray-800/50 rounded-xl border border-gray-200 dark:border-gray-700/50 text-center transition-colors {}", opacity)}>
+                        <div class={format!("flex flex-col items-center p-2 bg-gray-100 dark:bg-gray-800/50 rounded-xl neu-flat text-center transition-colors {}", opacity)}>
                             <span class="text-2xl">{b.emoji}</span>
                             <span class="text-[9px] font-bold text-gray-800 dark:text-gray-200 mt-1 leading-tight">{b.name}</span>
                             <span class="text-[8px] text-gray-500 dark:text-gray-500 leading-tight">{b.description}</span>

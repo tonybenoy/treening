@@ -136,7 +136,7 @@ pub fn settings_panel(props: &Props) -> Html {
 
     html! {
         <div class="space-y-4 transition-colors duration-200">
-            <div class="bg-gray-100 dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-transparent">
+            <div class="bg-gray-100 dark:bg-gray-800 rounded-2xl p-4 neu-flat">
                 <h3 class="font-semibold mb-2 text-gray-900 dark:text-gray-100">{"Features"}</h3>
                 <div class="flex items-center justify-between">
                     <div>
@@ -166,7 +166,7 @@ pub fn settings_panel(props: &Props) -> Html {
                     </div>
                     <select
                         onchange={on_change_theme}
-                        class="bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm rounded-lg px-2 py-1 outline-none border border-gray-300 dark:border-transparent focus:ring-1 focus:ring-blue-500"
+                        class="bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm rounded-lg px-2 py-1 outline-none neu-pressed"
                     >
                         <option value="dark" selected={config.theme == crate::models::Theme::Dark}>{"Dark"}</option>
                         <option value="light" selected={config.theme == crate::models::Theme::Light}>{"Light"}</option>
@@ -186,15 +186,15 @@ pub fn settings_panel(props: &Props) -> Html {
                 </p>
             </div>
 
-            <div class="bg-gray-100 dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-transparent">
+            <div class="bg-gray-100 dark:bg-gray-800 rounded-2xl p-4 neu-flat">
                 <h3 class="font-semibold mb-2 text-gray-900 dark:text-gray-100">{"Export Data"}</h3>
                 <p class="text-sm text-gray-500 dark:text-gray-400 mb-3">{"Download all your workout data as a JSON file."}</p>
                 <button
-                    class="w-full py-2 bg-blue-600 text-white rounded font-medium hover:bg-blue-700 shadow-sm transition-colors"
+                    class="w-full py-2 bg-blue-600 text-white rounded font-medium hover:bg-blue-700 neu-btn transition-colors"
                     onclick={on_export}
                 >{"Export JSON"}</button>
                 <button
-                    class="w-full py-2 mt-2 bg-green-600 text-white rounded font-medium hover:bg-green-700 shadow-sm transition-colors"
+                    class="w-full py-2 mt-2 bg-green-600 text-white rounded font-medium hover:bg-green-700 neu-btn transition-colors"
                     onclick={Callback::from(|_| {
                         let data = storage::export_csv();
                         let blob_parts = js_sys::Array::new();
@@ -216,10 +216,10 @@ pub fn settings_panel(props: &Props) -> Html {
                     })}
                 >{"Export CSV"}</button>
             </div>
-            <div class="bg-gray-100 dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-transparent">
+            <div class="bg-gray-100 dark:bg-gray-800 rounded-2xl p-4 neu-flat">
                 <h3 class="font-semibold mb-2 text-gray-900 dark:text-gray-100">{"Import Data"}</h3>
                 <p class="text-sm text-gray-500 dark:text-gray-400 mb-3">{"Restore data from a previously exported JSON file. This will replace current data."}</p>
-                <label class="block w-full py-2 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 border border-gray-300 dark:border-transparent rounded font-medium text-center cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors">
+                <label class="block w-full py-2 bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded font-medium text-center cursor-pointer hover:bg-gray-200 dark:hover:bg-gray-600 neu-btn transition-colors">
                     {"Choose File"}
                     <input
                         type="file"

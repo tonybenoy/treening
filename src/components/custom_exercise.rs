@@ -71,14 +71,14 @@ pub fn custom_exercise_form(props: &Props) -> Html {
     };
 
     html! {
-        <div class="bg-gray-100 dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-transparent transition-colors shadow-sm">
+        <div class="bg-gray-100 dark:bg-gray-800 rounded-2xl p-4 neu-flat transition-colors">
             <h3 class="text-lg font-bold mb-4 text-gray-900 dark:text-gray-100">{"Add Custom Exercise"}</h3>
             <div class="space-y-4">
                 <div>
                     <label class="block text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-gray-500 mb-1">{"Name"}</label>
                     <input
                         type="text"
-                        class="w-full px-3 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-transparent rounded text-gray-900 dark:text-gray-100 outline-none focus:ring-1 focus:ring-blue-500 transition-colors"
+                        class="w-full px-3 py-2 bg-white dark:bg-gray-700 rounded text-gray-900 dark:text-gray-100 outline-none neu-pressed transition-colors"
                         value={(*name).clone()}
                         oninput={let n = name.clone(); Callback::from(move |e: InputEvent| {
                             let input: web_sys::HtmlInputElement = e.target_unchecked_into();
@@ -90,7 +90,7 @@ pub fn custom_exercise_form(props: &Props) -> Html {
                     <div>
                         <label class="block text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-gray-500 mb-1">{"Category"}</label>
                         <select
-                            class="w-full px-3 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-transparent rounded text-gray-900 dark:text-gray-100 outline-none focus:ring-1 focus:ring-blue-500 transition-colors"
+                            class="w-full px-3 py-2 bg-white dark:bg-gray-700 rounded text-gray-900 dark:text-gray-100 outline-none neu-pressed transition-colors"
                             onchange={let c = category.clone(); Callback::from(move |e: Event| {
                                 let input: web_sys::HtmlInputElement = e.target_unchecked_into();
                                 let val = match input.value().as_str() {
@@ -114,7 +114,7 @@ pub fn custom_exercise_form(props: &Props) -> Html {
                     <div>
                         <label class="block text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-gray-500 mb-1">{"Equipment"}</label>
                         <select
-                            class="w-full px-3 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-transparent rounded text-gray-900 dark:text-gray-100 outline-none focus:ring-1 focus:ring-blue-500 transition-colors"
+                            class="w-full px-3 py-2 bg-white dark:bg-gray-700 rounded text-gray-900 dark:text-gray-100 outline-none neu-pressed transition-colors"
                             onchange={let eq = equipment.clone(); Callback::from(move |e: Event| {
                                 let input: web_sys::HtmlInputElement = e.target_unchecked_into();
                                 let val = match input.value().as_str() {
@@ -144,7 +144,7 @@ pub fn custom_exercise_form(props: &Props) -> Html {
                 <div>
                     <label class="block text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-gray-500 mb-1">{"Tracking Type"}</label>
                     <select
-                        class="w-full px-3 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-transparent rounded text-gray-900 dark:text-gray-100 outline-none focus:ring-1 focus:ring-blue-500 transition-colors"
+                        class="w-full px-3 py-2 bg-white dark:bg-gray-700 rounded text-gray-900 dark:text-gray-100 outline-none neu-pressed transition-colors"
                         onchange={let tt = tracking_type.clone(); Callback::from(move |e: Event| {
                             let input: web_sys::HtmlInputElement = e.target_unchecked_into();
                             let val = match input.value().as_str() {
@@ -168,7 +168,7 @@ pub fn custom_exercise_form(props: &Props) -> Html {
                     <input
                         type="text"
                         placeholder="e.g. Chest, Triceps"
-                        class="w-full px-3 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-transparent rounded text-gray-900 dark:text-gray-100 outline-none focus:ring-1 focus:ring-blue-500 transition-colors"
+                        class="w-full px-3 py-2 bg-white dark:bg-gray-700 rounded text-gray-900 dark:text-gray-100 outline-none neu-pressed transition-colors"
                         value={(*muscles).clone()}
                         oninput={let m = muscles.clone(); Callback::from(move |e: InputEvent| {
                             let input: web_sys::HtmlInputElement = e.target_unchecked_into();
@@ -180,7 +180,7 @@ pub fn custom_exercise_form(props: &Props) -> Html {
                     <label class="block text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-gray-500 mb-1">{"Description"}</label>
                     <textarea
                         rows="3"
-                        class="w-full px-3 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-transparent rounded text-gray-900 dark:text-gray-100 outline-none focus:ring-1 focus:ring-blue-500 transition-colors"
+                        class="w-full px-3 py-2 bg-white dark:bg-gray-700 rounded text-gray-900 dark:text-gray-100 outline-none neu-pressed transition-colors"
                         value={(*description).clone()}
                         oninput={let d = description.clone(); Callback::from(move |e: InputEvent| {
                             let input: web_sys::HtmlTextAreaElement = e.target_unchecked_into();
@@ -213,11 +213,11 @@ pub fn custom_exercise_form(props: &Props) -> Html {
                 </div>
                 <div class="flex gap-2 pt-2">
                     <button
-                        class="flex-1 py-2.5 bg-blue-600 text-white rounded-lg font-bold shadow-sm hover:bg-blue-700 transition-colors"
+                        class="flex-1 py-2.5 bg-blue-600 text-white rounded-lg font-bold neu-btn hover:bg-blue-700 transition-colors"
                         onclick={on_save}
                     >{"Save Exercise"}</button>
                     <button
-                        class="flex-1 py-2.5 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 border border-gray-300 dark:border-transparent rounded-lg font-bold hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors"
+                        class="flex-1 py-2.5 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg font-bold hover:bg-gray-200 dark:hover:bg-gray-600 neu-btn transition-colors"
                         onclick={let cb = props.on_cancel.clone(); Callback::from(move |_| cb.emit(()))}
                     >{"Cancel"}</button>
                 </div>

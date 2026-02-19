@@ -62,7 +62,7 @@ fn install_button() -> Html {
     // iOS doesn't support beforeinstallprompt — show manual instructions
     if is_ios() && !*can_install {
         return html! {
-            <div class="w-full py-3 px-4 bg-blue-50 dark:bg-blue-900/30 border border-blue-200 dark:border-blue-800 rounded-xl text-sm shadow-sm">
+            <div class="w-full py-3 px-4 bg-blue-50 dark:bg-blue-900/30 rounded-xl text-sm neu-flat">
                 <div class="font-bold mb-1 text-blue-900 dark:text-blue-100">{"Install Treening App"}</div>
                 <div class="text-xs text-blue-700 dark:text-blue-300">
                     {"Tap the "}
@@ -90,7 +90,7 @@ fn install_button() -> Html {
             onclick={onclick}
             disabled={!*can_install}
             class={if *can_install {
-                "w-full py-3 bg-gradient-to-r from-blue-600 to-blue-500 text-white rounded-xl font-bold text-sm shadow-sm hover:from-blue-700 hover:to-blue-600 transition-all"
+                "w-full py-3 bg-gradient-to-r from-blue-600 to-blue-500 text-white rounded-xl font-bold text-sm neu-btn hover:from-blue-700 hover:to-blue-600 transition-all"
             } else {
                 "w-full py-3 bg-gray-300 dark:bg-gray-700 text-gray-500 dark:text-gray-400 rounded-xl font-bold text-sm cursor-not-allowed"
             }}
@@ -235,7 +235,7 @@ fn profile_section() -> Html {
                 onclick={on_save}
                 disabled={!has_changes}
                 class={if has_changes {
-                    "w-full py-2.5 bg-blue-600 text-white rounded-lg font-bold text-sm hover:bg-blue-700 shadow-sm transition-colors"
+                    "w-full py-2.5 bg-blue-600 text-white rounded-lg font-bold text-sm hover:bg-blue-700 neu-btn transition-colors"
                 } else {
                     "w-full py-2.5 bg-gray-300 dark:bg-gray-700 text-gray-500 dark:text-gray-400 rounded-lg font-bold text-sm cursor-not-allowed transition-colors"
                 }}
@@ -325,7 +325,7 @@ fn body_metrics_section() -> Html {
                         </div>
                         <button
                             onclick={on_add}
-                            class="w-full py-2 bg-blue-600 text-white rounded-lg font-bold text-sm shadow-sm hover:bg-blue-700 transition-colors"
+                            class="w-full py-2 bg-blue-600 text-white rounded-lg font-bold text-sm neu-btn hover:bg-blue-700 transition-colors"
                         >{"Save Measurement"}</button>
                     </div>
                 }
@@ -453,7 +453,7 @@ pub fn settings_page() -> Html {
                 <div class="flex justify-between items-center mb-3 px-1">
                     <h2 class="text-lg font-semibold text-gray-900 dark:text-gray-100">{"Custom Exercises"}</h2>
                     <button
-                        class="px-3 py-1.5 bg-blue-600 text-white rounded text-sm hover:bg-blue-700 shadow-sm transition-colors"
+                        class="px-3 py-1.5 bg-blue-600 text-white rounded-lg text-sm hover:bg-blue-700 neu-btn transition-colors"
                         onclick={let s = show_custom_form.clone(); Callback::from(move |_| s.set(true))}
                     >{"+ Add"}</button>
                 </div>
@@ -494,7 +494,7 @@ pub fn settings_page() -> Html {
 
             <div class="text-center py-4">
                 <a href="https://buymeacoffee.com/tonybenoy" target="_blank" rel="noopener noreferrer"
-                   class="inline-flex items-center gap-2 px-4 py-2 bg-yellow-400 hover:bg-yellow-500 text-gray-900 font-semibold rounded-lg shadow-sm transition-colors text-sm">
+                   class="inline-flex items-center gap-2 px-4 py-2 bg-yellow-400 hover:bg-yellow-500 text-gray-900 font-semibold rounded-lg neu-btn transition-colors text-sm">
                     <span>{"☕"}</span>
                     <span>{"Buy Me a Coffee"}</span>
                 </a>

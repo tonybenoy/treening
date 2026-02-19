@@ -480,7 +480,7 @@ pub fn social_page() -> Html {
                     <h2 class="text-lg font-bold text-gray-900 dark:text-gray-100">{"Friend Ranking"}</h2>
                     <button
                         onclick={let s = show_add_friend.clone(); Callback::from(move |_| s.set(!*s))}
-                        class="text-sm px-3 py-1 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 border border-gray-200 dark:border-transparent transition-colors"
+                        class="text-sm px-3 py-1 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 neu-chip transition-colors"
                     >
                         {if *show_add_friend { "Cancel" } else { "+ Add Friend" }}
                     </button>
@@ -488,11 +488,11 @@ pub fn social_page() -> Html {
 
                 { if *show_add_friend {
                     html! {
-                        <div class="bg-gray-100 dark:bg-gray-800 p-4 rounded-xl space-y-3 border border-blue-500/30 transition-colors">
+                        <div class="bg-gray-100 dark:bg-gray-800 p-4 rounded-xl space-y-3 neu-flat transition-colors">
                             <input
                                 type="text"
                                 placeholder="Enter Friend Code"
-                                class="w-full bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg p-2 text-sm font-mono outline-none focus:border-blue-500 text-gray-900 dark:text-white"
+                                class="w-full bg-white dark:bg-gray-900 rounded-lg p-2 text-sm font-mono outline-none neu-pressed text-gray-900 dark:text-white"
                                 oninput={let input = friend_id_input.clone(); Callback::from(move |e: InputEvent| {
                                     let i: web_sys::HtmlInputElement = e.target_unchecked_into();
                                     input.set(i.value());
@@ -528,7 +528,7 @@ pub fn social_page() -> Html {
                                 let initial = f.name.chars().next().unwrap_or('?').to_uppercase().to_string();
 
                                 html! {
-                                    <div class="bg-gray-100 dark:bg-gray-800 p-3 rounded-xl border border-gray-200 dark:border-transparent transition-colors">
+                                    <div class="bg-gray-100 dark:bg-gray-800 p-3 rounded-xl neu-flat transition-colors">
                                         <div class="flex justify-between items-center">
                                             <div class="flex items-center gap-3">
                                                 <div class="w-10 h-10 bg-blue-100 dark:bg-gray-700 text-blue-600 dark:text-gray-100 rounded-full flex items-center justify-center font-bold flex-shrink-0">
@@ -539,7 +539,7 @@ pub fn social_page() -> Html {
                                                         html! {
                                                             <input
                                                                 type="text"
-                                                                class="bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded px-2 py-0.5 text-sm font-bold text-gray-800 dark:text-gray-100 outline-none focus:border-blue-500 w-full"
+                                                                class="bg-white dark:bg-gray-900 rounded px-2 py-0.5 text-sm font-bold text-gray-800 dark:text-gray-100 outline-none neu-pressed w-full"
                                                                 value={(*edit_input).clone()}
                                                                 oninput={let ei = edit_input.clone(); Callback::from(move |e: InputEvent| {
                                                                     let i: web_sys::HtmlInputElement = e.target_unchecked_into();
@@ -624,7 +624,7 @@ pub fn social_page() -> Html {
             </div>
 
             // Explanation
-            <div class="bg-gray-50 dark:bg-gray-900/50 p-4 rounded-xl border border-gray-200 dark:border-gray-800 transition-colors">
+            <div class="bg-gray-100 dark:bg-gray-900/50 p-4 rounded-xl neu-flat transition-colors">
                 <h3 class="text-xs font-bold uppercase tracking-widest text-gray-500 mb-2">{"How it works"}</h3>
                 <p class="text-[11px] text-gray-500 leading-relaxed">
                     {"Social features are Peer-to-Peer. Your weekly stats are exchanged directly with friends when you both have the app open. No data is stored on any server."}

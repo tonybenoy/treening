@@ -94,7 +94,7 @@ fn render_workout(
 
     html! {
         <div class="space-y-4">
-            <div class="bg-gray-100 dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-transparent">
+            <div class="bg-gray-100 dark:bg-gray-800 rounded-2xl p-4 neu-flat">
                 <h2 class="text-xl font-bold text-gray-900 dark:text-gray-100 mb-1">{&workout.name}</h2>
                 <div class="text-sm text-gray-500 dark:text-gray-400 mb-3">
                     <span>{&workout.date}</span>
@@ -145,7 +145,7 @@ fn render_workout(
             } else {
                 html! {
                     <button
-                        class="w-full py-3 bg-blue-600 text-white rounded-lg font-bold hover:bg-blue-700 shadow-sm transition-colors"
+                        class="w-full py-3 bg-blue-600 text-white rounded-xl font-bold hover:bg-blue-700 neu-btn transition-colors"
                         onclick={on_import}
                     >{"Import Workout"}</button>
                 }
@@ -184,7 +184,7 @@ fn render_routine(
 
     html! {
         <div class="space-y-4">
-            <div class="bg-gray-100 dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-transparent">
+            <div class="bg-gray-100 dark:bg-gray-800 rounded-2xl p-4 neu-flat">
                 <h2 class="text-xl font-bold text-gray-900 dark:text-gray-100 mb-3">{&routine.name}</h2>
                 <div class="space-y-2">
                     { for routine.exercise_ids.iter().map(|eid| {
@@ -213,7 +213,7 @@ fn render_routine(
             } else {
                 html! {
                     <button
-                        class="w-full py-3 bg-blue-600 text-white rounded-lg font-bold hover:bg-blue-700 shadow-sm transition-colors"
+                        class="w-full py-3 bg-blue-600 text-white rounded-xl font-bold hover:bg-blue-700 neu-btn transition-colors"
                         onclick={on_import}
                     >{"Import Routine"}</button>
                 }
@@ -239,11 +239,11 @@ fn render_exercise(exercise: &crate::models::Exercise, imported: &UseStateHandle
 
     html! {
         <div class="space-y-4">
-            <div class="bg-gray-100 dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-transparent">
+            <div class="bg-gray-100 dark:bg-gray-800 rounded-2xl p-4 neu-flat">
                 <h2 class="text-xl font-bold text-gray-900 dark:text-gray-100 mb-2">{&exercise.name}</h2>
                 <div class="flex flex-wrap gap-2 mb-4">
                     <span class="px-2 py-1 bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-transparent rounded text-xs font-bold uppercase">{exercise.category.to_string()}</span>
-                    <span class="px-2 py-1 bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-300 border border-gray-200 dark:border-transparent rounded text-xs font-bold uppercase">{exercise.equipment.to_string()}</span>
+                    <span class="px-2 py-1 bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-300 rounded text-xs font-bold uppercase neu-chip">{exercise.equipment.to_string()}</span>
                 </div>
                 { if !exercise.muscle_groups.is_empty() {
                     html! {
@@ -277,7 +277,7 @@ fn render_exercise(exercise: &crate::models::Exercise, imported: &UseStateHandle
             } else {
                 html! {
                     <button
-                        class="w-full py-3 bg-blue-600 text-white rounded-lg font-bold hover:bg-blue-700 shadow-sm transition-colors"
+                        class="w-full py-3 bg-blue-600 text-white rounded-xl font-bold hover:bg-blue-700 neu-btn transition-colors"
                         onclick={on_import}
                     >{"Import Exercise"}</button>
                 }

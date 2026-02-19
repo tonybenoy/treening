@@ -243,7 +243,7 @@ pub fn workout_log(props: &Props) -> Html {
                 let rest_override_val = we.rest_seconds_override;
 
                 html! {
-                    <div class={classes!("bg-gray-100", "dark:bg-gray-800", "rounded-lg", "p-4", "border", "border-gray-200", "dark:border-transparent", "transition-colors", "shadow-sm", superset_border)}>
+                    <div class={classes!("bg-gray-100", "dark:bg-gray-800", "rounded-2xl", "p-4", "neu-flat", "transition-colors", superset_border)}>
                         <div class="flex justify-between items-center mb-1">
                             <div class="flex items-center gap-2">
                                 <h3 class="font-semibold text-lg text-gray-900 dark:text-gray-100">{&name}</h3>
@@ -503,7 +503,7 @@ pub fn workout_log(props: &Props) -> Html {
                                         </div>
 
                                         { {
-                                            let input_class = AttrValue::Static("w-full px-2 py-1 bg-white dark:bg-gray-700 border border-gray-300 dark:border-transparent rounded text-sm text-center text-gray-900 dark:text-gray-100 outline-none focus:ring-1 focus:ring-blue-500 transition-colors");
+                                            let input_class = AttrValue::Static("w-full px-2 py-1 bg-white dark:bg-gray-700 rounded text-sm text-center text-gray-900 dark:text-gray-100 outline-none neu-pressed transition-colors");
                                             match tt {
                                             ExerciseTrackingType::Strength => html! {
                                                 <>
@@ -718,7 +718,7 @@ pub fn workout_log(props: &Props) -> Html {
                                                 <input
                                                     type="text"
                                                     placeholder="Set note..."
-                                                    class="w-full px-2 py-1 bg-white dark:bg-gray-700 border border-gray-300 dark:border-transparent rounded text-xs text-gray-900 dark:text-gray-100 outline-none focus:ring-1 focus:ring-blue-500 transition-colors"
+                                                    class="w-full px-2 py-1 bg-white dark:bg-gray-700 rounded text-xs text-gray-900 dark:text-gray-100 outline-none neu-pressed transition-colors"
                                                     value={note_text}
                                                     oninput={Callback::from(move |e: InputEvent| {
                                                         let input: web_sys::HtmlInputElement = e.target_unchecked_into();
@@ -800,7 +800,7 @@ pub fn workout_log(props: &Props) -> Html {
                                     <span class="text-[10px] text-gray-500 uppercase font-bold">{"Rest:"}</span>
                                     <input
                                         type="number"
-                                        class="w-16 px-1 py-0.5 bg-white dark:bg-gray-700 border border-gray-300 dark:border-transparent rounded text-xs text-center text-gray-900 dark:text-gray-100 outline-none focus:ring-1 focus:ring-blue-500"
+                                        class="w-16 px-1 py-0.5 bg-white dark:bg-gray-700 rounded text-xs text-center text-gray-900 dark:text-gray-100 outline-none neu-pressed"
                                         value={rest_override_val.unwrap_or(default_rest).to_string()}
                                         onchange={Callback::from(move |e: Event| {
                                             let input: web_sys::HtmlInputElement = e.target_unchecked_into();
@@ -823,7 +823,7 @@ pub fn workout_log(props: &Props) -> Html {
                             <input
                                 type="text"
                                 placeholder="Add notes..."
-                                class="w-full px-3 py-1.5 bg-white dark:bg-gray-700 border border-gray-300 dark:border-transparent rounded text-sm text-gray-900 dark:text-gray-100 outline-none focus:ring-1 focus:ring-blue-500 transition-colors"
+                                class="w-full px-3 py-1.5 bg-white dark:bg-gray-700 rounded text-sm text-gray-900 dark:text-gray-100 outline-none neu-pressed transition-colors"
                                 value={we.notes.clone()}
                                 oninput={{
                                     let exercises = exercises.clone();

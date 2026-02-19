@@ -480,7 +480,7 @@ pub fn sync_panel() -> Html {
             </div>
 
             // Your Device ID
-            <div class="bg-white dark:bg-gray-900 rounded-xl p-3 space-y-1 border border-gray-200 dark:border-gray-700">
+            <div class="bg-white dark:bg-gray-900 rounded-xl p-3 space-y-1 neu-flat">
                 <div class="text-[10px] text-gray-500 uppercase font-bold tracking-wider">{"Your Device ID"}</div>
                 <div class="flex items-center gap-2">
                     <code class="text-sm font-mono font-bold text-gray-900 dark:text-white flex-1 break-all">{&my_peer_id}</code>
@@ -510,7 +510,7 @@ pub fn sync_panel() -> Html {
                         type="text"
                         placeholder="Enter device ID (e.g. tr-abc12345)"
                         value={(*add_id_input).clone()}
-                        class="flex-1 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-xl py-2 px-3 text-sm font-mono focus:border-blue-500 dark:focus:border-blue-500 outline-none transition-colors text-gray-900 dark:text-white"
+                        class="flex-1 bg-white dark:bg-gray-900 rounded-xl py-2 px-3 text-sm font-mono outline-none neu-pressed transition-colors text-gray-900 dark:text-white"
                         oninput={let input = add_id_input.clone(); Callback::from(move |e: InputEvent| {
                             let el: web_sys::HtmlInputElement = e.target_unchecked_into();
                             input.set(el.value());
@@ -562,7 +562,7 @@ pub fn sync_panel() -> Html {
                             let editing_idx = editing_idx.clone();
 
                             html! {
-                                <div class="bg-white dark:bg-gray-900 rounded-xl p-3 border border-gray-200 dark:border-gray-700 flex items-center gap-3">
+                                <div class="bg-white dark:bg-gray-900 rounded-xl p-3 neu-flat flex items-center gap-3">
                                     <div class="flex-1 min-w-0">
                                         { if is_editing {
                                             html! {
@@ -570,7 +570,7 @@ pub fn sync_panel() -> Html {
                                                     <input
                                                         type="text"
                                                         value={(*edit_name_input).clone()}
-                                                        class="flex-1 bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg py-1 px-2 text-sm outline-none text-gray-900 dark:text-white"
+                                                        class="flex-1 bg-gray-100 dark:bg-gray-800 rounded-lg py-1 px-2 text-sm outline-none neu-pressed text-gray-900 dark:text-white"
                                                         oninput={let input = edit_name_input.clone(); Callback::from(move |e: InputEvent| {
                                                             let el: web_sys::HtmlInputElement = e.target_unchecked_into();
                                                             input.set(el.value());

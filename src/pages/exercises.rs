@@ -70,7 +70,7 @@ pub fn exercises_page() -> Html {
                         <div class="px-4 pt-4 pb-2 flex justify-between items-center transition-colors duration-200">
                             <h1 class="text-2xl font-bold text-gray-900 dark:text-gray-100">{"Exercises"}</h1>
                             <button
-                                class="px-3 py-1.5 bg-blue-600 text-white rounded text-sm font-bold hover:bg-blue-700 shadow-sm transition-colors"
+                                class="px-3 py-1.5 bg-blue-600 text-white rounded-lg text-sm font-bold hover:bg-blue-700 neu-btn transition-colors"
                                 onclick={let s = show_custom_form.clone(); Callback::from(move |_| s.set(true))}
                             >{"+ Custom"}</button>
                         </div>
