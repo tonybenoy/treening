@@ -226,6 +226,21 @@
             } catch { return 'dev'; }
         };
 
+        window.getBuildDate = async () => {
+            try {
+                const reg = await navigator.serviceWorker.ready;
+                const sw = reg.active;
+                if (!sw) return '';
+                const ch = new MessageChannel();
+                const promise = new Promise(resolve => {
+                    ch.port1.onmessage = e => resolve(e.data);
+                    setTimeout(() => resolve(''), 2000);
+                });
+                sw.postMessage({ type: 'GET_BUILD_DATE' }, [ch.port2]);
+                return await promise;
+            } catch { return ''; }
+        };
+
         // Service Worker registration
         if ('serviceWorker' in navigator) {
             // Listen for update messages from new SW

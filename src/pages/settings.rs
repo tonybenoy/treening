@@ -24,6 +24,9 @@ extern "C" {
 
     #[wasm_bindgen(js_name = getAppVersion)]
     fn get_app_version() -> js_sys::Promise;
+
+    #[wasm_bindgen(js_name = getBuildDate)]
+    fn get_build_date() -> js_sys::Promise;
 }
 
 #[function_component(InstallButton)]
@@ -394,14 +397,24 @@ pub fn settings_page() -> Html {
     };
 
     let app_version = use_state(|| String::from("..."));
+    let build_date = use_state(|| String::new());
     {
         let app_version = app_version.clone();
+        let build_date = build_date.clone();
         use_effect_with((), move |_| {
             wasm_bindgen_futures::spawn_local(async move {
                 let promise = get_app_version();
                 if let Ok(val) = wasm_bindgen_futures::JsFuture::from(promise).await {
                     if let Some(s) = val.as_string() {
                         app_version.set(s);
+                    }
+                }
+                let promise = get_build_date();
+                if let Ok(val) = wasm_bindgen_futures::JsFuture::from(promise).await {
+                    if let Some(s) = val.as_string() {
+                        if !s.is_empty() && !s.contains("__") {
+                            build_date.set(s);
+                        }
                     }
                 }
             });
@@ -428,8 +441,11 @@ pub fn settings_page() -> Html {
                     <span>{"Frequently Asked Questions"}</span>
                     <span>{"→"}</span>
                 </Link<Route>>
-                <div class="pt-2 border-t border-gray-200 dark:border-gray-700 mt-2">
+                <div class="pt-2 border-t border-gray-200 dark:border-gray-700 mt-2 space-y-1">
                     <span class="text-xs text-gray-500 dark:text-gray-400">{"Version: "}{(*app_version).clone()}</span>
+                    { if !build_date.is_empty() {
+                        html! { <span class="text-xs text-gray-500 dark:text-gray-400">{" · "}{(*build_date).clone()}</span> }
+                    } else { html! {} }}
                 </div>
             </div>
 

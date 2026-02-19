@@ -41,7 +41,9 @@ jobs:
         run: cargo clippy --target wasm32-unknown-unknown -- -D warnings
 
       - name: Stamp SW version
-        run: sed -i "s/__CACHE_VERSION__/$(git rev-parse --short HEAD)/" sw.js
+        run: |
+          sed -i "s/__CACHE_VERSION__/$(git rev-parse --short HEAD)/" sw.js
+          sed -i "s/__BUILD_DATE__/$(date -u '+%Y-%m-%d %H:%M UTC')/" sw.js
 
       - name: Build
         run: trunk build --release --public-url /

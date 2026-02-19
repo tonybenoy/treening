@@ -1,4 +1,5 @@
 const CACHE_NAME = 'treening-__CACHE_VERSION__';
+const BUILD_DATE = '__BUILD_DATE__';
 
 const PRECACHE_URLS = [
     './',
@@ -36,6 +37,12 @@ self.addEventListener('activate', event => {
             });
         })
     );
+});
+
+self.addEventListener('message', event => {
+    if (event.data && event.data.type === 'GET_BUILD_DATE') {
+        event.ports[0].postMessage(BUILD_DATE);
+    }
 });
 
 self.addEventListener('fetch', event => {

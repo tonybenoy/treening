@@ -105,19 +105,147 @@ pub fn generate_warmup_sets(working_weight: f64) -> Vec<WorkoutSet> {
         .collect()
 }
 
+// ---------------------------------------------------------------------------
+// Self-contained timer components – they own their own Interval + state so
+// ticking never re-renders the parent WorkoutPage.
+// ---------------------------------------------------------------------------
+
+fn format_time(secs: u32) -> String {
+    let m = secs / 60;
+    let s = secs % 60;
+    format!("{:02}:{:02}", m, s)
+}
+
+/// Displays the elapsed workout time. Fully self-contained: manages its own
+/// Interval and display state so ticking never re-renders the parent.
+#[derive(Properties, PartialEq)]
+pub struct ElapsedTimerProps {
+    pub active: bool,
+}
+
+#[function_component(ElapsedTimer)]
+pub fn elapsed_timer(props: &ElapsedTimerProps) -> Html {
+    let seconds = use_state(|| 0u32);
+    {
+        let seconds = seconds.clone();
+        let active = props.active;
+        use_effect_with(active, move |active| {
+            let interval = if *active {
+                Some(Interval::new(1000, move || {
+                    seconds.set(*seconds + 1);
+                }))
+            } else {
+                None
+            };
+            move || drop(interval)
+        });
+    }
+    html! {
+        <div class="text-xl font-mono text-blue-600 dark:text-blue-400 font-bold">
+            {format_time(*seconds)}
+        </div>
+    }
+}
+
+/// Self-contained rest-timer bar. Triggered by a `(counter, seconds)` prop.
+/// When the counter changes, a new countdown starts.
+#[derive(Properties, PartialEq)]
+pub struct RestTimerProps {
+    pub trigger: (u32, u32), // (counter, rest_seconds)
+}
+
+#[function_component(RestTimer)]
+pub fn rest_timer(props: &RestTimerProps) -> Html {
+    let remaining = use_state(|| 0u32);
+    let active = use_state(|| false);
+    let last_counter = use_mut_ref(|| 0u32);
+
+    // Detect new trigger
+    {
+        let remaining = remaining.clone();
+        let active = active.clone();
+        let last_counter = last_counter.clone();
+        let (counter, seconds) = props.trigger;
+        use_effect_with((counter, seconds), move |(counter, seconds)| {
+            let mut lc = last_counter.borrow_mut();
+            if *counter > 0 && *counter != *lc {
+                *lc = *counter;
+                remaining.set(*seconds);
+                active.set(true);
+            }
+            || ()
+        });
+    }
+
+    // Countdown interval
+    {
+        let remaining = remaining.clone();
+        let active_handle = active.clone();
+        use_effect_with(*active, move |is_active| {
+            let interval = if *is_active {
+                Some(Interval::new(1000, move || {
+                    let r = *remaining;
+                    if r <= 1 {
+                        remaining.set(0);
+                        active_handle.set(false);
+                        try_vibrate();
+                    } else {
+                        remaining.set(r - 1);
+                    }
+                }))
+            } else {
+                None
+            };
+            move || drop(interval)
+        });
+    }
+
+    if !*active && *remaining == 0 {
+        return html! {};
+    }
+
+    let r = *remaining;
+    let remaining_add = remaining.clone();
+    let remaining_skip = remaining.clone();
+    let active_skip = active.clone();
+
+    html! {
+        <div class="fixed bottom-16 left-0 right-0 z-50 px-4 pb-2">
+            <div class="bg-gray-900 dark:bg-gray-700 rounded-xl px-4 py-3 flex items-center justify-between shadow-lg border border-gray-700 dark:border-gray-600">
+                <div class="flex items-center gap-3">
+                    <span class="text-xs text-gray-400 uppercase font-bold">{"Rest"}</span>
+                    <span class="text-xl font-mono text-white font-bold">{format_time(r)}</span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <button
+                        class="text-xs font-bold text-blue-400 bg-blue-400/10 px-2.5 py-1 rounded-lg hover:bg-blue-400/20 transition-colors"
+                        onclick={Callback::from(move |_| remaining_add.set(*remaining_add + 30))}
+                    >{"+30s"}</button>
+                    <button
+                        class="text-xs font-bold text-gray-400 bg-gray-600 px-2.5 py-1 rounded-lg hover:bg-gray-500 transition-colors"
+                        onclick={Callback::from(move |_| {
+                            remaining_skip.set(0);
+                            active_skip.set(false);
+                        })}
+                    >{"Skip"}</button>
+                </div>
+            </div>
+        </div>
+    }
+}
+
 #[function_component(WorkoutPage)]
 pub fn workout_page() -> Html {
     let workout_exercises = use_state(Vec::<WorkoutExercise>::new);
     let workout_name = use_state(|| "Workout".to_string());
     let show_exercise_picker = use_state(|| false);
-    let elapsed_seconds = use_state(|| 0u32);
+    let elapsed_ref = use_mut_ref(|| 0u32);
     let workout_active = use_state(|| false);
     let saved = use_state(|| false);
     let navigator = use_navigator().unwrap();
 
-    // Rest timer state
-    let rest_remaining = use_state(|| 0u32);
-    let rest_active = use_state(|| false);
+    // Rest timer trigger: incremented to signal RestTimer to start
+    let rest_trigger = use_state(|| (0u32, 0u32)); // (counter, seconds)
 
     // Undo state
     let undo_snapshot = use_state(|| None::<Vec<WorkoutExercise>>);
@@ -186,14 +314,17 @@ pub fn workout_page() -> Html {
         });
     }
 
-    // Workout elapsed timer
+    // Elapsed timer — uses a ref so ticking doesn't re-render the page.
+    // An Interval writes to the ref; the ElapsedTimer component has its own
+    // state for display.
     {
-        let elapsed = elapsed_seconds.clone();
+        let elapsed_ref = elapsed_ref.clone();
         let active = workout_active.clone();
         use_effect_with((*active,), move |(active,)| {
             let interval = if *active {
                 Some(Interval::new(1000, move || {
-                    elapsed.set(*elapsed + 1);
+                    let mut r = elapsed_ref.borrow_mut();
+                    *r += 1;
                 }))
             } else {
                 None
@@ -201,43 +332,13 @@ pub fn workout_page() -> Html {
             move || drop(interval)
         });
     }
-
-    // Rest timer countdown
-    {
-        let remaining = rest_remaining.clone();
-        let active = rest_active.clone();
-        use_effect_with((*active,), move |(is_active,)| {
-            let interval = if *is_active {
-                Some(Interval::new(1000, move || {
-                    let r = *remaining;
-                    if r <= 1 {
-                        remaining.set(0);
-                        active.set(false);
-                        try_vibrate();
-                    } else {
-                        remaining.set(r - 1);
-                    }
-                }))
-            } else {
-                None
-            };
-            move || drop(interval)
-        });
-    }
-
-    let format_time = |secs: u32| -> String {
-        let m = secs / 60;
-        let s = secs % 60;
-        format!("{:02}:{:02}", m, s)
-    };
 
     // on_set_completed now receives resolved rest seconds
     let on_set_completed = {
-        let rest_remaining = rest_remaining.clone();
-        let rest_active = rest_active.clone();
+        let rest_trigger = rest_trigger.clone();
         Callback::from(move |seconds: u32| {
-            rest_remaining.set(seconds);
-            rest_active.set(true);
+            let (counter, _) = *rest_trigger;
+            rest_trigger.set((counter + 1, seconds));
         })
     };
 
@@ -308,7 +409,7 @@ pub fn workout_page() -> Html {
     let on_save = {
         let we = workout_exercises.clone();
         let name = workout_name.clone();
-        let elapsed = elapsed_seconds.clone();
+        let elapsed_ref = elapsed_ref.clone();
         let saved = saved.clone();
         let nav = navigator.clone();
         Callback::from(move |_| {
@@ -316,12 +417,13 @@ pub fn workout_page() -> Html {
                 return;
             }
             let now = chrono::Local::now();
+            let elapsed = *elapsed_ref.borrow();
             let workout = Workout {
                 id: uuid::Uuid::new_v4().to_string(),
                 date: now.format("%Y-%m-%d").to_string(),
                 name: (*name).clone(),
                 exercises: (*we).clone(),
-                duration_mins: *elapsed / 60,
+                duration_mins: elapsed / 60,
             };
             let mut workouts = storage::load_workouts();
             workouts.push(workout);
@@ -351,38 +453,7 @@ pub fn workout_page() -> Html {
         };
     }
 
-    // Rest timer bar
-    let rest_timer_html = if *rest_active || *rest_remaining > 0 {
-        let remaining = *rest_remaining;
-        let rest_remaining_add = rest_remaining.clone();
-        let rest_remaining_skip = rest_remaining.clone();
-        let rest_active_skip = rest_active.clone();
-        html! {
-            <div class="fixed bottom-16 left-0 right-0 z-50 px-4 pb-2">
-                <div class="bg-gray-900 dark:bg-gray-700 rounded-xl px-4 py-3 flex items-center justify-between shadow-lg border border-gray-700 dark:border-gray-600">
-                    <div class="flex items-center gap-3">
-                        <span class="text-xs text-gray-400 uppercase font-bold">{"Rest"}</span>
-                        <span class="text-xl font-mono text-white font-bold">{format_time(remaining)}</span>
-                    </div>
-                    <div class="flex items-center gap-2">
-                        <button
-                            class="text-xs font-bold text-blue-400 bg-blue-400/10 px-2.5 py-1 rounded-lg hover:bg-blue-400/20 transition-colors"
-                            onclick={Callback::from(move |_| rest_remaining_add.set(*rest_remaining_add + 30))}
-                        >{"+30s"}</button>
-                        <button
-                            class="text-xs font-bold text-gray-400 bg-gray-600 px-2.5 py-1 rounded-lg hover:bg-gray-500 transition-colors"
-                            onclick={Callback::from(move |_| {
-                                rest_remaining_skip.set(0);
-                                rest_active_skip.set(false);
-                            })}
-                        >{"Skip"}</button>
-                    </div>
-                </div>
-            </div>
-        }
-    } else {
-        html! {}
-    };
+    let rest_trigger_val = *rest_trigger;
 
     // Undo pill
     let undo_html = if undo_snapshot.is_some() {
@@ -420,11 +491,7 @@ pub fn workout_page() -> Html {
                     />
                 </div>
                 { if *workout_active {
-                    html! {
-                        <div class="text-xl font-mono text-blue-600 dark:text-blue-400 font-bold">
-                            {format_time(*elapsed_seconds)}
-                        </div>
-                    }
+                    html! { <ElapsedTimer active={true} /> }
                 } else { html! {} }}
             </div>
 
@@ -455,7 +522,7 @@ pub fn workout_page() -> Html {
                 }
             } else { html! {} }}
 
-            {rest_timer_html}
+            <RestTimer trigger={rest_trigger_val} />
             {undo_html}
         </div>
     }
