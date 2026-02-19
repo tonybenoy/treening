@@ -425,9 +425,9 @@ pub fn workout_log(props: &Props) -> Html {
                                                             type="number" step="0.5"
                                                             class="w-full px-2 py-1 bg-white dark:bg-gray-700 border border-gray-300 dark:border-transparent rounded text-sm text-center text-gray-900 dark:text-gray-100 outline-none focus:ring-1 focus:ring-blue-500 transition-colors"
                                                             value={format!("{:.1}", unit_sys2.display_weight(set.weight))}
-                                                            onchange={{
+                                                            oninput={{
                                                                 let unit_sys = unit_sys2.clone();
-                                                                Callback::from(move |e: Event| {
+                                                                Callback::from(move |e: InputEvent| {
                                                                 let input: web_sys::HtmlInputElement = e.target_unchecked_into();
                                                                 if let Ok(val) = input.value().parse::<f64>() {
                                                                     let mut exs = exercises2.clone();
@@ -456,7 +456,7 @@ pub fn workout_log(props: &Props) -> Html {
                                                             type="number"
                                                             class="w-full px-2 py-1 bg-white dark:bg-gray-700 border border-gray-300 dark:border-transparent rounded text-sm text-center text-gray-900 dark:text-gray-100 outline-none focus:ring-1 focus:ring-blue-500 transition-colors"
                                                             value={set.reps.to_string()}
-                                                            onchange={Callback::from(move |e: Event| {
+                                                            oninput={Callback::from(move |e: InputEvent| {
                                                                 let input: web_sys::HtmlInputElement = e.target_unchecked_into();
                                                                 if let Ok(val) = input.value().parse::<u32>() {
                                                                     let mut exs = exercises3.clone();
@@ -475,9 +475,9 @@ pub fn workout_log(props: &Props) -> Html {
                                                             type="number" step="0.1"
                                                             class="w-full px-2 py-1 bg-white dark:bg-gray-700 border border-gray-300 dark:border-transparent rounded text-sm text-center text-gray-900 dark:text-gray-100 outline-none focus:ring-1 focus:ring-blue-500 transition-colors"
                                                             value={format!("{:.1}", unit_sys3.display_distance(set.distance.unwrap_or(0.0)))}
-                                                            onchange={{
+                                                            oninput={{
                                                                 let unit_sys = unit_sys3.clone();
-                                                                Callback::from(move |e: Event| {
+                                                                Callback::from(move |e: InputEvent| {
                                                                 let input: web_sys::HtmlInputElement = e.target_unchecked_into();
                                                                 if let Ok(val) = input.value().parse::<f64>() {
                                                                     let mut exs = exercises2.clone();
@@ -492,7 +492,7 @@ pub fn workout_log(props: &Props) -> Html {
                                                             type="number"
                                                             class="w-full px-2 py-1 bg-white dark:bg-gray-700 border border-gray-300 dark:border-transparent rounded text-sm text-center text-gray-900 dark:text-gray-100 outline-none focus:ring-1 focus:ring-blue-500 transition-colors"
                                                             value={(set.duration_secs.unwrap_or(0) / 60).to_string()}
-                                                            onchange={Callback::from(move |e: Event| {
+                                                            oninput={Callback::from(move |e: InputEvent| {
                                                                 let input: web_sys::HtmlInputElement = e.target_unchecked_into();
                                                                 if let Ok(val) = input.value().parse::<u32>() {
                                                                     let mut exs = exercises3.clone();
@@ -510,7 +510,7 @@ pub fn workout_log(props: &Props) -> Html {
                                                         type="number"
                                                         class="w-full px-2 py-1 bg-white dark:bg-gray-700 border border-gray-300 dark:border-transparent rounded text-sm text-center text-gray-900 dark:text-gray-100 outline-none focus:ring-1 focus:ring-blue-500 transition-colors"
                                                         value={set.duration_secs.unwrap_or(0).to_string()}
-                                                        onchange={Callback::from(move |e: Event| {
+                                                        oninput={Callback::from(move |e: InputEvent| {
                                                             let input: web_sys::HtmlInputElement = e.target_unchecked_into();
                                                             if let Ok(val) = input.value().parse::<u32>() {
                                                                 let mut exs = exercises2.clone();
@@ -527,7 +527,7 @@ pub fn workout_log(props: &Props) -> Html {
                                                         type="number"
                                                         class="w-full px-2 py-1 bg-white dark:bg-gray-700 border border-gray-300 dark:border-transparent rounded text-sm text-center text-gray-900 dark:text-gray-100 outline-none focus:ring-1 focus:ring-blue-500 transition-colors"
                                                         value={set.reps.to_string()}
-                                                        onchange={Callback::from(move |e: Event| {
+                                                        oninput={Callback::from(move |e: InputEvent| {
                                                             let input: web_sys::HtmlInputElement = e.target_unchecked_into();
                                                             if let Ok(val) = input.value().parse::<u32>() {
                                                                 let mut exs = exercises2.clone();

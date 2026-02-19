@@ -1,5 +1,5 @@
 use crate::components::share_modal::ShareModal;
-use crate::models::{Exercise, Workout, WorkoutSet};
+use crate::models::{Exercise, ExerciseTrackingType, Workout, WorkoutSet};
 use crate::sharing::{self, ShareableData};
 use crate::storage;
 use crate::Route;
@@ -30,6 +30,14 @@ pub fn history_list(props: &Props) -> Html {
             .find(|e| e.id == id)
             .map(|e| e.name.clone())
             .unwrap_or_else(|| id.to_string())
+    };
+    let find_tracking_type = |id: &str| -> ExerciseTrackingType {
+        props
+            .all_exercises
+            .iter()
+            .find(|e| e.id == id)
+            .map(|e| e.tracking_type.clone())
+            .unwrap_or(ExerciseTrackingType::Strength)
     };
 
     let mut workouts = props.workouts.clone();
@@ -104,6 +112,7 @@ pub fn history_list(props: &Props) -> Html {
 
                                         { for edit_workout.exercises.iter().enumerate().map(|(ex_idx, we)| {
                                             let name = find_exercise(&we.exercise_id);
+                                            let tt = find_tracking_type(&we.exercise_id);
                                             let editing = editing_state.clone();
                                             let workout = edit_workout.clone();
 
@@ -128,8 +137,26 @@ pub fn history_list(props: &Props) -> Html {
                                                     <div class="space-y-1">
                                                         <div class="grid grid-cols-12 gap-2 text-[10px] uppercase font-bold text-gray-500 dark:text-gray-500 px-1">
                                                             <div class="col-span-1">{"#"}</div>
-                                                            <div class="col-span-4">{"Weight"}</div>
-                                                            <div class="col-span-3">{"Reps"}</div>
+                                                            { match tt {
+                                                                ExerciseTrackingType::Strength => html! {
+                                                                    <>
+                                                                        <div class="col-span-4">{"Weight"}</div>
+                                                                        <div class="col-span-3">{"Reps"}</div>
+                                                                    </>
+                                                                },
+                                                                ExerciseTrackingType::Cardio => html! {
+                                                                    <>
+                                                                        <div class="col-span-4">{"Distance"}</div>
+                                                                        <div class="col-span-3">{"Time (m)"}</div>
+                                                                    </>
+                                                                },
+                                                                ExerciseTrackingType::Duration => html! {
+                                                                    <div class="col-span-7 text-center">{"Duration (s)"}</div>
+                                                                },
+                                                                ExerciseTrackingType::Bodyweight => html! {
+                                                                    <div class="col-span-7 text-center">{"Reps"}</div>
+                                                                },
+                                                            }}
                                                             <div class="col-span-2 text-center">{"Done"}</div>
                                                             <div class="col-span-2"></div>
                                                         </div>
@@ -143,6 +170,8 @@ pub fn history_list(props: &Props) -> Html {
                                                             let editing4 = editing.clone();
                                                             let workout4 = workout.clone();
                                                             let completed = set.completed;
+                                                            let tt = tt.clone();
+                                                            let input_class = "w-full px-2 py-1 bg-white dark:bg-gray-600 border border-gray-300 dark:border-transparent rounded text-xs text-center text-gray-900 dark:text-white outline-none focus:ring-1 focus:ring-blue-500 transition-colors";
 
                                                             html! {
                                                                 <div class={classes!(
@@ -150,45 +179,134 @@ pub fn history_list(props: &Props) -> Html {
                                                                     if completed { "opacity-50" } else { "" }
                                                                 )}>
                                                                     <div class="col-span-1 text-xs font-bold text-gray-400 dark:text-gray-500">{set_idx + 1}</div>
-                                                                    <div class="col-span-4">
-                                                                        <input
-                                                                            type="number"
-                                                                            step="0.5"
-                                                                            class="w-full px-2 py-1 bg-white dark:bg-gray-600 border border-gray-300 dark:border-transparent rounded text-xs text-center text-gray-900 dark:text-white outline-none focus:ring-1 focus:ring-blue-500 transition-colors"
-                                                                            value={set.weight.to_string()}
-                                                                            onclick={Callback::from(|e: MouseEvent| e.stop_propagation())}
-                                                                            onchange={Callback::from(move |e: Event| {
-                                                                                let input: web_sys::HtmlInputElement = e.target_unchecked_into();
-                                                                                let val: f64 = input.value().parse().unwrap_or(0.0);
-                                                                                let mut w = workout.clone();
-                                                                                if let Some(we) = w.exercises.get_mut(ex_idx) {
-                                                                                    if let Some(s) = we.sets.get_mut(set_idx) {
-                                                                                        s.weight = val;
-                                                                                    }
-                                                                                }
-                                                                                editing.set(Some(w));
-                                                                            })}
-                                                                        />
-                                                                    </div>
-                                                                    <div class="col-span-3">
-                                                                        <input
-                                                                            type="number"
-                                                                            class="w-full px-2 py-1 bg-white dark:bg-gray-600 border border-gray-300 dark:border-transparent rounded text-xs text-center text-gray-900 dark:text-white outline-none focus:ring-1 focus:ring-blue-500 transition-colors"
-                                                                            value={set.reps.to_string()}
-                                                                            onclick={Callback::from(|e: MouseEvent| e.stop_propagation())}
-                                                                            onchange={Callback::from(move |e: Event| {
-                                                                                let input: web_sys::HtmlInputElement = e.target_unchecked_into();
-                                                                                let val: u32 = input.value().parse().unwrap_or(0);
-                                                                                let mut w = workout2.clone();
-                                                                                if let Some(we) = w.exercises.get_mut(ex_idx) {
-                                                                                    if let Some(s) = we.sets.get_mut(set_idx) {
-                                                                                        s.reps = val;
-                                                                                    }
-                                                                                }
-                                                                                editing2.set(Some(w));
-                                                                            })}
-                                                                        />
-                                                                    </div>
+                                                                    { match tt {
+                                                                        ExerciseTrackingType::Strength => html! {
+                                                                            <>
+                                                                                <div class="col-span-4">
+                                                                                    <input
+                                                                                        type="number" step="0.5"
+                                                                                        class={input_class}
+                                                                                        value={set.weight.to_string()}
+                                                                                        onclick={Callback::from(|e: MouseEvent| e.stop_propagation())}
+                                                                                        onchange={Callback::from(move |e: Event| {
+                                                                                            let input: web_sys::HtmlInputElement = e.target_unchecked_into();
+                                                                                            let val: f64 = input.value().parse().unwrap_or(0.0);
+                                                                                            let mut w = workout.clone();
+                                                                                            if let Some(we) = w.exercises.get_mut(ex_idx) {
+                                                                                                if let Some(s) = we.sets.get_mut(set_idx) {
+                                                                                                    s.weight = val;
+                                                                                                }
+                                                                                            }
+                                                                                            editing.set(Some(w));
+                                                                                        })}
+                                                                                    />
+                                                                                </div>
+                                                                                <div class="col-span-3">
+                                                                                    <input
+                                                                                        type="number"
+                                                                                        class={input_class}
+                                                                                        value={set.reps.to_string()}
+                                                                                        onclick={Callback::from(|e: MouseEvent| e.stop_propagation())}
+                                                                                        onchange={Callback::from(move |e: Event| {
+                                                                                            let input: web_sys::HtmlInputElement = e.target_unchecked_into();
+                                                                                            let val: u32 = input.value().parse().unwrap_or(0);
+                                                                                            let mut w = workout2.clone();
+                                                                                            if let Some(we) = w.exercises.get_mut(ex_idx) {
+                                                                                                if let Some(s) = we.sets.get_mut(set_idx) {
+                                                                                                    s.reps = val;
+                                                                                                }
+                                                                                            }
+                                                                                            editing2.set(Some(w));
+                                                                                        })}
+                                                                                    />
+                                                                                </div>
+                                                                            </>
+                                                                        },
+                                                                        ExerciseTrackingType::Cardio => html! {
+                                                                            <>
+                                                                                <div class="col-span-4">
+                                                                                    <input
+                                                                                        type="number" step="0.1"
+                                                                                        class={input_class}
+                                                                                        value={format!("{:.1}", set.distance.unwrap_or(0.0))}
+                                                                                        onclick={Callback::from(|e: MouseEvent| e.stop_propagation())}
+                                                                                        onchange={Callback::from(move |e: Event| {
+                                                                                            let input: web_sys::HtmlInputElement = e.target_unchecked_into();
+                                                                                            let val: f64 = input.value().parse().unwrap_or(0.0);
+                                                                                            let mut w = workout.clone();
+                                                                                            if let Some(we) = w.exercises.get_mut(ex_idx) {
+                                                                                                if let Some(s) = we.sets.get_mut(set_idx) {
+                                                                                                    s.distance = Some(val);
+                                                                                                }
+                                                                                            }
+                                                                                            editing.set(Some(w));
+                                                                                        })}
+                                                                                    />
+                                                                                </div>
+                                                                                <div class="col-span-3">
+                                                                                    <input
+                                                                                        type="number"
+                                                                                        class={input_class}
+                                                                                        value={(set.duration_secs.unwrap_or(0) / 60).to_string()}
+                                                                                        onclick={Callback::from(|e: MouseEvent| e.stop_propagation())}
+                                                                                        onchange={Callback::from(move |e: Event| {
+                                                                                            let input: web_sys::HtmlInputElement = e.target_unchecked_into();
+                                                                                            let val: u32 = input.value().parse().unwrap_or(0);
+                                                                                            let mut w = workout2.clone();
+                                                                                            if let Some(we) = w.exercises.get_mut(ex_idx) {
+                                                                                                if let Some(s) = we.sets.get_mut(set_idx) {
+                                                                                                    s.duration_secs = Some(val * 60);
+                                                                                                }
+                                                                                            }
+                                                                                            editing2.set(Some(w));
+                                                                                        })}
+                                                                                    />
+                                                                                </div>
+                                                                            </>
+                                                                        },
+                                                                        ExerciseTrackingType::Duration => html! {
+                                                                            <div class="col-span-7 px-4">
+                                                                                <input
+                                                                                    type="number"
+                                                                                    class={input_class}
+                                                                                    value={set.duration_secs.unwrap_or(0).to_string()}
+                                                                                    onclick={Callback::from(|e: MouseEvent| e.stop_propagation())}
+                                                                                    onchange={Callback::from(move |e: Event| {
+                                                                                        let input: web_sys::HtmlInputElement = e.target_unchecked_into();
+                                                                                        let val: u32 = input.value().parse().unwrap_or(0);
+                                                                                        let mut w = workout.clone();
+                                                                                        if let Some(we) = w.exercises.get_mut(ex_idx) {
+                                                                                            if let Some(s) = we.sets.get_mut(set_idx) {
+                                                                                                s.duration_secs = Some(val);
+                                                                                            }
+                                                                                        }
+                                                                                        editing.set(Some(w));
+                                                                                    })}
+                                                                                />
+                                                                            </div>
+                                                                        },
+                                                                        ExerciseTrackingType::Bodyweight => html! {
+                                                                            <div class="col-span-7 px-4">
+                                                                                <input
+                                                                                    type="number"
+                                                                                    class={input_class}
+                                                                                    value={set.reps.to_string()}
+                                                                                    onclick={Callback::from(|e: MouseEvent| e.stop_propagation())}
+                                                                                    onchange={Callback::from(move |e: Event| {
+                                                                                        let input: web_sys::HtmlInputElement = e.target_unchecked_into();
+                                                                                        let val: u32 = input.value().parse().unwrap_or(0);
+                                                                                        let mut w = workout.clone();
+                                                                                        if let Some(we) = w.exercises.get_mut(ex_idx) {
+                                                                                            if let Some(s) = we.sets.get_mut(set_idx) {
+                                                                                                s.reps = val;
+                                                                                            }
+                                                                                        }
+                                                                                        editing.set(Some(w));
+                                                                                    })}
+                                                                                />
+                                                                            </div>
+                                                                        },
+                                                                    }}
                                                                     <div class="col-span-2 flex justify-center">
                                                                         <input
                                                                             type="checkbox"
