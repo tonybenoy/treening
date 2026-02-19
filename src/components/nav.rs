@@ -31,7 +31,6 @@ pub fn bottom_nav() -> Html {
             {nav_item(Route::Home, "Home", "🏠")}
             {nav_item(Route::Exercises, "Exercises", "💪")}
             {nav_item(Route::Routines, "Routines", "📋")}
-            {nav_item(Route::Workout, "Log", "🏋️")}
             {nav_item(Route::History, "History", "📅")}
             {nav_item(Route::Settings, "Settings", "⚙️")}
         </nav>

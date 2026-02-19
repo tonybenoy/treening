@@ -108,6 +108,34 @@ fn switch(routes: Route) -> Html {
     html! { <div key={key} class="page-enter">{page}</div> }
 }
 
+#[function_component(FloatingLogButton)]
+fn floating_log_button() -> Html {
+    let route: Route = use_route().unwrap_or(Route::Home);
+    let navigator = use_navigator().unwrap();
+
+    // Hide on the workout page itself
+    if route == Route::Workout {
+        return html! {};
+    }
+
+    let onclick = {
+        let nav = navigator;
+        Callback::from(move |_: MouseEvent| {
+            nav.push(&Route::Workout);
+        })
+    };
+
+    html! {
+        <button
+            class="fixed bottom-20 right-4 z-50 bg-blue-600 hover:bg-blue-700 active:scale-95 text-white rounded-full shadow-lg flex items-center gap-1.5 px-4 py-3 text-sm font-bold transition-all"
+            {onclick}
+            aria-label="Log workout"
+        >
+            {"🏋️ Log"}
+        </button>
+    }
+}
+
 #[function_component(App)]
 fn app() -> Html {
     let storage_warning = use_state(|| false);
@@ -171,6 +199,7 @@ fn app() -> Html {
                 </footer>
             </div>
             <BottomNav />
+            <FloatingLogButton />
         </HashRouter>
     }
 }

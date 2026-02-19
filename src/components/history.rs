@@ -43,44 +43,41 @@ pub fn history_list(props: &Props) -> Html {
     let mut workouts = props.workouts.clone();
     workouts.sort_by(|a, b| b.date.cmp(&a.date));
 
-    // Group workouts by month (YYYY-MM)
+    // Group workouts by date (YYYY-MM-DD)
     let mut grouped: Vec<(String, Vec<&Workout>)> = Vec::new();
     for w in &workouts {
-        let month_key = if w.date.len() >= 7 {
-            w.date[..7].to_string()
-        } else {
-            "Unknown".to_string()
-        };
+        let date_key = w.date.clone();
         if let Some(last) = grouped.last_mut() {
-            if last.0 == month_key {
+            if last.0 == date_key {
                 last.1.push(w);
                 continue;
             }
         }
-        grouped.push((month_key, vec![w]));
+        grouped.push((date_key, vec![w]));
     }
 
-    // Format month key to display label
-    let format_month = |key: &str| -> String {
-        if key.len() >= 7 {
+    // Format date key to display label
+    let format_date = |key: &str| -> String {
+        if key.len() >= 10 {
             let parts: Vec<&str> = key.split('-').collect();
-            if parts.len() == 2 {
+            if parts.len() == 3 {
                 let month_name = match parts[1] {
-                    "01" => "January",
-                    "02" => "February",
-                    "03" => "March",
-                    "04" => "April",
+                    "01" => "Jan",
+                    "02" => "Feb",
+                    "03" => "Mar",
+                    "04" => "Apr",
                     "05" => "May",
-                    "06" => "June",
-                    "07" => "July",
-                    "08" => "August",
-                    "09" => "September",
-                    "10" => "October",
-                    "11" => "November",
-                    "12" => "December",
+                    "06" => "Jun",
+                    "07" => "Jul",
+                    "08" => "Aug",
+                    "09" => "Sep",
+                    "10" => "Oct",
+                    "11" => "Nov",
+                    "12" => "Dec",
                     _ => parts[1],
                 };
-                return format!("{} {}", month_name, parts[0]);
+                let day = parts[2].trim_start_matches('0');
+                return format!("{} {} {}", day, month_name, parts[0]);
             }
         }
         key.to_string()
@@ -88,15 +85,15 @@ pub fn history_list(props: &Props) -> Html {
 
     html! {
         <div class="space-y-3 px-4 pb-4">
-            { for grouped.iter().map(|(month_key, month_workouts)| {
-                let label = format_month(month_key);
+            { for grouped.iter().map(|(date_key, day_workouts)| {
+                let label = format_date(date_key);
                 html! {
                     <div>
                         <div class="sticky top-0 z-10 py-2">
-                            <h3 class="text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">{label}{" · "}{month_workouts.len()}{" workouts"}</h3>
+                            <h3 class="text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">{label}</h3>
                         </div>
                         <div class="space-y-3">
-            { for month_workouts.iter().map(|&w| {
+            { for day_workouts.iter().map(|&w| {
                 let is_expanded = *expanded == Some(w.id.clone());
                 let is_editing = editing.as_ref().map(|e| e.id == w.id).unwrap_or(false);
                 let wid = w.id.clone();
@@ -126,9 +123,7 @@ pub fn history_list(props: &Props) -> Html {
                         >
                             <div class="flex justify-between items-start">
                                 <div class="flex-1 min-w-0 mr-3">
-                                    <div class="font-bold text-gray-900 dark:text-gray-100">{&w.name}</div>
-                                    <div class="text-sm text-gray-500 dark:text-gray-400 font-mono">{&w.date}</div>
-                                    <div class="text-xs text-gray-500 dark:text-gray-400 mt-1 truncate">{names_summary}</div>
+                                    <div class="text-sm text-gray-900 dark:text-gray-100 truncate font-medium">{names_summary}</div>
                                 </div>
                                 <div class="text-right text-sm text-gray-500 dark:text-gray-400 font-medium flex-shrink-0">
                                     <div>{total_sets}{" sets"}</div>
