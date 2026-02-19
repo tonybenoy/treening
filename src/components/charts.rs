@@ -278,6 +278,11 @@ pub struct CalendarHeatmapProps {
 
 #[function_component(CalendarHeatmap)]
 pub fn calendar_heatmap(props: &CalendarHeatmapProps) -> Html {
+    let is_dark = gloo::utils::document()
+        .document_element()
+        .and_then(|el| el.get_attribute("class"))
+        .map(|c| c.contains("dark"))
+        .unwrap_or(false);
     let today = chrono::Local::now().date_naive();
     // 20 columns (weeks) x 7 rows (days, Mon=0..Sun=6)
     let cols = 20u32;
@@ -324,13 +329,19 @@ pub fn calendar_heatmap(props: &CalendarHeatmapProps) -> Html {
                         let x = padding_left + col as f64 * (cell + gap);
                         let y = padding_top + row as f64 * (cell + gap);
 
-                        let (fill, class) = if date > today {
-                            ("transparent", "")
+                        let fill = if date > today {
+                            "transparent"
                         } else {
                             match count {
-                                0 => ("", "fill-gray-200 dark:fill-gray-700"),
-                                1 => ("#166534", ""),
-                                _ => ("#22c55e", ""),
+                                0 => {
+                                    if is_dark {
+                                        "#374151" // gray-700
+                                    } else {
+                                        "#e5e7eb" // gray-200
+                                    }
+                                }
+                                1 => "#166534",
+                                _ => "#22c55e",
                             }
                         };
 
@@ -338,7 +349,7 @@ pub fn calendar_heatmap(props: &CalendarHeatmapProps) -> Html {
                             <rect
                                 x={format!("{}", x)} y={format!("{}", y)}
                                 width={format!("{}", cell)} height={format!("{}", cell)}
-                                rx="2" fill={fill} class={class}
+                                rx="2" fill={fill}
                             />
                         }
                     })
