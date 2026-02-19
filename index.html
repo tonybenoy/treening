@@ -228,12 +228,19 @@
 
         // Service Worker registration
         if ('serviceWorker' in navigator) {
+            // Listen for update messages from new SW
+            navigator.serviceWorker.addEventListener('message', event => {
+                if (event.data && event.data.type === 'SW_UPDATED') {
+                    window.location.reload();
+                }
+            });
+
             window.addEventListener('load', () => {
                 navigator.serviceWorker.register('sw.js')
                     .then(reg => {
                         console.log('SW registered:', reg.scope);
-                        // Check for updates every hour (important for installed PWAs)
-                        setInterval(() => reg.update(), 60 * 60 * 1000);
+                        // Check for updates every 30 minutes
+                        setInterval(() => reg.update(), 30 * 60 * 1000);
                         // Also check on visibility change (user returns to app)
                         document.addEventListener('visibilitychange', () => {
                             if (document.visibilityState === 'visible') reg.update();

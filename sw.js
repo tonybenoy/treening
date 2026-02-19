@@ -27,6 +27,17 @@ self.addEventListener('activate', event => {
     );
 });
 
+// When a new SW activates, reload all open tabs to use the new version
+self.addEventListener('activate', event => {
+    event.waitUntil(
+        self.clients.matchAll({ type: 'window' }).then(clients => {
+            clients.forEach(client => {
+                client.postMessage({ type: 'SW_UPDATED' });
+            });
+        })
+    );
+});
+
 self.addEventListener('fetch', event => {
     // Skip non-GET requests and PeerJS signaling server
     if (event.request.method !== 'GET') return;
@@ -34,7 +45,23 @@ self.addEventListener('fetch', event => {
     if (url.hostname.includes('peerjs.com') || url.hostname === '0.peerjs.com') return;
 
     if (url.origin === location.origin) {
-        // App assets: cache first
+        // Navigation requests (HTML): network first so updates are picked up
+        if (event.request.mode === 'navigate') {
+            event.respondWith(
+                fetch(event.request)
+                    .then(response => {
+                        if (response.ok) {
+                            const clone = response.clone();
+                            caches.open(CACHE_NAME).then(cache => cache.put(event.request, clone));
+                        }
+                        return response;
+                    })
+                    .catch(() => caches.match(event.request))
+            );
+            return;
+        }
+
+        // Other app assets: cache first (WASM, JS, icons - fingerprinted by Trunk)
         event.respondWith(
             caches.match(event.request).then(cached => {
                 if (cached) return cached;
