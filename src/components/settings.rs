@@ -36,19 +36,27 @@ pub fn settings_panel(props: &Props) -> Html {
             };
             storage::save_user_config(&new_config);
             
-            // Apply theme immediately for better UX
+            // Apply theme immediately with smooth transition
             let document = gloo::utils::document();
             let html = document.document_element().unwrap();
-            match new_config.theme {
-                crate::models::Theme::Dark => { let _ = html.set_attribute("class", "dark"); }
-                crate::models::Theme::Light => { let _ = html.set_attribute("class", ""); }
+            let theme_class = match new_config.theme {
+                crate::models::Theme::Dark => "dark theme-transitioning",
+                crate::models::Theme::Light => "theme-transitioning",
                 crate::models::Theme::System => {
                     let window = gloo::utils::window();
                     let is_dark = window.match_media("(prefers-color-scheme: dark)").unwrap().unwrap().matches();
-                    let _ = html.set_attribute("class", if is_dark { "dark" } else { "" });
+                    if is_dark { "dark theme-transitioning" } else { "theme-transitioning" }
                 }
-                crate::models::Theme::AmoledBlack => { let _ = html.set_attribute("class", "dark amoled"); }
-            }
+                crate::models::Theme::AmoledBlack => "dark amoled theme-transitioning",
+            };
+            let _ = html.set_attribute("class", theme_class);
+            // Remove transitioning class after animation completes
+            let final_class = theme_class.replace(" theme-transitioning", "").replace("theme-transitioning", "");
+            gloo::timers::callback::Timeout::new(350, move || {
+                if let Some(html_el) = gloo::utils::document().document_element() {
+                    let _ = html_el.set_attribute("class", final_class.trim());
+                }
+            }).forget();
             
             config.set(new_config);
         })

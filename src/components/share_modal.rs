@@ -102,11 +102,11 @@ pub fn share_modal(props: &Props) -> Html {
 
     html! {
         <div
-            class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm px-4"
+            class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm px-4 modal-overlay-enter"
             onclick={Callback::from(move |_| on_close.emit(()))}
         >
             <div
-                class="bg-white dark:bg-gray-800 rounded-2xl shadow-xl w-full max-w-sm p-6 relative"
+                class="bg-white dark:bg-gray-800 rounded-2xl shadow-xl w-full max-w-sm p-6 relative modal-content-enter"
                 onclick={Callback::from(|e: MouseEvent| e.stop_propagation())}
             >
                 <button

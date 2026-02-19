@@ -10,16 +10,16 @@ pub fn bottom_nav() -> Html {
     let nav_item = |r: Route, label: &str, icon: &str| {
         let active = route == r;
         let cls = if active {
-            "flex flex-col items-center text-blue-600 dark:text-blue-400"
+            "flex flex-col items-center text-blue-600 dark:text-blue-400 transition-all duration-150 scale-110"
         } else {
-            "flex flex-col items-center text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200"
+            "flex flex-col items-center text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 transition-all duration-150 scale-100"
         };
         let nav = navigator.clone();
         let onclick = Callback::from(move |_: MouseEvent| {
             nav.replace(&r);
         });
         html! {
-            <button class={classes!(cls)} {onclick}>
+            <button class={classes!(cls, "btn-press")} {onclick}>
                 <span class="text-xl">{icon}</span>
                 <span class="text-xs mt-0.5">{label}</span>
             </button>

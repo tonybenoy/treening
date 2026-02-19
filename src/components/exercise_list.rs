@@ -87,15 +87,16 @@ pub fn exercise_list(props: &Props) -> Html {
                 })}
             </div>
             <div class="px-4 space-y-2 pb-4">
-                { for filtered.iter().map(|exercise| {
+                { for filtered.iter().enumerate().map(|(i, exercise)| {
                     let ex = (*exercise).clone();
                     let on_select = props.on_select.clone();
                     let on_add = props.on_add.clone();
                     let show_add = props.show_add_button;
                     let ex2 = ex.clone();
                     let ex3 = ex.clone();
+                    let delay = format!("animation-delay: {}ms", i.min(10) * 30);
                     html! {
-                        <div class="bg-gray-100 dark:bg-gray-800 rounded-lg p-3 flex justify-between items-center border border-gray-200 dark:border-transparent transition-colors shadow-sm">
+                        <div class="bg-gray-100 dark:bg-gray-800 rounded-lg p-3 flex justify-between items-center border border-gray-200 dark:border-transparent transition-colors shadow-sm list-item-enter" style={delay}>
                             <div class="flex-1 cursor-pointer flex items-center gap-3" onclick={Callback::from(move |_| on_select.emit(ex2.clone()))}>
                                 { if let Some(ref img) = ex.image {
                                     html! {

@@ -100,6 +100,36 @@
             from { transform: translateY(100%); opacity: 0; }
             to { transform: translateY(0); opacity: 1; }
         }
+        /* Theme transition - applied temporarily during theme switches */
+        .theme-transitioning * {
+            transition: background-color 300ms, color 300ms, border-color 300ms !important;
+        }
+        /* Page enter animation */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(6px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .page-enter { animation: fadeIn 150ms ease-out; }
+        /* Modal animations */
+        @keyframes modalOverlayIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        .modal-overlay-enter { animation: modalOverlayIn 150ms ease-out; }
+        @keyframes modalContentIn {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        .modal-content-enter { animation: modalContentIn 200ms ease-out; }
+        /* Button press feedback */
+        .btn-press { transition: transform 100ms ease; }
+        .btn-press:active { transform: scale(0.97); }
+        /* List item stagger animation */
+        @keyframes listItemIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .list-item-enter { animation: listItemIn 200ms ease-out both; }
         /* AMOLED Black theme overrides */
         .amoled .bg-gray-900 { background-color: #000000 !important; }
         .amoled .bg-gray-800 { background-color: #121212 !important; }

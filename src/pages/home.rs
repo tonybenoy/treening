@@ -194,7 +194,7 @@ pub fn home_page() -> Html {
             </div>
 
             <button
-                class="w-full py-4 bg-blue-600 rounded-xl text-lg font-bold hover:bg-blue-700 active:bg-blue-800 transition shadow-lg shadow-blue-900/20"
+                class="w-full py-4 bg-blue-600 rounded-xl text-lg font-bold hover:bg-blue-700 active:bg-blue-800 transition shadow-lg shadow-blue-900/20 btn-press"
                 onclick={start_empty}
             >{"Start New Workout"}</button>
 

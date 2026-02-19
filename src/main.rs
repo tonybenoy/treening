@@ -85,19 +85,20 @@ pub enum Route {
 }
 
 fn switch(routes: Route) -> Html {
-    match routes {
-        Route::Home => html! { <HomePage /> },
-        Route::Exercises => html! { <ExercisesPage /> },
-        Route::Workout => html! { <WorkoutPage /> },
-        Route::History => html! { <HistoryPage /> },
-        Route::Routines => html! { <RoutinesPage /> },
-        Route::Settings => html! { <SettingsPage /> },
-        Route::Social => html! { <SocialPage /> },
-        Route::Faq => html! { <FaqPage /> },
-        Route::Analytics => html! { <AnalyticsPage /> },
-        Route::Shared => html! { <SharedPage /> },
-        Route::NotFound => html! { <HomePage /> },
-    }
+    let (key, page) = match routes {
+        Route::Home => ("home", html! { <HomePage /> }),
+        Route::Exercises => ("exercises", html! { <ExercisesPage /> }),
+        Route::Workout => ("workout", html! { <WorkoutPage /> }),
+        Route::History => ("history", html! { <HistoryPage /> }),
+        Route::Routines => ("routines", html! { <RoutinesPage /> }),
+        Route::Settings => ("settings", html! { <SettingsPage /> }),
+        Route::Social => ("social", html! { <SocialPage /> }),
+        Route::Faq => ("faq", html! { <FaqPage /> }),
+        Route::Analytics => ("analytics", html! { <AnalyticsPage /> }),
+        Route::Shared => ("shared", html! { <SharedPage /> }),
+        Route::NotFound => ("home", html! { <HomePage /> }),
+    };
+    html! { <div key={key} class="page-enter">{page}</div> }
 }
 
 #[function_component(App)]
