@@ -324,13 +324,13 @@ pub fn calendar_heatmap(props: &CalendarHeatmapProps) -> Html {
                         let x = padding_left + col as f64 * (cell + gap);
                         let y = padding_top + row as f64 * (cell + gap);
 
-                        let fill = if date > today {
-                            "transparent"
+                        let (fill, class) = if date > today {
+                            ("transparent", "")
                         } else {
                             match count {
-                                0 => "#1f2937", // dark gray
-                                1 => "#166534", // light green
-                                _ => "#22c55e", // bright green
+                                0 => ("", "fill-gray-200 dark:fill-gray-700"),
+                                1 => ("#166534", ""),
+                                _ => ("#22c55e", ""),
                             }
                         };
 
@@ -338,7 +338,7 @@ pub fn calendar_heatmap(props: &CalendarHeatmapProps) -> Html {
                             <rect
                                 x={format!("{}", x)} y={format!("{}", y)}
                                 width={format!("{}", cell)} height={format!("{}", cell)}
-                                rx="2" fill={fill}
+                                rx="2" fill={fill} class={class}
                             />
                         }
                     })

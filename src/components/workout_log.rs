@@ -14,6 +14,82 @@ fn display_f64(v: f64) -> String {
     }
 }
 
+// ---------------------------------------------------------------------------
+// Self-contained input component. Keeps its own text state so parent
+// re-renders never overwrite what the user is typing. Commits on blur.
+// ---------------------------------------------------------------------------
+
+#[derive(Properties, PartialEq)]
+struct SetInputProps {
+    /// The canonical display value (e.g. "60", "10", "5.0").
+    pub display_value: AttrValue,
+    /// Fires with the raw string when the user blurs the field.
+    pub on_commit: Callback<String>,
+    /// "decimal" or "numeric"
+    #[prop_or(AttrValue::Static("numeric"))]
+    pub inputmode: AttrValue,
+    #[prop_or_default]
+    pub class: AttrValue,
+}
+
+#[function_component(SetInput)]
+fn set_input(props: &SetInputProps) -> Html {
+    let text = use_state(|| props.display_value.to_string());
+    let focused = use_state(|| false);
+
+    // Sync from parent ONLY when not focused (i.e. external data changed).
+    {
+        let text = text.clone();
+        let focused = focused.clone();
+        let dv = props.display_value.clone();
+        use_effect_with(dv, move |dv| {
+            if !*focused {
+                text.set(dv.to_string());
+            }
+            || ()
+        });
+    }
+
+    let oninput = {
+        let text = text.clone();
+        Callback::from(move |e: InputEvent| {
+            let input: web_sys::HtmlInputElement = e.target_unchecked_into();
+            text.set(input.value());
+        })
+    };
+
+    let onfocus = {
+        let focused = focused.clone();
+        Callback::from(move |_: FocusEvent| focused.set(true))
+    };
+
+    let onblur = {
+        let focused = focused.clone();
+        let text = text.clone();
+        let on_commit = props.on_commit.clone();
+        Callback::from(move |_: FocusEvent| {
+            focused.set(false);
+            on_commit.emit((*text).clone());
+        })
+    };
+
+    let inputmode = props.inputmode.clone();
+    let class = props.class.clone();
+    let value = (*text).clone();
+
+    html! {
+        <input
+            type="text"
+            inputmode={inputmode}
+            class={class}
+            value={value}
+            {oninput}
+            {onfocus}
+            {onblur}
+        />
+    }
+}
+
 /// Epley formula: weight * (1 + reps/30)
 fn estimate_1rm(weight: f64, reps: u32) -> f64 {
     weight * (1.0 + reps as f64 / 30.0)
@@ -426,24 +502,26 @@ pub fn workout_log(props: &Props) -> Html {
                                             } else { html! {} }}
                                         </div>
 
-                                        { match tt {
+                                        { {
+                                            let input_class = AttrValue::Static("w-full px-2 py-1 bg-white dark:bg-gray-700 border border-gray-300 dark:border-transparent rounded text-sm text-center text-gray-900 dark:text-gray-100 outline-none focus:ring-1 focus:ring-blue-500 transition-colors");
+                                            match tt {
                                             ExerciseTrackingType::Strength => html! {
                                                 <>
                                                     <div class="col-span-4 flex gap-1">
-                                                        <input
-                                                            type="text" inputmode="decimal"
-                                                            class="w-full px-2 py-1 bg-white dark:bg-gray-700 border border-gray-300 dark:border-transparent rounded text-sm text-center text-gray-900 dark:text-gray-100 outline-none focus:ring-1 focus:ring-blue-500 transition-colors"
-                                                            value={display_f64(unit_sys2.display_weight(set.weight))}
-                                                            onchange={{
+                                                        <SetInput
+                                                            display_value={display_f64(unit_sys2.display_weight(set.weight))}
+                                                            inputmode="decimal"
+                                                            class={input_class.clone()}
+                                                            on_commit={{
                                                                 let unit_sys = unit_sys2.clone();
-                                                                Callback::from(move |e: Event| {
-                                                                let input: web_sys::HtmlInputElement = e.target_unchecked_into();
-                                                                if let Ok(val) = input.value().parse::<f64>() {
-                                                                    let mut exs = exercises2.clone();
-                                                                    if let Some(we) = exs.get_mut(ex_idx) { if let Some(s) = we.sets.get_mut(set_idx) { s.weight = unit_sys.to_kg(val); } }
-                                                                    on_update2.emit(exs);
-                                                                }
-                                                            })}}
+                                                                Callback::from(move |v: String| {
+                                                                    if let Ok(val) = v.parse::<f64>() {
+                                                                        let mut exs = exercises2.clone();
+                                                                        if let Some(we) = exs.get_mut(ex_idx) { if let Some(s) = we.sets.get_mut(set_idx) { s.weight = unit_sys.to_kg(val); } }
+                                                                        on_update2.emit(exs);
+                                                                    }
+                                                                })
+                                                            }}
                                                         />
                                                         <button
                                                             class="text-gray-400 hover:text-blue-400 text-xs flex-shrink-0 transition-colors"
@@ -461,13 +539,12 @@ pub fn workout_log(props: &Props) -> Html {
                                                         >{"\u{1f3cb}"}</button>
                                                     </div>
                                                     <div class="col-span-3">
-                                                        <input
-                                                            type="text" inputmode="numeric"
-                                                            class="w-full px-2 py-1 bg-white dark:bg-gray-700 border border-gray-300 dark:border-transparent rounded text-sm text-center text-gray-900 dark:text-gray-100 outline-none focus:ring-1 focus:ring-blue-500 transition-colors"
-                                                            value={set.reps.to_string()}
-                                                            onchange={Callback::from(move |e: Event| {
-                                                                let input: web_sys::HtmlInputElement = e.target_unchecked_into();
-                                                                if let Ok(val) = input.value().parse::<u32>() {
+                                                        <SetInput
+                                                            display_value={set.reps.to_string()}
+                                                            inputmode="numeric"
+                                                            class={input_class}
+                                                            on_commit={Callback::from(move |v: String| {
+                                                                if let Ok(val) = v.parse::<u32>() {
                                                                     let mut exs = exercises3.clone();
                                                                     if let Some(we) = exs.get_mut(ex_idx) { if let Some(s) = we.sets.get_mut(set_idx) { s.reps = val; } }
                                                                     on_update3.emit(exs);
@@ -480,30 +557,29 @@ pub fn workout_log(props: &Props) -> Html {
                                             ExerciseTrackingType::Cardio => html! {
                                                 <>
                                                     <div class="col-span-4">
-                                                        <input
-                                                            type="text" inputmode="decimal"
-                                                            class="w-full px-2 py-1 bg-white dark:bg-gray-700 border border-gray-300 dark:border-transparent rounded text-sm text-center text-gray-900 dark:text-gray-100 outline-none focus:ring-1 focus:ring-blue-500 transition-colors"
-                                                            value={display_f64(unit_sys3.display_distance(set.distance.unwrap_or(0.0)))}
-                                                            onchange={{
+                                                        <SetInput
+                                                            display_value={display_f64(unit_sys3.display_distance(set.distance.unwrap_or(0.0)))}
+                                                            inputmode="decimal"
+                                                            class={input_class.clone()}
+                                                            on_commit={{
                                                                 let unit_sys = unit_sys3.clone();
-                                                                Callback::from(move |e: Event| {
-                                                                let input: web_sys::HtmlInputElement = e.target_unchecked_into();
-                                                                if let Ok(val) = input.value().parse::<f64>() {
-                                                                    let mut exs = exercises2.clone();
-                                                                    if let Some(we) = exs.get_mut(ex_idx) { if let Some(s) = we.sets.get_mut(set_idx) { s.distance = Some(unit_sys.to_km(val)); } }
-                                                                    on_update2.emit(exs);
-                                                                }
-                                                            })}}
+                                                                Callback::from(move |v: String| {
+                                                                    if let Ok(val) = v.parse::<f64>() {
+                                                                        let mut exs = exercises2.clone();
+                                                                        if let Some(we) = exs.get_mut(ex_idx) { if let Some(s) = we.sets.get_mut(set_idx) { s.distance = Some(unit_sys.to_km(val)); } }
+                                                                        on_update2.emit(exs);
+                                                                    }
+                                                                })
+                                                            }}
                                                         />
                                                     </div>
                                                     <div class="col-span-3">
-                                                        <input
-                                                            type="text" inputmode="numeric"
-                                                            class="w-full px-2 py-1 bg-white dark:bg-gray-700 border border-gray-300 dark:border-transparent rounded text-sm text-center text-gray-900 dark:text-gray-100 outline-none focus:ring-1 focus:ring-blue-500 transition-colors"
-                                                            value={(set.duration_secs.unwrap_or(0) / 60).to_string()}
-                                                            onchange={Callback::from(move |e: Event| {
-                                                                let input: web_sys::HtmlInputElement = e.target_unchecked_into();
-                                                                if let Ok(val) = input.value().parse::<u32>() {
+                                                        <SetInput
+                                                            display_value={(set.duration_secs.unwrap_or(0) / 60).to_string()}
+                                                            inputmode="numeric"
+                                                            class={input_class}
+                                                            on_commit={Callback::from(move |v: String| {
+                                                                if let Ok(val) = v.parse::<u32>() {
                                                                     let mut exs = exercises3.clone();
                                                                     if let Some(we) = exs.get_mut(ex_idx) { if let Some(s) = we.sets.get_mut(set_idx) { s.duration_secs = Some(val * 60); } }
                                                                     on_update3.emit(exs);
@@ -515,13 +591,12 @@ pub fn workout_log(props: &Props) -> Html {
                                             },
                                             ExerciseTrackingType::Duration => html! {
                                                 <div class="col-span-7 px-4">
-                                                    <input
-                                                        type="text" inputmode="numeric"
-                                                        class="w-full px-2 py-1 bg-white dark:bg-gray-700 border border-gray-300 dark:border-transparent rounded text-sm text-center text-gray-900 dark:text-gray-100 outline-none focus:ring-1 focus:ring-blue-500 transition-colors"
-                                                        value={set.duration_secs.unwrap_or(0).to_string()}
-                                                        onchange={Callback::from(move |e: Event| {
-                                                            let input: web_sys::HtmlInputElement = e.target_unchecked_into();
-                                                            if let Ok(val) = input.value().parse::<u32>() {
+                                                    <SetInput
+                                                        display_value={set.duration_secs.unwrap_or(0).to_string()}
+                                                        inputmode="numeric"
+                                                        class={input_class}
+                                                        on_commit={Callback::from(move |v: String| {
+                                                            if let Ok(val) = v.parse::<u32>() {
                                                                 let mut exs = exercises2.clone();
                                                                 if let Some(we) = exs.get_mut(ex_idx) { if let Some(s) = we.sets.get_mut(set_idx) { s.duration_secs = Some(val); } }
                                                                 on_update2.emit(exs);
@@ -532,13 +607,12 @@ pub fn workout_log(props: &Props) -> Html {
                                             },
                                             ExerciseTrackingType::Bodyweight => html! {
                                                 <div class="col-span-7 px-4">
-                                                    <input
-                                                        type="text" inputmode="numeric"
-                                                        class="w-full px-2 py-1 bg-white dark:bg-gray-700 border border-gray-300 dark:border-transparent rounded text-sm text-center text-gray-900 dark:text-gray-100 outline-none focus:ring-1 focus:ring-blue-500 transition-colors"
-                                                        value={set.reps.to_string()}
-                                                        onchange={Callback::from(move |e: Event| {
-                                                            let input: web_sys::HtmlInputElement = e.target_unchecked_into();
-                                                            if let Ok(val) = input.value().parse::<u32>() {
+                                                    <SetInput
+                                                        display_value={set.reps.to_string()}
+                                                        inputmode="numeric"
+                                                        class={input_class}
+                                                        on_commit={Callback::from(move |v: String| {
+                                                            if let Ok(val) = v.parse::<u32>() {
                                                                 let mut exs = exercises2.clone();
                                                                 if let Some(we) = exs.get_mut(ex_idx) { if let Some(s) = we.sets.get_mut(set_idx) { s.reps = val; } }
                                                                 on_update2.emit(exs);
@@ -547,7 +621,7 @@ pub fn workout_log(props: &Props) -> Html {
                                                     />
                                                 </div>
                                             },
-                                        }}
+                                        }}}
 
                                         <div class="col-span-2 flex justify-center items-center gap-1">
                                             <input

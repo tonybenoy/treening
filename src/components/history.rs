@@ -43,9 +43,52 @@ pub fn history_list(props: &Props) -> Html {
     let mut workouts = props.workouts.clone();
     workouts.sort_by(|a, b| b.date.cmp(&a.date));
 
+    // Group workouts by month (YYYY-MM)
+    let mut grouped: Vec<(String, Vec<&Workout>)> = Vec::new();
+    for w in &workouts {
+        let month_key = if w.date.len() >= 7 {
+            w.date[..7].to_string()
+        } else {
+            "Unknown".to_string()
+        };
+        if let Some(last) = grouped.last_mut() {
+            if last.0 == month_key {
+                last.1.push(w);
+                continue;
+            }
+        }
+        grouped.push((month_key, vec![w]));
+    }
+
+    // Format month key to display label
+    let format_month = |key: &str| -> String {
+        if key.len() >= 7 {
+            let parts: Vec<&str> = key.split('-').collect();
+            if parts.len() == 2 {
+                let month_name = match parts[1] {
+                    "01" => "January", "02" => "February", "03" => "March",
+                    "04" => "April", "05" => "May", "06" => "June",
+                    "07" => "July", "08" => "August", "09" => "September",
+                    "10" => "October", "11" => "November", "12" => "December",
+                    _ => parts[1],
+                };
+                return format!("{} {}", month_name, parts[0]);
+            }
+        }
+        key.to_string()
+    };
+
     html! {
         <div class="space-y-3 px-4 pb-4">
-            { for workouts.iter().map(|w| {
+            { for grouped.iter().map(|(month_key, month_workouts)| {
+                let label = format_month(month_key);
+                html! {
+                    <div>
+                        <div class="sticky top-0 z-10 py-2">
+                            <h3 class="text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">{label}{" · "}{month_workouts.len()}{" workouts"}</h3>
+                        </div>
+                        <div class="space-y-3">
+            { for month_workouts.iter().map(|&w| {
                 let is_expanded = *expanded == Some(w.id.clone());
                 let is_editing = editing.as_ref().map(|e| e.id == w.id).unwrap_or(false);
                 let wid = w.id.clone();
@@ -54,6 +97,10 @@ pub fn history_list(props: &Props) -> Html {
                 let on_update = props.on_update.clone();
                 let wid2 = w.id.clone();
                 let total_sets: usize = w.exercises.iter().map(|e| e.sets.len()).sum();
+                let exercise_names: Vec<String> = w.exercises.iter()
+                    .map(|we| find_exercise(&we.exercise_id))
+                    .collect();
+                let names_summary = exercise_names.join(", ");
 
                 let display_workout = if is_editing {
                     editing.as_ref().unwrap().clone()
@@ -70,12 +117,12 @@ pub fn history_list(props: &Props) -> Html {
                             })}
                         >
                             <div class="flex justify-between items-start">
-                                <div>
+                                <div class="flex-1 min-w-0 mr-3">
                                     <div class="font-bold text-gray-900 dark:text-gray-100">{&w.name}</div>
                                     <div class="text-sm text-gray-500 dark:text-gray-400 font-mono">{&w.date}</div>
+                                    <div class="text-xs text-gray-500 dark:text-gray-400 mt-1 truncate">{names_summary}</div>
                                 </div>
-                                <div class="text-right text-sm text-gray-500 dark:text-gray-400 font-medium">
-                                    <div>{w.exercises.len()}{" exercises"}</div>
+                                <div class="text-right text-sm text-gray-500 dark:text-gray-400 font-medium flex-shrink-0">
                                     <div>{total_sets}{" sets"}</div>
                                     { if w.duration_mins > 0 {
                                         html! { <div>{w.duration_mins}{"min"}</div> }
@@ -140,24 +187,23 @@ pub fn history_list(props: &Props) -> Html {
                                                             { match tt {
                                                                 ExerciseTrackingType::Strength => html! {
                                                                     <>
-                                                                        <div class="col-span-4">{"Weight"}</div>
-                                                                        <div class="col-span-3">{"Reps"}</div>
+                                                                        <div class="col-span-5">{"Weight"}</div>
+                                                                        <div class="col-span-4">{"Reps"}</div>
                                                                     </>
                                                                 },
                                                                 ExerciseTrackingType::Cardio => html! {
                                                                     <>
-                                                                        <div class="col-span-4">{"Distance"}</div>
-                                                                        <div class="col-span-3">{"Time (m)"}</div>
+                                                                        <div class="col-span-5">{"Distance"}</div>
+                                                                        <div class="col-span-4">{"Time (m)"}</div>
                                                                     </>
                                                                 },
                                                                 ExerciseTrackingType::Duration => html! {
-                                                                    <div class="col-span-7 text-center">{"Duration (s)"}</div>
+                                                                    <div class="col-span-9 text-center">{"Duration (s)"}</div>
                                                                 },
                                                                 ExerciseTrackingType::Bodyweight => html! {
-                                                                    <div class="col-span-7 text-center">{"Reps"}</div>
+                                                                    <div class="col-span-9 text-center">{"Reps"}</div>
                                                                 },
                                                             }}
-                                                            <div class="col-span-2 text-center">{"Done"}</div>
                                                             <div class="col-span-2"></div>
                                                         </div>
                                                         { for we.sets.iter().enumerate().map(|(set_idx, set)| {
@@ -165,26 +211,20 @@ pub fn history_list(props: &Props) -> Html {
                                                             let workout = workout.clone();
                                                             let editing2 = editing.clone();
                                                             let workout2 = workout.clone();
-                                                            let editing3 = editing.clone();
-                                                            let workout3 = workout.clone();
                                                             let editing4 = editing.clone();
                                                             let workout4 = workout.clone();
-                                                            let completed = set.completed;
                                                             let tt = tt.clone();
                                                             let input_class = "w-full px-2 py-1 bg-white dark:bg-gray-600 border border-gray-300 dark:border-transparent rounded text-xs text-center text-gray-900 dark:text-white outline-none focus:ring-1 focus:ring-blue-500 transition-colors";
 
                                                             html! {
-                                                                <div class={classes!(
-                                                                    "grid", "grid-cols-12", "gap-2", "items-center", "transition-opacity",
-                                                                    if completed { "opacity-50" } else { "" }
-                                                                )}>
+                                                                <div class="grid grid-cols-12 gap-2 items-center">
                                                                     <div class="col-span-1 text-xs font-bold text-gray-400 dark:text-gray-500">{set_idx + 1}</div>
                                                                     { match tt {
                                                                         ExerciseTrackingType::Strength => html! {
                                                                             <>
-                                                                                <div class="col-span-4">
+                                                                                <div class="col-span-5">
                                                                                     <input
-                                                                                        type="number" step="0.5"
+                                                                                        type="text" inputmode="decimal"
                                                                                         class={input_class}
                                                                                         value={set.weight.to_string()}
                                                                                         onclick={Callback::from(|e: MouseEvent| e.stop_propagation())}
@@ -201,9 +241,9 @@ pub fn history_list(props: &Props) -> Html {
                                                                                         })}
                                                                                     />
                                                                                 </div>
-                                                                                <div class="col-span-3">
+                                                                                <div class="col-span-4">
                                                                                     <input
-                                                                                        type="number"
+                                                                                        type="text" inputmode="numeric"
                                                                                         class={input_class}
                                                                                         value={set.reps.to_string()}
                                                                                         onclick={Callback::from(|e: MouseEvent| e.stop_propagation())}
@@ -224,9 +264,9 @@ pub fn history_list(props: &Props) -> Html {
                                                                         },
                                                                         ExerciseTrackingType::Cardio => html! {
                                                                             <>
-                                                                                <div class="col-span-4">
+                                                                                <div class="col-span-5">
                                                                                     <input
-                                                                                        type="number" step="0.1"
+                                                                                        type="text" inputmode="decimal"
                                                                                         class={input_class}
                                                                                         value={format!("{:.1}", set.distance.unwrap_or(0.0))}
                                                                                         onclick={Callback::from(|e: MouseEvent| e.stop_propagation())}
@@ -243,9 +283,9 @@ pub fn history_list(props: &Props) -> Html {
                                                                                         })}
                                                                                     />
                                                                                 </div>
-                                                                                <div class="col-span-3">
+                                                                                <div class="col-span-4">
                                                                                     <input
-                                                                                        type="number"
+                                                                                        type="text" inputmode="numeric"
                                                                                         class={input_class}
                                                                                         value={(set.duration_secs.unwrap_or(0) / 60).to_string()}
                                                                                         onclick={Callback::from(|e: MouseEvent| e.stop_propagation())}
@@ -265,9 +305,9 @@ pub fn history_list(props: &Props) -> Html {
                                                                             </>
                                                                         },
                                                                         ExerciseTrackingType::Duration => html! {
-                                                                            <div class="col-span-7 px-4">
+                                                                            <div class="col-span-9 px-4">
                                                                                 <input
-                                                                                    type="number"
+                                                                                    type="text" inputmode="numeric"
                                                                                     class={input_class}
                                                                                     value={set.duration_secs.unwrap_or(0).to_string()}
                                                                                     onclick={Callback::from(|e: MouseEvent| e.stop_propagation())}
@@ -286,9 +326,9 @@ pub fn history_list(props: &Props) -> Html {
                                                                             </div>
                                                                         },
                                                                         ExerciseTrackingType::Bodyweight => html! {
-                                                                            <div class="col-span-7 px-4">
+                                                                            <div class="col-span-9 px-4">
                                                                                 <input
-                                                                                    type="number"
+                                                                                    type="text" inputmode="numeric"
                                                                                     class={input_class}
                                                                                     value={set.reps.to_string()}
                                                                                     onclick={Callback::from(|e: MouseEvent| e.stop_propagation())}
@@ -307,23 +347,6 @@ pub fn history_list(props: &Props) -> Html {
                                                                             </div>
                                                                         },
                                                                     }}
-                                                                    <div class="col-span-2 flex justify-center">
-                                                                        <input
-                                                                            type="checkbox"
-                                                                            checked={completed}
-                                                                            class="w-4 h-4 accent-blue-600 cursor-pointer"
-                                                                            onclick={Callback::from(|e: MouseEvent| e.stop_propagation())}
-                                                                            onchange={Callback::from(move |_| {
-                                                                                let mut w = workout3.clone();
-                                                                                if let Some(we) = w.exercises.get_mut(ex_idx) {
-                                                                                    if let Some(s) = we.sets.get_mut(set_idx) {
-                                                                                        s.completed = !s.completed;
-                                                                                    }
-                                                                                }
-                                                                                editing3.set(Some(w));
-                                                                            })}
-                                                                        />
-                                                                    </div>
                                                                     <div class="col-span-2 flex justify-end">
                                                                         <button
                                                                             class="text-red-600 dark:text-red-400 text-xs hover:text-red-500 dark:hover:text-red-300 p-1 transition-colors"
@@ -499,6 +522,10 @@ pub fn history_list(props: &Props) -> Html {
                                 }
                             }
                         } else { html! {} }}
+                    </div>
+                }
+            })}
+                        </div>
                     </div>
                 }
             })}
