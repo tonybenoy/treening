@@ -56,7 +56,6 @@ pub fn exercise_list(props: &Props) -> Html {
                     placeholder="Search exercises..."
                     class="w-full px-4 py-2 bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-gray-900 dark:text-gray-100 placeholder-gray-500 focus:outline-none focus:border-blue-500 transition-colors shadow-sm"
                     oninput={on_search}
-                    value={(*search).clone()}
                 />
             </div>
             <div class="px-4 pb-2 flex gap-2 overflow-x-auto scrollbar-hide">

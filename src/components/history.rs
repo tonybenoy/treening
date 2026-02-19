@@ -407,15 +407,33 @@ pub fn history_list(props: &Props) -> Html {
                                     <div class="px-4 pb-4 border-t border-gray-200 dark:border-gray-700 pt-3 transition-colors">
                                         { for display_workout.exercises.iter().map(|we| {
                                             let name = find_exercise(&we.exercise_id);
+                                            let tt = find_tracking_type(&we.exercise_id);
                                             html! {
                                                 <div class="mb-4">
                                                     <div class="font-bold text-sm text-gray-800 dark:text-gray-200 mb-1.5">{name}</div>
                                                     <div class="space-y-1">
                                                         { for we.sets.iter().enumerate().map(|(i, s)| {
+                                                            let detail = match tt {
+                                                                ExerciseTrackingType::Strength => {
+                                                                    format!("{:.1}{} x {}", units.display_weight(s.weight), units.weight_label(), s.reps)
+                                                                },
+                                                                ExerciseTrackingType::Cardio => {
+                                                                    let dist = s.distance.unwrap_or(0.0);
+                                                                    let mins = s.duration_secs.unwrap_or(0) / 60;
+                                                                    format!("{:.1}{} · {}min", units.display_distance(dist), units.distance_label(), mins)
+                                                                },
+                                                                ExerciseTrackingType::Duration => {
+                                                                    let secs = s.duration_secs.unwrap_or(0);
+                                                                    format!("{}s", secs)
+                                                                },
+                                                                ExerciseTrackingType::Bodyweight => {
+                                                                    format!("{} reps", s.reps)
+                                                                },
+                                                            };
                                                             html! {
                                                                 <div class="text-xs text-gray-600 dark:text-gray-400 ml-2 flex items-center gap-2">
                                                                     <span class="w-10 font-medium">{"Set "}{i+1}{":"}</span>
-                                                                    <span class="font-bold text-gray-800 dark:text-gray-200">{format!("{:.1}", units.display_weight(s.weight))}{units.weight_label()}{" x "}{s.reps}</span>
+                                                                    <span class="font-bold text-gray-800 dark:text-gray-200">{detail}</span>
                                                                     { if s.completed { html!{<span class="text-green-600 dark:text-green-400 text-sm font-bold">{" \u{2713}"}</span>} } else { html!{} } }
                                                                 </div>
                                                             }

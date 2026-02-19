@@ -5,6 +5,15 @@ use crate::pages::workout::generate_warmup_sets;
 use std::collections::{HashMap, HashSet};
 use yew::prelude::*;
 
+/// Display an f64 cleanly: "60" instead of "60.0", "62.5" stays "62.5".
+fn display_f64(v: f64) -> String {
+    if v.fract() == 0.0 {
+        format!("{}", v as i64)
+    } else {
+        format!("{:.1}", v)
+    }
+}
+
 /// Epley formula: weight * (1 + reps/30)
 fn estimate_1rm(weight: f64, reps: u32) -> f64 {
     weight * (1.0 + reps as f64 / 30.0)
@@ -422,12 +431,12 @@ pub fn workout_log(props: &Props) -> Html {
                                                 <>
                                                     <div class="col-span-4 flex gap-1">
                                                         <input
-                                                            type="number" step="0.5"
+                                                            type="text" inputmode="decimal"
                                                             class="w-full px-2 py-1 bg-white dark:bg-gray-700 border border-gray-300 dark:border-transparent rounded text-sm text-center text-gray-900 dark:text-gray-100 outline-none focus:ring-1 focus:ring-blue-500 transition-colors"
-                                                            value={format!("{:.1}", unit_sys2.display_weight(set.weight))}
-                                                            oninput={{
+                                                            value={display_f64(unit_sys2.display_weight(set.weight))}
+                                                            onchange={{
                                                                 let unit_sys = unit_sys2.clone();
-                                                                Callback::from(move |e: InputEvent| {
+                                                                Callback::from(move |e: Event| {
                                                                 let input: web_sys::HtmlInputElement = e.target_unchecked_into();
                                                                 if let Ok(val) = input.value().parse::<f64>() {
                                                                     let mut exs = exercises2.clone();
@@ -453,10 +462,10 @@ pub fn workout_log(props: &Props) -> Html {
                                                     </div>
                                                     <div class="col-span-3">
                                                         <input
-                                                            type="number"
+                                                            type="text" inputmode="numeric"
                                                             class="w-full px-2 py-1 bg-white dark:bg-gray-700 border border-gray-300 dark:border-transparent rounded text-sm text-center text-gray-900 dark:text-gray-100 outline-none focus:ring-1 focus:ring-blue-500 transition-colors"
                                                             value={set.reps.to_string()}
-                                                            oninput={Callback::from(move |e: InputEvent| {
+                                                            onchange={Callback::from(move |e: Event| {
                                                                 let input: web_sys::HtmlInputElement = e.target_unchecked_into();
                                                                 if let Ok(val) = input.value().parse::<u32>() {
                                                                     let mut exs = exercises3.clone();
@@ -472,12 +481,12 @@ pub fn workout_log(props: &Props) -> Html {
                                                 <>
                                                     <div class="col-span-4">
                                                         <input
-                                                            type="number" step="0.1"
+                                                            type="text" inputmode="decimal"
                                                             class="w-full px-2 py-1 bg-white dark:bg-gray-700 border border-gray-300 dark:border-transparent rounded text-sm text-center text-gray-900 dark:text-gray-100 outline-none focus:ring-1 focus:ring-blue-500 transition-colors"
-                                                            value={format!("{:.1}", unit_sys3.display_distance(set.distance.unwrap_or(0.0)))}
-                                                            oninput={{
+                                                            value={display_f64(unit_sys3.display_distance(set.distance.unwrap_or(0.0)))}
+                                                            onchange={{
                                                                 let unit_sys = unit_sys3.clone();
-                                                                Callback::from(move |e: InputEvent| {
+                                                                Callback::from(move |e: Event| {
                                                                 let input: web_sys::HtmlInputElement = e.target_unchecked_into();
                                                                 if let Ok(val) = input.value().parse::<f64>() {
                                                                     let mut exs = exercises2.clone();
@@ -489,10 +498,10 @@ pub fn workout_log(props: &Props) -> Html {
                                                     </div>
                                                     <div class="col-span-3">
                                                         <input
-                                                            type="number"
+                                                            type="text" inputmode="numeric"
                                                             class="w-full px-2 py-1 bg-white dark:bg-gray-700 border border-gray-300 dark:border-transparent rounded text-sm text-center text-gray-900 dark:text-gray-100 outline-none focus:ring-1 focus:ring-blue-500 transition-colors"
                                                             value={(set.duration_secs.unwrap_or(0) / 60).to_string()}
-                                                            oninput={Callback::from(move |e: InputEvent| {
+                                                            onchange={Callback::from(move |e: Event| {
                                                                 let input: web_sys::HtmlInputElement = e.target_unchecked_into();
                                                                 if let Ok(val) = input.value().parse::<u32>() {
                                                                     let mut exs = exercises3.clone();
@@ -507,10 +516,10 @@ pub fn workout_log(props: &Props) -> Html {
                                             ExerciseTrackingType::Duration => html! {
                                                 <div class="col-span-7 px-4">
                                                     <input
-                                                        type="number"
+                                                        type="text" inputmode="numeric"
                                                         class="w-full px-2 py-1 bg-white dark:bg-gray-700 border border-gray-300 dark:border-transparent rounded text-sm text-center text-gray-900 dark:text-gray-100 outline-none focus:ring-1 focus:ring-blue-500 transition-colors"
                                                         value={set.duration_secs.unwrap_or(0).to_string()}
-                                                        oninput={Callback::from(move |e: InputEvent| {
+                                                        onchange={Callback::from(move |e: Event| {
                                                             let input: web_sys::HtmlInputElement = e.target_unchecked_into();
                                                             if let Ok(val) = input.value().parse::<u32>() {
                                                                 let mut exs = exercises2.clone();
@@ -524,10 +533,10 @@ pub fn workout_log(props: &Props) -> Html {
                                             ExerciseTrackingType::Bodyweight => html! {
                                                 <div class="col-span-7 px-4">
                                                     <input
-                                                        type="number"
+                                                        type="text" inputmode="numeric"
                                                         class="w-full px-2 py-1 bg-white dark:bg-gray-700 border border-gray-300 dark:border-transparent rounded text-sm text-center text-gray-900 dark:text-gray-100 outline-none focus:ring-1 focus:ring-blue-500 transition-colors"
                                                         value={set.reps.to_string()}
-                                                        oninput={Callback::from(move |e: InputEvent| {
+                                                        onchange={Callback::from(move |e: Event| {
                                                             let input: web_sys::HtmlInputElement = e.target_unchecked_into();
                                                             if let Ok(val) = input.value().parse::<u32>() {
                                                                 let mut exs = exercises2.clone();
