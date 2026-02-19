@@ -206,6 +206,7 @@ pub enum Theme {
     Light,
     System,
     AmoledBlack,
+    Treen,
 }
 
 #[derive(Clone, Debug, Default, Serialize, Deserialize, PartialEq)]

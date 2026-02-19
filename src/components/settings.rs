@@ -32,6 +32,7 @@ pub fn settings_panel(props: &Props) -> Html {
                 "light" => crate::models::Theme::Light,
                 "system" => crate::models::Theme::System,
                 "amoled" => crate::models::Theme::AmoledBlack,
+                "treen" => crate::models::Theme::Treen,
                 _ => crate::models::Theme::Dark,
             };
             storage::save_user_config(&new_config);
@@ -56,6 +57,7 @@ pub fn settings_panel(props: &Props) -> Html {
                     }
                 }
                 crate::models::Theme::AmoledBlack => "dark amoled theme-transitioning",
+                crate::models::Theme::Treen => "dark treen theme-transitioning",
             };
             let _ = html.set_attribute("class", theme_class);
             // Remove transitioning class after animation completes
@@ -170,6 +172,7 @@ pub fn settings_panel(props: &Props) -> Html {
                         <option value="light" selected={config.theme == crate::models::Theme::Light}>{"Light"}</option>
                         <option value="system" selected={config.theme == crate::models::Theme::System}>{"System"}</option>
                         <option value="amoled" selected={config.theme == crate::models::Theme::AmoledBlack}>{"AMOLED Black"}</option>
+                        <option value="treen" selected={config.theme == crate::models::Theme::Treen}>{"Treen (Wood)"}</option>
                     </select>
                 </div>
 

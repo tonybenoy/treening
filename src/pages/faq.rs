@@ -167,12 +167,24 @@ const FAQS: &[FaqItem] = &[
         answer: "Yes! The source code is available on GitHub at https://github.com/tonybenoy/treening. It is built using Rust and WebAssembly for maximum performance and privacy. Contributions are very welcome!",
     },
     FaqItem {
+        question: "What is 'treen'?",
+        answer: "Treen refers to small handmade household objects carved from wood \u{2014} things like spoons, bowls, snuff boxes, and mallets. Before mass production, every home had these hand-turned wooden items. The achievement badges in Treening are named after treen objects as a nod to craftsmanship and steady, patient progress.",
+    },
+    FaqItem {
+        question: "What are the Treen achievement badges on the home page?",
+        answer: "The achievement grid on the home page shows badges named after traditional treen (small handmade wooden objects). They are computed from your workout data \u{2014} nothing is stored separately. Badges include Wooden Spoon (1st workout), Cutting Board (10 workouts), Snuff Box (100 total sets), Turned Bowl (50 workouts), Mallet Head (any lift \u{2265}100kg), Lignum Vitae (30-day consecutive streak), and Master Carver (100 workouts). Earned badges appear in full color; unearned ones are grayed out.",
+    },
+    FaqItem {
         question: "What does 'Treening' mean?",
         answer: "Treening is an Estonian word meaning 'training' or 'workout'. It felt like the perfect name for a no-nonsense workout tracker \u{2014} and the domain treen.ing was too good to pass up.",
     },
     FaqItem {
         question: "Why was Treening built?",
         answer: "After losing 20 kg and hitting a weight loss plateau, the developer started going to the gym but couldn\u{2019}t find a workout tracker that was both free and subscription-free. So Treening was built in a day using Claude Code and Gemini to solve that problem.",
+    },
+    FaqItem {
+        question: "Is there a community for Treening users?",
+        answer: "Yes! We have GitHub Discussions at https://github.com/tonybenoy/treening/discussions. You can introduce yourself, suggest features, ask questions, share your achievements, and chat with other users. Feature requests with the most upvotes get prioritized.",
     },
     FaqItem {
         question: "How do I report a bug or request a feature?",

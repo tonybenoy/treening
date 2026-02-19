@@ -1,3 +1,4 @@
+use crate::components::achievements::AchievementBadges;
 use crate::models::{Exercise, Workout};
 use crate::storage;
 use crate::Route;
@@ -162,6 +163,34 @@ pub fn home_page() -> Html {
     let routines = use_state(storage::load_routines);
     let navigator = use_navigator().unwrap();
 
+    let treen_taps = use_state(|| 0u32);
+    let show_treen_toast = use_state(|| false);
+
+    let on_title_click = {
+        let treen_taps = treen_taps.clone();
+        let show_treen_toast = show_treen_toast.clone();
+        Callback::from(move |_: MouseEvent| {
+            let new_count = *treen_taps + 1;
+            treen_taps.set(new_count);
+            if new_count >= 5 {
+                treen_taps.set(0);
+                // Activate Treen theme
+                let mut config = storage::load_user_config();
+                config.theme = crate::models::Theme::Treen;
+                storage::save_user_config(&config);
+                if let Some(html) = gloo::utils::document().document_element() {
+                    let _ = html.set_attribute("class", "dark treen");
+                }
+                show_treen_toast.set(true);
+                let toast = show_treen_toast.clone();
+                gloo::timers::callback::Timeout::new(3_000, move || {
+                    toast.set(false);
+                })
+                .forget();
+            }
+        })
+    };
+
     let last_workout: Option<&Workout> = {
         let mut sorted: Vec<&Workout> = workouts.iter().collect();
         sorted.sort_by(|a, b| b.date.cmp(&a.date));
@@ -193,7 +222,7 @@ pub fn home_page() -> Html {
         <div class="px-4 py-4 space-y-6">
             <div class="flex justify-between items-start">
                 <div>
-                    <h1 class="text-3xl font-bold">{"Treening"}</h1>
+                    <h1 class="text-3xl font-bold cursor-pointer select-none" onclick={on_title_click}>{"Treening"}</h1>
                     <p class="text-gray-400 mt-1">{"Workout Tracker"}</p>
                 </div>
             </div>
@@ -204,6 +233,8 @@ pub fn home_page() -> Html {
             >{"Start New Workout"}</button>
 
             <SummaryStats />
+
+            <AchievementBadges />
 
             <CommunitySummary />
 
@@ -336,6 +367,16 @@ pub fn home_page() -> Html {
                     <span class="text-gray-400 dark:text-gray-600 group-hover:text-blue-600 dark:group-hover:text-blue-400 group-hover:translate-x-1 transition-all">{"→"}</span>
                 </Link<Route>>
             </div>
+
+            { if *show_treen_toast {
+                html! {
+                    <div class="fixed top-4 left-4 right-4 z-50 bg-amber-800 text-amber-100 px-4 py-3 rounded-xl shadow-lg text-center font-bold text-sm" style="animation: modalContentIn 200ms ease-out;">
+                        {"🪵 Treen Mode activated! Wood grain unlocked."}
+                    </div>
+                }
+            } else {
+                html! {}
+            }}
         </div>
     }
 }

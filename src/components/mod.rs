@@ -1,3 +1,4 @@
+pub mod achievements;
 pub mod charts;
 pub mod custom_exercise;
 pub mod exercise_detail;

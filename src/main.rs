@@ -55,6 +55,9 @@ fn theme_manager() -> Html {
             Theme::AmoledBlack => {
                 let _ = html.set_attribute("class", "dark amoled");
             }
+            Theme::Treen => {
+                let _ = html.set_attribute("class", "dark treen");
+            }
         }
         || ()
     });
