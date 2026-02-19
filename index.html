@@ -237,7 +237,11 @@
                     setTimeout(() => resolve(''), 2000);
                 });
                 sw.postMessage({ type: 'GET_BUILD_DATE' }, [ch.port2]);
-                return await promise;
+                const utc = await promise;
+                if (!utc) return '';
+                const d = new Date(utc.replace(' UTC', ' UTC+0'));
+                if (isNaN(d)) return utc;
+                return d.toLocaleString(undefined, { year:'numeric', month:'short', day:'numeric', hour:'2-digit', minute:'2-digit' });
             } catch { return ''; }
         };
 
