@@ -31,6 +31,7 @@ pub fn settings_panel(props: &Props) -> Html {
             new_config.theme = match input.value().as_str() {
                 "light" => crate::models::Theme::Light,
                 "system" => crate::models::Theme::System,
+                "amoled" => crate::models::Theme::AmoledBlack,
                 _ => crate::models::Theme::Dark,
             };
             storage::save_user_config(&new_config);
@@ -46,6 +47,7 @@ pub fn settings_panel(props: &Props) -> Html {
                     let is_dark = window.match_media("(prefers-color-scheme: dark)").unwrap().unwrap().matches();
                     let _ = html.set_attribute("class", if is_dark { "dark" } else { "" });
                 }
+                crate::models::Theme::AmoledBlack => { let _ = html.set_attribute("class", "dark amoled"); }
             }
             
             config.set(new_config);
@@ -148,6 +150,7 @@ pub fn settings_panel(props: &Props) -> Html {
                         <option value="dark" selected={config.theme == crate::models::Theme::Dark}>{"Dark"}</option>
                         <option value="light" selected={config.theme == crate::models::Theme::Light}>{"Light"}</option>
                         <option value="system" selected={config.theme == crate::models::Theme::System}>{"System"}</option>
+                        <option value="amoled" selected={config.theme == crate::models::Theme::AmoledBlack}>{"AMOLED Black"}</option>
                     </select>
                 </div>
 

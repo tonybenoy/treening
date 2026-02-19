@@ -100,6 +100,13 @@
             from { transform: translateY(100%); opacity: 0; }
             to { transform: translateY(0); opacity: 1; }
         }
+        /* AMOLED Black theme overrides */
+        .amoled .bg-gray-900 { background-color: #000000 !important; }
+        .amoled .bg-gray-800 { background-color: #121212 !important; }
+        .amoled .bg-gray-700 { background-color: #1e1e1e !important; }
+        .amoled .dark\:bg-gray-900 { background-color: #000000 !important; }
+        .amoled .dark\:bg-gray-800 { background-color: #121212 !important; }
+        .amoled .dark\:bg-gray-700 { background-color: #1e1e1e !important; }
     </style>
     <script>
         // Capture beforeinstallprompt early (before Yew replaces body)
