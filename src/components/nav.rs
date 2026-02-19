@@ -5,6 +5,7 @@ use crate::Route;
 #[function_component(BottomNav)]
 pub fn bottom_nav() -> Html {
     let route: Route = use_route().unwrap_or(Route::Home);
+    let navigator = use_navigator().unwrap();
 
     let nav_item = |r: Route, label: &str, icon: &str| {
         let active = route == r;
@@ -13,11 +14,15 @@ pub fn bottom_nav() -> Html {
         } else {
             "flex flex-col items-center text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200"
         };
+        let nav = navigator.clone();
+        let onclick = Callback::from(move |_: MouseEvent| {
+            nav.replace(&r);
+        });
         html! {
-            <Link<Route> to={r} classes={classes!(cls)}>
+            <button class={classes!(cls)} {onclick}>
                 <span class="text-xl">{icon}</span>
                 <span class="text-xs mt-0.5">{label}</span>
-            </Link<Route>>
+            </button>
         }
     };
 

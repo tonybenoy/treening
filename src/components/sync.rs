@@ -124,9 +124,11 @@ pub fn sync_panel() -> Html {
         use_effect_with((), move |_| {
             // Handle ?pair= URL parameter for auto-adding a device
             let window = gloo::utils::window();
+            let mut opened_via_pair = false;
             if let Ok(search) = window.location().search() {
                 let params = web_sys::UrlSearchParams::new_with_str(&search).unwrap();
                 if let Some(pair_id) = params.get("pair") {
+                    opened_via_pair = true;
                     let mut devs = (*devices).clone();
                     if !pair_id.is_empty() && !devs.iter().any(|d| d.peer_id == pair_id) {
                         devs.push(TrustedDevice {
@@ -171,8 +173,20 @@ pub fn sync_panel() -> Html {
 
             // On peer error
             let status_err = status.clone();
-            let on_error = Closure::wrap(Box::new(move |_err: JsValue| {
-                status_err.set("Connection error".to_string());
+            let on_error = Closure::wrap(Box::new(move |err: JsValue| {
+                let err_type = js_sys::Reflect::get(&err, &"type".into())
+                    .ok()
+                    .and_then(|v| v.as_string())
+                    .unwrap_or_default();
+                if err_type == "unavailable-id" {
+                    if opened_via_pair {
+                        // Device already saved, other tab will pick it up — close this tab
+                        let _ = gloo::utils::window().close();
+                    }
+                    status_err.set("Active in another tab".to_string());
+                } else {
+                    status_err.set("Connection error".to_string());
+                }
             }) as Box<dyn FnMut(JsValue)>);
             peer.on("error", on_error.as_ref().unchecked_ref());
             on_error.forget();
@@ -194,6 +208,37 @@ pub fn sync_panel() -> Html {
             on_connection.forget();
 
             *peer_ref_c.borrow_mut() = Some(peer);
+
+            // Listen for storage events from other tabs (e.g. ?pair= link opened in new tab)
+            let peer_ref_storage = peer_ref.clone();
+            let devices_storage = devices.clone();
+            let status_storage = status.clone();
+            let on_storage = Closure::wrap(Box::new(move |e: web_sys::StorageEvent| {
+                if e.key().as_deref() == Some("treening_trusted_devices") {
+                    let new_devs = storage::load_trusted_devices();
+                    let old_devs = (*devices_storage).clone();
+                    // Connect to any newly added devices
+                    if let Some(peer) = peer_ref_storage.borrow().as_ref() {
+                        for d in &new_devs {
+                            if !old_devs.iter().any(|od| od.peer_id == d.peer_id) {
+                                let conn = peer.connect(&d.peer_id);
+                                let devices_c = devices_storage.clone();
+                                let status_c = status_storage.clone();
+                                let conn_c = conn.clone();
+                                let on_open_conn = Closure::wrap(Box::new(move || {
+                                    send_sync_data(&conn_c);
+                                }) as Box<dyn FnMut()>);
+                                conn.on_conn("open", on_open_conn.as_ref().unchecked_ref());
+                                on_open_conn.forget();
+                                handle_sync_data(&conn, devices_c, status_c);
+                            }
+                        }
+                    }
+                    devices_storage.set(new_devs);
+                }
+            }) as Box<dyn FnMut(web_sys::StorageEvent)>);
+            window.add_event_listener_with_callback("storage", on_storage.as_ref().unchecked_ref()).ok();
+            on_storage.forget();
 
             // Cleanup
             let peer_ref_cleanup = peer_ref.clone();
@@ -316,7 +361,7 @@ pub fn sync_panel() -> Html {
             if can_share {
                 let data = js_sys::Object::new();
                 let _ = js_sys::Reflect::set(&data, &"title".into(), &"Pair with my Treening app".into());
-                let _ = js_sys::Reflect::set(&data, &"text".into(), &format!("Pair your Treening app with mine to auto-sync!\n{}", url).into());
+                let _ = js_sys::Reflect::set(&data, &"text".into(), &"Pair your Treening app with mine to auto-sync!".into());
                 let _ = js_sys::Reflect::set(&data, &"url".into(), &url.into());
                 let share = share_fn.unwrap();
                 let _ = js_sys::Function::from(share).call1(&navigator, &data);
@@ -361,6 +406,7 @@ pub fn sync_panel() -> Html {
     let status_color = match (*status).as_str() {
         "Online" => "text-green-600 dark:text-green-400 bg-green-100 dark:bg-green-900/30",
         "Synced!" => "text-green-600 dark:text-green-400 bg-green-100 dark:bg-green-900/30",
+        "Active in another tab" => "text-yellow-600 dark:text-yellow-400 bg-yellow-100 dark:bg-yellow-900/30",
         "Connecting..." | "Syncing..." | "Connecting to new device..." => "text-blue-600 dark:text-blue-400 bg-blue-100 dark:bg-blue-900/30",
         _ => "text-red-600 dark:text-red-400 bg-red-100 dark:bg-red-900/30",
     };

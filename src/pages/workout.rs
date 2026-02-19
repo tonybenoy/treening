@@ -300,7 +300,7 @@ pub fn workout_page() -> Html {
             workouts.push(workout);
             storage::save_workouts(&workouts);
             saved.set(true);
-            nav.push(&Route::History);
+            nav.replace(&Route::History);
         })
     };
 

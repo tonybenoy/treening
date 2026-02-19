@@ -135,9 +135,11 @@ pub fn social_page() -> Html {
         use_effect_with((), move |_| {
             // Handle Auto-Join from URL
             let window = gloo::utils::window();
+            let mut opened_via_join = false;
             if let Ok(search) = window.location().search() {
                 let params = web_sys::UrlSearchParams::new_with_str(&search).unwrap();
                 if let Some(friend_id) = params.get("join") {
+                    opened_via_join = true;
                     let mut current = storage::load_friends();
                     if !current.iter().any(|f| f.id == friend_id) {
                         current.push(Friend {
@@ -213,13 +215,57 @@ pub fn social_page() -> Html {
 
             // Handle errors
             let status_err = status.clone();
-            let on_error = Closure::wrap(Box::new(move |_err: JsValue| {
-                status_err.set("Connection error".to_string());
+            let on_error = Closure::wrap(Box::new(move |err: JsValue| {
+                let err_type = js_sys::Reflect::get(&err, &"type".into())
+                    .ok()
+                    .and_then(|v| v.as_string())
+                    .unwrap_or_default();
+                if err_type == "unavailable-id" {
+                    if opened_via_join {
+                        let _ = gloo::utils::window().close();
+                    }
+                    status_err.set("Active in another tab".to_string());
+                } else {
+                    status_err.set("Connection error".to_string());
+                }
             }) as Box<dyn FnMut(JsValue)>);
             peer.on("error", on_error.as_ref().unchecked_ref());
             on_error.forget();
 
             *peer_ref.borrow_mut() = Some(peer);
+
+            // Listen for storage events from other tabs (e.g. ?join= link opened in new tab)
+            let peer_ref_storage = peer_ref.clone();
+            let friends_storage = friends.clone();
+            let my_stats_storage = my_stats.clone();
+            let user_config_storage = user_config.clone();
+            let on_storage = Closure::wrap(Box::new(move |e: web_sys::StorageEvent| {
+                if e.key().as_deref() == Some("treening_friends") {
+                    let new_friends = storage::load_friends();
+                    let old_friends = (*friends_storage).clone();
+                    if let Some(peer) = peer_ref_storage.borrow().as_ref() {
+                        for f in &new_friends {
+                            if !old_friends.iter().any(|of| of.id == f.id) {
+                                let conn = peer.connect(&f.id);
+                                let stats = my_stats_storage.clone();
+                                let nickname = user_config_storage.nickname.clone();
+                                let pid = user_config_storage.peer_id.clone();
+                                let conn_c = conn.clone();
+                                let friends_c = friends_storage.clone();
+                                let on_open_conn = Closure::wrap(Box::new(move || {
+                                    send_my_stats(&conn_c, &stats, &nickname, &pid);
+                                }) as Box<dyn FnMut()>);
+                                conn.on_conn("open", on_open_conn.as_ref().unchecked_ref());
+                                on_open_conn.forget();
+                                setup_data_handler(&conn, friends_c);
+                            }
+                        }
+                    }
+                    friends_storage.set(new_friends);
+                }
+            }) as Box<dyn FnMut(web_sys::StorageEvent)>);
+            window.add_event_listener_with_callback("storage", on_storage.as_ref().unchecked_ref()).ok();
+            on_storage.forget();
 
             move || {
                 if let Some(p) = peer_ref.borrow_mut().take() {
@@ -391,7 +437,7 @@ pub fn social_page() -> Html {
                                 if can_share {
                                     let data = js_sys::Object::new();
                                     let _ = js_sys::Reflect::set(&data, &"title".into(), &"Add me on Treening!".into());
-                                    let _ = js_sys::Reflect::set(&data, &"text".into(), &format!("Add me as a friend on Treening!\n{}", url).into());
+                                    let _ = js_sys::Reflect::set(&data, &"text".into(), &"Add me as a friend on Treening!".into());
                                     let _ = js_sys::Reflect::set(&data, &"url".into(), &url.into());
                                     let share = share_fn.unwrap();
                                     let _ = js_sys::Function::from(share).call1(&navigator, &data);
