@@ -397,7 +397,7 @@ pub fn settings_page() -> Html {
     };
 
     let app_version = use_state(|| String::from("..."));
-    let build_date = use_state(|| String::new());
+    let build_date = use_state(String::new);
     {
         let app_version = app_version.clone();
         let build_date = build_date.clone();
