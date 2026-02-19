@@ -447,6 +447,24 @@ pub fn settings_page() -> Html {
                     <span>{"Buy Me a Coffee"}</span>
                 </a>
             </div>
+
+            <div class="bg-gray-100 dark:bg-gray-800 rounded-2xl p-4 border border-gray-200 dark:border-transparent shadow-sm transition-colors space-y-3">
+                <h3 class="font-semibold text-gray-900 dark:text-gray-100">{"About Treening"}</h3>
+                <p class="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
+                    {"Treening was born out of personal need. After losing 20 kg and hitting a weight loss plateau, I started hitting the gym \u{2014} but couldn't find a single workout tracker that was both free and subscription-free. So I built one myself in a day using Claude Code and Gemini."}
+                </p>
+                <p class="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
+                    {"This is a side project built to scratch my own itch, so I may not be able to address feature requests or bug reports right away \u{2014} but I'll do my best. The easiest way to reach out is by opening an issue on GitHub:"}
+                </p>
+                <a href="https://github.com/tonybenoy/treening/issues" target="_blank" rel="noopener noreferrer"
+                   class="inline-flex items-center gap-1 text-sm text-blue-600 dark:text-blue-400 hover:underline font-medium">
+                    {"github.com/tonybenoy/treening/issues"}
+                    <span>{"→"}</span>
+                </a>
+                <p class="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
+                    {"Even better \u{2014} if you can fix the issue yourself and submit a pull request, that would be amazing! Contributions are always welcome."}
+                </p>
+            </div>
         </div>
     }
 }

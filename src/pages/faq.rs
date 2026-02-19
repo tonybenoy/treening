@@ -160,7 +160,19 @@ const FAQS: &[FaqItem] = &[
     },
     FaqItem {
         question: "Is it open source?",
-        answer: "Yes! The source code is available on GitHub. It is built using Rust and WebAssembly for maximum performance and privacy.",
+        answer: "Yes! The source code is available on GitHub at https://github.com/tonybenoy/treening. It is built using Rust and WebAssembly for maximum performance and privacy. Contributions are very welcome!",
+    },
+    FaqItem {
+        question: "Why was Treening built?",
+        answer: "After losing 20 kg and hitting a weight loss plateau, the developer started going to the gym but couldn\u{2019}t find a workout tracker that was both free and subscription-free. So Treening was built in a day using Claude Code and Gemini to solve that problem.",
+    },
+    FaqItem {
+        question: "How do I report a bug or request a feature?",
+        answer: "The best way is to open an issue on GitHub at https://github.com/tonybenoy/treening/issues. Select the bug report or feature request template and provide as much detail as you can. Since this is a side project, it may take some time to address, but every report is appreciated.",
+    },
+    FaqItem {
+        question: "Can I contribute to the project?",
+        answer: "Absolutely! If you find a bug and know how to fix it, or want to add a feature, submitting a pull request on GitHub is the fastest way to get it into the app. Check out the repository at https://github.com/tonybenoy/treening.",
     },
     FaqItem {
         question: "How can I support the development of Treening?",
