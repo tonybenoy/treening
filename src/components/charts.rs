@@ -1,6 +1,6 @@
-use yew::prelude::*;
-use std::collections::HashMap;
 use chrono::Datelike;
+use std::collections::HashMap;
+use yew::prelude::*;
 
 // ── StatCard ────────────────────────────────────────────────────────────────
 
@@ -127,7 +127,11 @@ pub fn line_chart(props: &LineChartProps) -> Html {
 
     let max_val = props.data.iter().map(|(_, v)| *v).fold(0.0_f64, f64::max);
     let min_val = props.data.iter().map(|(_, v)| *v).fold(f64::MAX, f64::min);
-    let range = if (max_val - min_val).abs() < 0.001 { 1.0 } else { max_val - min_val };
+    let range = if (max_val - min_val).abs() < 0.001 {
+        1.0
+    } else {
+        max_val - min_val
+    };
 
     let chart_w: f64 = 300.0;
     let chart_h: f64 = props.height as f64;
@@ -221,7 +225,11 @@ pub fn horizontal_bar_chart(props: &HorizontalBarChartProps) -> Html {
         };
     }
 
-    let max_val = props.data.iter().map(|(_, v, _)| *v).fold(0.0_f64, f64::max);
+    let max_val = props
+        .data
+        .iter()
+        .map(|(_, v, _)| *v)
+        .fold(0.0_f64, f64::max);
     let max_val = if max_val == 0.0 { 1.0 } else { max_val };
 
     html! {

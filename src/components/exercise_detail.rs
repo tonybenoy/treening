@@ -1,5 +1,5 @@
-use yew::prelude::*;
 use crate::models::Exercise;
+use yew::prelude::*;
 
 #[derive(Properties, PartialEq)]
 pub struct Props {

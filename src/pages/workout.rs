@@ -1,14 +1,14 @@
-use yew::prelude::*;
-use yew_router::prelude::*;
-use gloo::timers::callback::{Interval, Timeout};
-use gloo::storage::{LocalStorage, Storage};
-use wasm_bindgen::prelude::*;
 use crate::components::exercise_list::ExerciseList;
 use crate::components::workout_log::WorkoutLog;
-use crate::models::{Exercise, Workout, WorkoutExercise, WorkoutSet, ExerciseTrackingType};
-use crate::storage;
 use crate::data;
+use crate::models::{Exercise, ExerciseTrackingType, Workout, WorkoutExercise, WorkoutSet};
+use crate::storage;
 use crate::Route;
+use gloo::storage::{LocalStorage, Storage};
+use gloo::timers::callback::{Interval, Timeout};
+use wasm_bindgen::prelude::*;
+use yew::prelude::*;
+use yew_router::prelude::*;
 
 #[wasm_bindgen]
 extern "C" {
@@ -30,12 +30,14 @@ fn try_vibrate() {
 
 /// Auto-fill a set from the most recent previous workout containing this exercise.
 fn autofill_set(previous: &[Workout], exercise_id: &str, all_exercises: &[Exercise]) -> WorkoutSet {
-    let tracking = all_exercises.iter()
+    let tracking = all_exercises
+        .iter()
         .find(|e| e.id == exercise_id)
         .map(|e| e.tracking_type.clone())
         .unwrap_or(ExerciseTrackingType::Strength);
 
-    let prev_set = previous.iter()
+    let prev_set = previous
+        .iter()
         .rev()
         .flat_map(|w| w.exercises.iter())
         .find(|we| we.exercise_id == exercise_id)
@@ -52,16 +54,28 @@ fn autofill_set(previous: &[Workout], exercise_id: &str, all_exercises: &[Exerci
         },
         None => match tracking {
             ExerciseTrackingType::Cardio => WorkoutSet {
-                weight: 0.0, reps: 0, completed: false,
-                distance: Some(0.0), duration_secs: Some(0), note: None,
+                weight: 0.0,
+                reps: 0,
+                completed: false,
+                distance: Some(0.0),
+                duration_secs: Some(0),
+                note: None,
             },
             ExerciseTrackingType::Duration => WorkoutSet {
-                weight: 0.0, reps: 0, completed: false,
-                distance: None, duration_secs: Some(0), note: None,
+                weight: 0.0,
+                reps: 0,
+                completed: false,
+                distance: None,
+                duration_secs: Some(0),
+                note: None,
             },
             _ => WorkoutSet {
-                weight: 0.0, reps: 10, completed: false,
-                distance: None, duration_secs: None, note: None,
+                weight: 0.0,
+                reps: 10,
+                completed: false,
+                distance: None,
+                duration_secs: None,
+                note: None,
             },
         },
     }
@@ -73,18 +87,22 @@ pub fn generate_warmup_sets(working_weight: f64) -> Vec<WorkoutSet> {
     let percentages = [0.40, 0.60, 0.75, 0.90];
     let reps = [10u32, 6, 4, 2];
 
-    percentages.iter().zip(reps.iter()).map(|(&pct, &r)| {
-        let raw = working_weight * pct;
-        let rounded = (raw / 2.5).round() * 2.5;
-        WorkoutSet {
-            weight: rounded,
-            reps: r,
-            completed: false,
-            distance: None,
-            duration_secs: None,
-            note: None,
-        }
-    }).collect()
+    percentages
+        .iter()
+        .zip(reps.iter())
+        .map(|(&pct, &r)| {
+            let raw = working_weight * pct;
+            let rounded = (raw / 2.5).round() * 2.5;
+            WorkoutSet {
+                weight: rounded,
+                reps: r,
+                completed: false,
+                distance: None,
+                duration_secs: None,
+                note: None,
+            }
+        })
+        .collect()
 }
 
 #[function_component(WorkoutPage)]
@@ -128,16 +146,20 @@ pub fn workout_page() -> Html {
                 let routines = storage::load_routines();
                 if let Some(routine) = routines.iter().find(|r| r.id == routine_id) {
                     workout_name.set(routine.name.clone());
-                    let exs: Vec<WorkoutExercise> = routine.exercise_ids.iter().map(|eid| {
-                        let set = autofill_set(&previous, eid, &all_ex);
-                        WorkoutExercise {
-                            exercise_id: eid.clone(),
-                            sets: vec![set],
-                            notes: String::new(),
-                            superset_group: None,
-                            rest_seconds_override: None,
-                        }
-                    }).collect();
+                    let exs: Vec<WorkoutExercise> = routine
+                        .exercise_ids
+                        .iter()
+                        .map(|eid| {
+                            let set = autofill_set(&previous, eid, &all_ex);
+                            WorkoutExercise {
+                                exercise_id: eid.clone(),
+                                sets: vec![set],
+                                notes: String::new(),
+                                superset_group: None,
+                                rest_seconds_override: None,
+                            }
+                        })
+                        .collect();
                     workout_exercises.set(exs);
                     workout_active.set(true);
                 }
@@ -147,12 +169,15 @@ pub fn workout_page() -> Html {
                 LocalStorage::delete("treening_active_repeat");
                 if let Ok(exs) = serde_json::from_str::<Vec<WorkoutExercise>>(&repeat_json) {
                     // Reset completed status on all sets
-                    let exs: Vec<WorkoutExercise> = exs.into_iter().map(|mut we| {
-                        for s in we.sets.iter_mut() {
-                            s.completed = false;
-                        }
-                        we
-                    }).collect();
+                    let exs: Vec<WorkoutExercise> = exs
+                        .into_iter()
+                        .map(|mut we| {
+                            for s in we.sets.iter_mut() {
+                                s.completed = false;
+                            }
+                            we
+                        })
+                        .collect();
                     workout_exercises.set(exs);
                     workout_active.set(true);
                 }
@@ -287,7 +312,9 @@ pub fn workout_page() -> Html {
         let saved = saved.clone();
         let nav = navigator.clone();
         Callback::from(move |_| {
-            if we.is_empty() { return; }
+            if we.is_empty() {
+                return;
+            }
             let now = chrono::Local::now();
             let workout = Workout {
                 id: uuid::Uuid::new_v4().to_string(),

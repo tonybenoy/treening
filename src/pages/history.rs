@@ -1,8 +1,8 @@
-use yew::prelude::*;
 use crate::components::history::HistoryList;
+use crate::data;
 use crate::models::{Exercise, Workout};
 use crate::storage;
-use crate::data;
+use yew::prelude::*;
 
 #[function_component(HistoryPage)]
 pub fn history_page() -> Html {

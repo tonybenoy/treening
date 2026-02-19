@@ -1,37 +1,37 @@
-mod models;
-mod data;
-mod storage;
 mod backup;
-mod sharing;
 mod components;
+mod data;
+mod models;
 mod pages;
+mod sharing;
+mod storage;
 
 use wasm_bindgen::JsCast;
 use yew::prelude::*;
 use yew_router::prelude::*;
 
+use crate::models::Theme;
 use components::nav::BottomNav;
-use pages::home::HomePage;
+use pages::analytics::AnalyticsPage;
 use pages::exercises::ExercisesPage;
-use pages::workout::WorkoutPage;
+use pages::faq::FaqPage;
 use pages::history::HistoryPage;
+use pages::home::HomePage;
 use pages::routines::RoutinesPage;
 use pages::settings::SettingsPage;
-use pages::social::SocialPage;
-use pages::faq::FaqPage;
-use pages::analytics::AnalyticsPage;
 use pages::shared::SharedPage;
-use crate::models::Theme;
+use pages::social::SocialPage;
+use pages::workout::WorkoutPage;
 
 #[function_component(ThemeManager)]
 fn theme_manager() -> Html {
     let route = use_route::<Route>().unwrap_or(Route::Home);
-    
+
     use_effect_with(route, move |_| {
         let config = storage::load_user_config();
         let document = gloo::utils::document();
         let html = document.document_element().unwrap();
-        
+
         match config.theme {
             Theme::Dark => {
                 let _ = html.set_attribute("class", "dark");
@@ -41,7 +41,11 @@ fn theme_manager() -> Html {
             }
             Theme::System => {
                 let window = gloo::utils::window();
-                let is_dark = window.match_media("(prefers-color-scheme: dark)").unwrap().unwrap().matches();
+                let is_dark = window
+                    .match_media("(prefers-color-scheme: dark)")
+                    .unwrap()
+                    .unwrap()
+                    .matches();
                 if is_dark {
                     let _ = html.set_attribute("class", "dark");
                 } else {
@@ -154,7 +158,7 @@ fn app() -> Html {
                         </a>
                     </div>
                     <div>
-                        {"made with "} <span class="text-red-500">{"❤️"}</span> {" by "} 
+                        {"made with "} <span class="text-red-500">{"❤️"}</span> {" by "}
                         <a href="https://github.com/tonybenoy" target="_blank" class="hover:underline text-blue-400">{"Tony"}</a>
                         {" using "}
                         <a href="https://claude.ai" target="_blank" class="hover:underline text-blue-400">{"Claude Code"}</a>
@@ -191,11 +195,10 @@ fn main() {
                 Some("/#/"),
             );
         }
-    }) as Box<dyn FnMut(web_sys::Event)>);
-    let _ = window.add_event_listener_with_callback(
-        "popstate",
-        on_popstate.as_ref().unchecked_ref(),
-    );
+    })
+        as Box<dyn FnMut(web_sys::Event)>);
+    let _ =
+        window.add_event_listener_with_callback("popstate", on_popstate.as_ref().unchecked_ref());
     on_popstate.forget();
 
     yew::Renderer::<App>::new().render();

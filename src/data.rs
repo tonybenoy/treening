@@ -1,10 +1,33 @@
 use crate::models::{Category, Equipment, Exercise, ExerciseTrackingType};
 
-fn ex(id: &str, name: &str, cat: Category, equip: Equipment, muscles: &[&str], desc: &str) -> Exercise {
-    ex_t(id, name, cat, equip, muscles, desc, ExerciseTrackingType::Strength)
+fn ex(
+    id: &str,
+    name: &str,
+    cat: Category,
+    equip: Equipment,
+    muscles: &[&str],
+    desc: &str,
+) -> Exercise {
+    ex_t(
+        id,
+        name,
+        cat,
+        equip,
+        muscles,
+        desc,
+        ExerciseTrackingType::Strength,
+    )
 }
 
-fn ex_t(id: &str, name: &str, cat: Category, equip: Equipment, muscles: &[&str], desc: &str, tt: ExerciseTrackingType) -> Exercise {
+fn ex_t(
+    id: &str,
+    name: &str,
+    cat: Category,
+    equip: Equipment,
+    muscles: &[&str],
+    desc: &str,
+    tt: ExerciseTrackingType,
+) -> Exercise {
     // Default to .svg, but allowing contributors to easily change extensions here
     let image_path = format!("icons/exercises/{}.svg", id);
     Exercise {

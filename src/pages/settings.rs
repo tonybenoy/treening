@@ -1,12 +1,12 @@
-use yew::prelude::*;
-use yew_router::prelude::*;
-use wasm_bindgen::prelude::*;
+use crate::components::custom_exercise::CustomExerciseForm;
 use crate::components::settings::SettingsPanel;
 use crate::components::sync::SyncPanel;
-use crate::components::custom_exercise::CustomExerciseForm;
-use crate::models::{Exercise, BodyMetric, UnitSystem};
+use crate::models::{BodyMetric, Exercise, UnitSystem};
 use crate::storage;
 use crate::Route;
+use wasm_bindgen::prelude::*;
+use yew::prelude::*;
+use yew_router::prelude::*;
 
 #[wasm_bindgen]
 extern "C" {
@@ -39,12 +39,16 @@ fn install_button() -> Html {
                 can_install.set(can_install_app());
             });
             let window = web_sys::window().unwrap();
-            let id = window.set_interval_with_callback_and_timeout_and_arguments_0(
-                cb.as_ref().unchecked_ref(),
-                1000,
-            ).unwrap();
+            let id = window
+                .set_interval_with_callback_and_timeout_and_arguments_0(
+                    cb.as_ref().unchecked_ref(),
+                    1000,
+                )
+                .unwrap();
             cb.forget();
-            move || { web_sys::window().unwrap().clear_interval_with_handle(id); }
+            move || {
+                web_sys::window().unwrap().clear_interval_with_handle(id);
+            }
         });
     }
 
@@ -97,7 +101,12 @@ fn install_button() -> Html {
 fn profile_section() -> Html {
     let config = use_state(storage::load_user_config);
     let nickname = use_state(|| config.nickname.clone());
-    let height = use_state(|| config.height.map(|h| config.unit_system.display_height(h).to_string()).unwrap_or_default());
+    let height = use_state(|| {
+        config
+            .height
+            .map(|h| config.unit_system.display_height(h).to_string())
+            .unwrap_or_default()
+    });
     let birth_date = use_state(|| config.birth_date.clone().unwrap_or_default());
     let gender = use_state(|| config.gender.clone().unwrap_or_default());
     let rest_seconds = use_state(|| config.rest_seconds.to_string());
@@ -110,7 +119,10 @@ fn profile_section() -> Html {
     let has_changes = {
         let c = &*config;
         *nickname != c.nickname
-            || *height != c.height.map(|h| c.unit_system.display_height(h).to_string()).unwrap_or_default()
+            || *height
+                != c.height
+                    .map(|h| c.unit_system.display_height(h).to_string())
+                    .unwrap_or_default()
             || *birth_date != c.birth_date.clone().unwrap_or_default()
             || *gender != c.gender.clone().unwrap_or_default()
             || *rest_seconds != c.rest_seconds.to_string()
@@ -147,8 +159,8 @@ fn profile_section() -> Html {
             <div class="grid grid-cols-2 gap-4">
                 <div class="col-span-2">
                     <label class="block text-[10px] uppercase font-bold text-gray-500 mb-1">{"Nickname"}</label>
-                    <input 
-                        type="text" 
+                    <input
+                        type="text"
                         class="w-full bg-white dark:bg-gray-700 border border-gray-200 dark:border-transparent rounded-lg px-3 py-2 text-sm text-gray-900 dark:text-white outline-none focus:ring-1 focus:ring-blue-500"
                         value={(*nickname).clone()}
                         oninput={let n = nickname.clone(); Callback::from(move |e: InputEvent| n.set(e.target_unchecked_into::<web_sys::HtmlInputElement>().value()))}
@@ -178,7 +190,7 @@ fn profile_section() -> Html {
                 </div>
                 <div>
                     <label class="block text-[10px] uppercase font-bold text-gray-500 mb-1">{"Gender"}</label>
-                    <select 
+                    <select
                         class="w-full bg-white dark:bg-gray-700 border border-gray-200 dark:border-transparent rounded-lg px-3 py-2 text-sm text-gray-900 dark:text-white outline-none focus:ring-1 focus:ring-blue-500"
                         onchange={let g = gender.clone(); Callback::from(move |e: Event| g.set(e.target_unchecked_into::<web_sys::HtmlSelectElement>().value()))}
                     >
@@ -244,7 +256,9 @@ fn body_metrics_section() -> Html {
         let show = show_form.clone();
         let units = units.clone();
         Callback::from(move |_| {
-            if weight.is_empty() { return; }
+            if weight.is_empty() {
+                return;
+            }
             let mut new_metrics = (*metrics_state).clone();
             new_metrics.push(BodyMetric {
                 id: uuid::Uuid::new_v4().to_string(),
@@ -277,7 +291,7 @@ fn body_metrics_section() -> Html {
         <div class="space-y-4">
             <div class="flex justify-between items-center px-1 transition-colors">
                 <h2 class="text-lg font-bold text-gray-900 dark:text-gray-100">{"Body Progress"}</h2>
-                <button 
+                <button
                     onclick={let s = show_form.clone(); Callback::from(move |_| s.set(!*s))}
                     class="text-xs font-bold text-blue-600 dark:text-blue-400 hover:underline"
                 >{if *show_form { "Cancel" } else { "+ Log Weight" }}</button>
@@ -306,7 +320,7 @@ fn body_metrics_section() -> Html {
                                 />
                             </div>
                         </div>
-                        <button 
+                        <button
                             onclick={on_add}
                             class="w-full py-2 bg-blue-600 text-white rounded-lg font-bold text-sm shadow-sm hover:bg-blue-700 transition-colors"
                         >{"Save Measurement"}</button>
@@ -327,7 +341,7 @@ fn body_metrics_section() -> Html {
                                 </div>
                                 <div class="text-[10px] text-gray-500 dark:text-gray-500 font-mono uppercase tracking-wider">{&m.date}</div>
                             </div>
-                            <button 
+                            <button
                                 onclick={Callback::from(move |_| on_del.emit(id.clone()))}
                                 class="text-gray-400 hover:text-red-500 p-1 transition-colors"
                             >{"\u{1f5d1}"}</button>

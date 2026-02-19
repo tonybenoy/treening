@@ -1,6 +1,6 @@
-use wasm_bindgen::prelude::*;
 use wasm_bindgen::closure::Closure;
-use web_sys::{IdbOpenDbRequest, IdbDatabase, IdbTransactionMode, IdbRequest};
+use wasm_bindgen::prelude::*;
+use web_sys::{IdbDatabase, IdbOpenDbRequest, IdbRequest, IdbTransactionMode};
 
 const DB_NAME: &str = "treening_backup";
 const STORE_NAME: &str = "app_data";
@@ -8,10 +8,7 @@ const BACKUP_KEY: &str = "backup";
 
 fn open_db(on_success: impl FnOnce(IdbDatabase) + 'static) {
     let window = gloo::utils::window();
-    let idb_factory = window
-        .indexed_db()
-        .ok()
-        .flatten();
+    let idb_factory = window.indexed_db().ok().flatten();
 
     let idb_factory = match idb_factory {
         Some(f) => f,
@@ -68,10 +65,7 @@ pub fn save_backup(data: &str) {
             Ok(s) => s,
             Err(_) => return,
         };
-        let _ = store.put_with_key(
-            &JsValue::from_str(&data),
-            &JsValue::from_str(BACKUP_KEY),
-        );
+        let _ = store.put_with_key(&JsValue::from_str(&data), &JsValue::from_str(BACKUP_KEY));
     });
 }
 

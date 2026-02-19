@@ -70,12 +70,11 @@ impl fmt::Display for Equipment {
 #[derive(Clone, Debug, Default, PartialEq, Serialize, Deserialize)]
 pub enum ExerciseTrackingType {
     #[default]
-    Strength,   // Weight + Reps (Default)
+    Strength, // Weight + Reps (Default)
     Cardio,     // Distance + Duration
     Duration,   // Duration only (e.g. Plank)
     Bodyweight, // Reps only
 }
-
 
 #[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 pub struct Exercise {
@@ -119,7 +118,8 @@ pub struct WorkoutExercise {
 
 impl WorkoutExercise {
     pub fn volume(&self) -> f64 {
-        self.sets.iter()
+        self.sets
+            .iter()
             .filter(|s| s.completed)
             .map(|s| {
                 if let Some(dist) = s.distance {
@@ -286,7 +286,6 @@ impl UnitSystem {
     }
 }
 
-
 #[derive(Clone, Debug, Serialize, Deserialize, PartialEq)]
 pub struct UserConfig {
     pub nickname: String,
@@ -320,5 +319,3 @@ fn default_bar_weight() -> f64 {
 fn default_social_enabled() -> bool {
     true
 }
-
-

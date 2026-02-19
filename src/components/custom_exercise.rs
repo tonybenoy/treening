@@ -1,7 +1,7 @@
-use yew::prelude::*;
 use crate::models::{Category, Equipment, Exercise, ExerciseTrackingType};
 use gloo::file::callbacks::{self, FileReader};
 use web_sys::HtmlInputElement;
+use yew::prelude::*;
 
 #[derive(Properties, PartialEq)]
 pub struct Props {
@@ -56,7 +56,8 @@ pub fn custom_exercise_form(props: &Props) -> Html {
                     name: (*name).clone(),
                     category: (*category).clone(),
                     equipment: (*equipment).clone(),
-                    muscle_groups: muscles.split(',')
+                    muscle_groups: muscles
+                        .split(',')
                         .map(|s| s.trim().to_string())
                         .filter(|s| !s.is_empty())
                         .collect(),

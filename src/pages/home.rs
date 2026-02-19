@@ -1,22 +1,20 @@
-use yew::prelude::*;
-use yew_router::prelude::*;
-use gloo::storage::{LocalStorage, Storage};
 use crate::models::{Exercise, Workout};
 use crate::storage;
 use crate::Route;
+use gloo::storage::{LocalStorage, Storage};
+use yew::prelude::*;
+use yew_router::prelude::*;
 
 #[function_component(SummaryStats)]
 fn summary_stats() -> Html {
     let workouts = storage::load_workouts();
-    
+
     if workouts.is_empty() {
         return html! {};
     }
 
     let total_workouts = workouts.len();
-    let total_volume: f64 = workouts.iter()
-        .map(|w| w.total_volume())
-        .sum();
+    let total_volume: f64 = workouts.iter().map(|w| w.total_volume()).sum();
 
     let weight = storage::load_body_metrics().first().and_then(|m| m.weight);
 
@@ -30,7 +28,11 @@ fn summary_stats() -> Html {
         format!("{:.0}", total_volume)
     };
 
-    let volume_label = if weight.is_some() { "Rel. Volume" } else { "Total Volume" };
+    let volume_label = if weight.is_some() {
+        "Rel. Volume"
+    } else {
+        "Total Volume"
+    };
 
     let streak = {
         let mut dates: Vec<chrono::NaiveDate> = workouts
@@ -39,13 +41,13 @@ fn summary_stats() -> Html {
             .collect();
         dates.sort();
         dates.dedup();
-        
+
         if dates.is_empty() {
             0
         } else {
             let today = chrono::Local::now().date_naive();
             let last = *dates.last().unwrap();
-            
+
             if (today - last).num_days() > 1 {
                 0
             } else {
@@ -95,7 +97,7 @@ fn summary_stats() -> Html {
 fn community_summary() -> Html {
     let config = storage::load_user_config();
     let friends = storage::load_friends();
-    
+
     if !config.social_enabled {
         return html! {
             <div class="bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-900 rounded-2xl p-4 border border-gray-200 dark:border-gray-700/50 transition-colors">
@@ -119,7 +121,7 @@ fn community_summary() -> Html {
                     {"View All →"}
                 </Link<Route>>
             </div>
-            
+
             <div class="bg-gray-100 dark:bg-gray-800/50 rounded-2xl p-4 border border-gray-200 dark:border-gray-700/50 transition-colors">
                 { if friends.is_empty() {
                     html! {
@@ -173,7 +175,8 @@ pub fn home_page() -> Html {
     };
 
     let find_exercise = |id: &str| -> String {
-        all_exercises.iter()
+        all_exercises
+            .iter()
             .find(|e| e.id == id)
             .map(|e| e.name.clone())
             .unwrap_or_else(|| id.to_string())
@@ -181,7 +184,9 @@ pub fn home_page() -> Html {
 
     let start_empty = {
         let nav = navigator.clone();
-        Callback::from(move |_| { nav.push(&Route::Workout); })
+        Callback::from(move |_| {
+            nav.push(&Route::Workout);
+        })
     };
 
     html! {
@@ -281,7 +286,7 @@ pub fn home_page() -> Html {
                             <p class="text-2xl font-bold text-gray-900 dark:text-gray-100">{"Welcome to Treening!"}</p>
                             <p class="mt-2 text-gray-600 dark:text-gray-400">{"Your privacy-first, offline workout tracker."}</p>
                         </div>
-                        
+
                         <div class="bg-gray-100 dark:bg-gray-800/30 border border-gray-200 dark:border-gray-800 rounded-2xl p-6 space-y-6 shadow-sm">
                             <h3 class="font-bold text-gray-800 dark:text-gray-200">{"Quick Start Guide"}</h3>
                             <div class="space-y-4">

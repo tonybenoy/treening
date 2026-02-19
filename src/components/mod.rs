@@ -1,11 +1,11 @@
-pub mod nav;
-pub mod exercise_list;
+pub mod charts;
+pub mod custom_exercise;
 pub mod exercise_detail;
-pub mod workout_log;
+pub mod exercise_list;
 pub mod history;
+pub mod nav;
 pub mod routine_editor;
 pub mod settings;
-pub mod sync;
-pub mod custom_exercise;
-pub mod charts;
 pub mod share_modal;
+pub mod sync;
+pub mod workout_log;

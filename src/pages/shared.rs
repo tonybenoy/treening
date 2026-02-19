@@ -1,7 +1,7 @@
-use yew::prelude::*;
+use crate::data;
 use crate::sharing::{self, ShareableData};
 use crate::storage;
-use crate::data;
+use yew::prelude::*;
 
 #[function_component(SharedPage)]
 pub fn shared_page() -> Html {
@@ -35,19 +35,15 @@ pub fn shared_page() -> Html {
                 <p class="text-gray-500 text-sm">{e}</p>
             </div>
         },
-        Some(Ok(data)) => {
-            match data {
-                ShareableData::Workout { workout, exercises } => {
-                    render_workout(workout, exercises, &imported)
-                }
-                ShareableData::Routine { routine, exercises } => {
-                    render_routine(routine, exercises, &imported)
-                }
-                ShareableData::Exercise { exercise } => {
-                    render_exercise(exercise, &imported)
-                }
+        Some(Ok(data)) => match data {
+            ShareableData::Workout { workout, exercises } => {
+                render_workout(workout, exercises, &imported)
             }
-        }
+            ShareableData::Routine { routine, exercises } => {
+                render_routine(routine, exercises, &imported)
+            }
+            ShareableData::Exercise { exercise } => render_exercise(exercise, &imported),
+        },
     };
 
     html! {
@@ -58,9 +54,17 @@ pub fn shared_page() -> Html {
     }
 }
 
-fn render_workout(workout: &crate::models::Workout, exercises: &[crate::models::Exercise], imported: &UseStateHandle<bool>) -> Html {
+fn render_workout(
+    workout: &crate::models::Workout,
+    exercises: &[crate::models::Exercise],
+    imported: &UseStateHandle<bool>,
+) -> Html {
     let find_name = |id: &str| -> String {
-        exercises.iter().find(|e| e.id == id).map(|e| e.name.clone()).unwrap_or_else(|| id.to_string())
+        exercises
+            .iter()
+            .find(|e| e.id == id)
+            .map(|e| e.name.clone())
+            .unwrap_or_else(|| id.to_string())
     };
 
     let workout_c = workout.clone();
@@ -71,7 +75,8 @@ fn render_workout(workout: &crate::models::Workout, exercises: &[crate::models::
         let mut custom = storage::load_custom_exercises();
         let defaults = data::default_exercises();
         for ex in &exercises_c {
-            let exists = custom.iter().any(|e| e.id == ex.id) || defaults.iter().any(|e| e.id == ex.id);
+            let exists =
+                custom.iter().any(|e| e.id == ex.id) || defaults.iter().any(|e| e.id == ex.id);
             if !exists {
                 custom.push(ex.clone());
             }
@@ -149,7 +154,11 @@ fn render_workout(workout: &crate::models::Workout, exercises: &[crate::models::
     }
 }
 
-fn render_routine(routine: &crate::models::Routine, exercises: &[crate::models::Exercise], imported: &UseStateHandle<bool>) -> Html {
+fn render_routine(
+    routine: &crate::models::Routine,
+    exercises: &[crate::models::Exercise],
+    imported: &UseStateHandle<bool>,
+) -> Html {
     let routine_c = routine.clone();
     let exercises_c = exercises.to_vec();
     let imported_c = imported.clone();
@@ -157,7 +166,8 @@ fn render_routine(routine: &crate::models::Routine, exercises: &[crate::models::
         let mut custom = storage::load_custom_exercises();
         let defaults = data::default_exercises();
         for ex in &exercises_c {
-            let exists = custom.iter().any(|e| e.id == ex.id) || defaults.iter().any(|e| e.id == ex.id);
+            let exists =
+                custom.iter().any(|e| e.id == ex.id) || defaults.iter().any(|e| e.id == ex.id);
             if !exists {
                 custom.push(ex.clone());
             }
@@ -218,7 +228,8 @@ fn render_exercise(exercise: &crate::models::Exercise, imported: &UseStateHandle
     let on_import = Callback::from(move |_| {
         let mut custom = storage::load_custom_exercises();
         let defaults = data::default_exercises();
-        let exists = custom.iter().any(|e| e.id == exercise_c.id) || defaults.iter().any(|e| e.id == exercise_c.id);
+        let exists = custom.iter().any(|e| e.id == exercise_c.id)
+            || defaults.iter().any(|e| e.id == exercise_c.id);
         if !exists {
             custom.push(exercise_c.clone());
         }

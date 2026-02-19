@@ -1,6 +1,8 @@
-use gloo::storage::{LocalStorage, Storage};
-use crate::models::{AppData, Exercise, Friend, Routine, TrustedDevice, UserConfig, Workout, BodyMetric};
 use crate::backup;
+use crate::models::{
+    AppData, BodyMetric, Exercise, Friend, Routine, TrustedDevice, UserConfig, Workout,
+};
+use gloo::storage::{LocalStorage, Storage};
 use std::cell::Cell;
 
 const WORKOUTS_KEY: &str = "treening_workouts";
@@ -148,13 +150,17 @@ pub fn export_csv() -> String {
 
     for w in &workouts {
         for we in &w.exercises {
-            let ex_name = exercises.iter()
+            let ex_name = exercises
+                .iter()
                 .find(|e| e.id == we.exercise_id)
                 .map(|e| e.name.clone())
                 .unwrap_or_else(|| we.exercise_id.clone());
             for (i, s) in we.sets.iter().enumerate() {
                 let dist = s.distance.map(|d| format!("{}", d)).unwrap_or_default();
-                let dur = s.duration_secs.map(|d| format!("{}", d)).unwrap_or_default();
+                let dur = s
+                    .duration_secs
+                    .map(|d| format!("{}", d))
+                    .unwrap_or_default();
                 let note = s.note.as_deref().unwrap_or("");
                 lines.push(format!(
                     "{},{},{},{},{},{},{},{},{},{},{}",
@@ -207,15 +213,14 @@ pub fn import_all_data(json: &str) -> Result<(), String> {
 pub fn try_restore_from_backup() {
     // Use raw get_item to check key existence — LocalStorage::get::<String> fails
     // for JSON objects/arrays, which would incorrectly trigger restore every time.
-    let storage = gloo::utils::window()
-        .local_storage()
-        .ok()
-        .flatten();
-    let has_data = storage.map(|s| {
-        s.get_item(WORKOUTS_KEY).ok().flatten().is_some()
-            || s.get_item(ROUTINES_KEY).ok().flatten().is_some()
-            || s.get_item(USER_CONFIG_KEY).ok().flatten().is_some()
-    }).unwrap_or(false);
+    let storage = gloo::utils::window().local_storage().ok().flatten();
+    let has_data = storage
+        .map(|s| {
+            s.get_item(WORKOUTS_KEY).ok().flatten().is_some()
+                || s.get_item(ROUTINES_KEY).ok().flatten().is_some()
+                || s.get_item(USER_CONFIG_KEY).ok().flatten().is_some()
+        })
+        .unwrap_or(false);
 
     if has_data {
         // LocalStorage has data, no need to restore
@@ -292,7 +297,10 @@ pub fn merge_all_data(json: &str) -> Result<(), String> {
     // Merge Trusted Devices (deduplicate by peer_id)
     let mut current_devices = load_trusted_devices();
     for incoming_d in incoming.trusted_devices {
-        if !current_devices.iter().any(|d| d.peer_id == incoming_d.peer_id) {
+        if !current_devices
+            .iter()
+            .any(|d| d.peer_id == incoming_d.peer_id)
+        {
             current_devices.push(incoming_d);
         }
     }

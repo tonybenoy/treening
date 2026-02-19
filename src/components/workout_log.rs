@@ -1,7 +1,9 @@
-use yew::prelude::*;
-use std::collections::{HashSet, HashMap};
-use crate::models::{Exercise, Workout, WorkoutExercise, WorkoutSet, ExerciseTrackingType, UnitSystem};
+use crate::models::{
+    Exercise, ExerciseTrackingType, UnitSystem, Workout, WorkoutExercise, WorkoutSet,
+};
 use crate::pages::workout::generate_warmup_sets;
+use std::collections::{HashMap, HashSet};
+use yew::prelude::*;
 
 /// Epley formula: weight * (1 + reps/30)
 fn estimate_1rm(weight: f64, reps: u32) -> f64 {
@@ -27,8 +29,12 @@ fn compute_plates(target: f64, bar: f64) -> Vec<(f64, u32)> {
 }
 
 /// Find the most recent previous workout that contains the given exercise_id.
-fn find_previous_exercise<'a>(previous_workouts: &'a [Workout], exercise_id: &str) -> Option<&'a WorkoutExercise> {
-    previous_workouts.iter()
+fn find_previous_exercise<'a>(
+    previous_workouts: &'a [Workout],
+    exercise_id: &str,
+) -> Option<&'a WorkoutExercise> {
+    previous_workouts
+        .iter()
         .rev()
         .flat_map(|w| w.exercises.iter())
         .find(|we| we.exercise_id == exercise_id)
@@ -36,7 +42,8 @@ fn find_previous_exercise<'a>(previous_workouts: &'a [Workout], exercise_id: &st
 
 /// Compute max weight ever lifted for an exercise across all previous workouts.
 fn exercise_pr_weight(previous_workouts: &[Workout], exercise_id: &str) -> f64 {
-    previous_workouts.iter()
+    previous_workouts
+        .iter()
         .flat_map(|w| w.exercises.iter())
         .filter(|we| we.exercise_id == exercise_id)
         .flat_map(|we| we.sets.iter())
@@ -79,7 +86,12 @@ pub fn workout_log(props: &Props) -> Html {
     {
         use_effect_with((), |_| {
             let document = gloo::utils::document();
-            if document.query_selector("#treening-confetti-style").ok().flatten().is_none() {
+            if document
+                .query_selector("#treening-confetti-style")
+                .ok()
+                .flatten()
+                .is_none()
+            {
                 if let Ok(style) = document.create_element("style") {
                     style.set_id("treening-confetti-style");
                     style.set_text_content(Some(
@@ -93,9 +105,8 @@ pub fn workout_log(props: &Props) -> Html {
         });
     }
 
-    let get_exercise = |id: &str| -> Option<&Exercise> {
-        props.all_exercises.iter().find(|e| e.id == id)
-    };
+    let get_exercise =
+        |id: &str| -> Option<&Exercise> { props.all_exercises.iter().find(|e| e.id == id) };
 
     let exercise_count = props.workout_exercises.len();
 

@@ -1,11 +1,11 @@
-use yew::prelude::*;
-use yew_router::prelude::*;
-use gloo::storage::{LocalStorage, Storage};
+use crate::components::share_modal::ShareModal;
 use crate::models::{Exercise, Workout, WorkoutSet};
 use crate::sharing::{self, ShareableData};
-use crate::components::share_modal::ShareModal;
 use crate::storage;
 use crate::Route;
+use gloo::storage::{LocalStorage, Storage};
+use yew::prelude::*;
+use yew_router::prelude::*;
 
 #[derive(Properties, PartialEq)]
 pub struct Props {
@@ -24,7 +24,9 @@ pub fn history_list(props: &Props) -> Html {
     let units = storage::load_user_config().unit_system;
 
     let find_exercise = |id: &str| -> String {
-        props.all_exercises.iter()
+        props
+            .all_exercises
+            .iter()
             .find(|e| e.id == id)
             .map(|e| e.name.clone())
             .unwrap_or_else(|| id.to_string())

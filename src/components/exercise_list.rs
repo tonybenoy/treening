@@ -1,5 +1,5 @@
-use yew::prelude::*;
 use crate::models::{Category, Exercise};
+use yew::prelude::*;
 
 #[derive(Properties, PartialEq)]
 pub struct Props {
@@ -16,21 +16,27 @@ pub fn exercise_list(props: &Props) -> Html {
     let search = use_state(String::new);
     let category_filter = use_state(|| None::<Category>);
 
-    let filtered: Vec<&Exercise> = props.exercises.iter().filter(|e| {
-        let search_match = if search.is_empty() {
-            true
-        } else {
-            let s = search.to_lowercase();
-            e.name.to_lowercase().contains(&s)
-                || e.muscle_groups.iter().any(|m| m.to_lowercase().contains(&s))
-                || e.equipment.to_string().to_lowercase().contains(&s)
-        };
-        let cat_match = match &*category_filter {
-            Some(cat) => e.category == *cat,
-            None => true,
-        };
-        search_match && cat_match
-    }).collect();
+    let filtered: Vec<&Exercise> = props
+        .exercises
+        .iter()
+        .filter(|e| {
+            let search_match = if search.is_empty() {
+                true
+            } else {
+                let s = search.to_lowercase();
+                e.name.to_lowercase().contains(&s)
+                    || e.muscle_groups
+                        .iter()
+                        .any(|m| m.to_lowercase().contains(&s))
+                    || e.equipment.to_string().to_lowercase().contains(&s)
+            };
+            let cat_match = match &*category_filter {
+                Some(cat) => e.category == *cat,
+                None => true,
+            };
+            search_match && cat_match
+        })
+        .collect();
 
     let on_search = {
         let search = search.clone();
@@ -59,10 +65,10 @@ pub fn exercise_list(props: &Props) -> Html {
                         let cf = category_filter.clone();
                         html! {
                             <button
-                                class={if cf.is_none() { 
-                                    "px-3 py-1 rounded-full text-sm bg-blue-600 text-white font-medium shadow-sm transition-colors" 
-                                } else { 
-                                    "px-3 py-1 rounded-full text-sm bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 border border-gray-200 dark:border-transparent hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors" 
+                                class={if cf.is_none() {
+                                    "px-3 py-1 rounded-full text-sm bg-blue-600 text-white font-medium shadow-sm transition-colors"
+                                } else {
+                                    "px-3 py-1 rounded-full text-sm bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 border border-gray-200 dark:border-transparent hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
                                 }}
                                 onclick={let cf = cf.clone(); Callback::from(move |_| cf.set(None))}
                             >{"All"}</button>
@@ -76,10 +82,10 @@ pub fn exercise_list(props: &Props) -> Html {
                     let label = cat.to_string();
                     html! {
                         <button
-                            class={if active { 
-                                "px-3 py-1 rounded-full text-sm bg-blue-600 text-white whitespace-nowrap font-medium shadow-sm transition-colors" 
-                            } else { 
-                                "px-3 py-1 rounded-full text-sm bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 border border-gray-200 dark:border-transparent whitespace-nowrap hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors" 
+                            class={if active {
+                                "px-3 py-1 rounded-full text-sm bg-blue-600 text-white whitespace-nowrap font-medium shadow-sm transition-colors"
+                            } else {
+                                "px-3 py-1 rounded-full text-sm bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 border border-gray-200 dark:border-transparent whitespace-nowrap hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
                             }}
                             onclick={Callback::from(move |_| cf.set(Some(cat_clone.clone())))}
                         >{label}</button>

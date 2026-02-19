@@ -1,7 +1,7 @@
-use yew::prelude::*;
+use crate::components::share_modal::ShareModal;
 use crate::models::{Exercise, Routine};
 use crate::sharing::{self, ShareableData};
-use crate::components::share_modal::ShareModal;
+use yew::prelude::*;
 
 #[derive(Properties, PartialEq)]
 pub struct Props {
@@ -19,7 +19,9 @@ pub fn routine_editor(props: &Props) -> Html {
     let share_target = use_state(|| None::<(ShareableData, String)>);
 
     let find_exercise = |id: &str| -> String {
-        props.all_exercises.iter()
+        props
+            .all_exercises
+            .iter()
             .find(|e| e.id == id)
             .map(|e| e.name.clone())
             .unwrap_or_else(|| id.to_string())

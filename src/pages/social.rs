@@ -1,10 +1,10 @@
-use yew::prelude::*;
-use yew_router::prelude::*;
+use crate::models::{Friend, FriendStats};
+use crate::storage;
+use qrcode_generator;
 use wasm_bindgen::prelude::*;
 use wasm_bindgen::JsCast;
-use crate::storage;
-use crate::models::{Friend, FriendStats};
-use qrcode_generator;
+use yew::prelude::*;
+use yew_router::prelude::*;
 
 #[wasm_bindgen]
 extern "C" {
@@ -46,8 +46,16 @@ fn setup_data_handler(conn: &DataConnection, friends: UseStateHandle<Vec<Friend>
         if let Some(msg) = data.as_string() {
             if let Ok(val) = serde_json::from_str::<serde_json::Value>(&msg) {
                 if val.get("type").and_then(|t| t.as_str()) == Some("stats_exchange") {
-                    let nickname = val.get("nickname").and_then(|n| n.as_str()).unwrap_or("Friend").to_string();
-                    let peer_id = val.get("peer_id").and_then(|p| p.as_str()).unwrap_or("").to_string();
+                    let nickname = val
+                        .get("nickname")
+                        .and_then(|n| n.as_str())
+                        .unwrap_or("Friend")
+                        .to_string();
+                    let peer_id = val
+                        .get("peer_id")
+                        .and_then(|p| p.as_str())
+                        .unwrap_or("")
+                        .to_string();
                     if let Some(stats) = val.get("stats") {
                         if let Ok(stats) = serde_json::from_value::<FriendStats>(stats.clone()) {
                             let mut current = (*friends).clone();
@@ -75,7 +83,8 @@ fn send_my_stats(conn: &DataConnection, my_stats: &FriendStats, nickname: &str, 
         "nickname": nickname,
         "peer_id": peer_id,
         "stats": my_stats
-    }).to_string();
+    })
+    .to_string();
     conn.send(&share_data);
 }
 
@@ -103,16 +112,18 @@ pub fn social_page() -> Html {
         let now = chrono::Local::now();
         let week_ago = now - chrono::Duration::days(7);
 
-        let this_week: Vec<_> = workouts.iter()
+        let this_week: Vec<_> = workouts
+            .iter()
             .filter(|w| {
                 if let Ok(dt) = chrono::NaiveDate::parse_from_str(&w.date, "%Y-%m-%d") {
                     dt >= week_ago.date_naive()
-                } else { false }
-            }).collect();
+                } else {
+                    false
+                }
+            })
+            .collect();
 
-        let total_volume: f64 = this_week.iter()
-            .map(|w| w.total_volume())
-            .sum();
+        let total_volume: f64 = this_week.iter().map(|w| w.total_volume()).sum();
 
         let latest_weight = storage::load_body_metrics().first().and_then(|m| m.weight);
 
@@ -254,7 +265,8 @@ pub fn social_page() -> Html {
                                 let friends_c = friends_storage.clone();
                                 let on_open_conn = Closure::wrap(Box::new(move || {
                                     send_my_stats(&conn_c, &stats, &nickname, &pid);
-                                }) as Box<dyn FnMut()>);
+                                })
+                                    as Box<dyn FnMut()>);
                                 conn.on_conn("open", on_open_conn.as_ref().unchecked_ref());
                                 on_open_conn.forget();
                                 setup_data_handler(&conn, friends_c);
@@ -264,7 +276,9 @@ pub fn social_page() -> Html {
                     friends_storage.set(new_friends);
                 }
             }) as Box<dyn FnMut(web_sys::StorageEvent)>);
-            window.add_event_listener_with_callback("storage", on_storage.as_ref().unchecked_ref()).ok();
+            window
+                .add_event_listener_with_callback("storage", on_storage.as_ref().unchecked_ref())
+                .ok();
             on_storage.forget();
 
             move || {
@@ -284,7 +298,9 @@ pub fn social_page() -> Html {
         let user_config = user_config.clone();
         Callback::from(move |_| {
             let id = (*friend_id_input).trim().to_string();
-            if id.is_empty() || id == user_config.peer_id { return; }
+            if id.is_empty() || id == user_config.peer_id {
+                return;
+            }
 
             let mut current = (*friends_state).clone();
             if !current.iter().any(|f| f.id == id) {
@@ -350,7 +366,12 @@ pub fn social_page() -> Html {
     };
 
     let render_qr = |data: &str| {
-        let result: Result<String, _> = qrcode_generator::to_svg_to_string(data, qrcode_generator::QrCodeEcc::Low, 400, None::<&str>);
+        let result: Result<String, _> = qrcode_generator::to_svg_to_string(
+            data,
+            qrcode_generator::QrCodeEcc::Low,
+            400,
+            None::<&str>,
+        );
         match result {
             Ok(svg) => {
                 let base64 = gloo::utils::window().btoa(&svg).unwrap_or_default();
@@ -360,7 +381,7 @@ pub fn social_page() -> Html {
                     </div>
                 }
             }
-            Err(_) => html! { <div>{"QR Error"}</div> }
+            Err(_) => html! { <div>{"QR Error"}</div> },
         }
     };
 

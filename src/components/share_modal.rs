@@ -1,5 +1,5 @@
-use yew::prelude::*;
 use crate::sharing::{self, ShareableData};
+use yew::prelude::*;
 
 #[derive(Properties, PartialEq, Clone)]
 pub struct Props {
@@ -95,7 +95,11 @@ pub fn share_modal(props: &Props) -> Html {
         })
         .forget();
     });
-    let text_label = if *copied_text { "Copied!" } else { "Copy as Text" };
+    let text_label = if *copied_text {
+        "Copied!"
+    } else {
+        "Copy as Text"
+    };
 
     let on_close = props.on_close.clone();
     let on_close2 = props.on_close.clone();

@@ -1,7 +1,7 @@
-use yew::prelude::*;
-use wasm_bindgen::JsCast;
-use wasm_bindgen::closure::Closure;
 use crate::storage;
+use wasm_bindgen::closure::Closure;
+use wasm_bindgen::JsCast;
+use yew::prelude::*;
 
 #[derive(Properties, PartialEq)]
 pub struct Props {
@@ -35,7 +35,7 @@ pub fn settings_panel(props: &Props) -> Html {
                 _ => crate::models::Theme::Dark,
             };
             storage::save_user_config(&new_config);
-            
+
             // Apply theme immediately with smooth transition
             let document = gloo::utils::document();
             let html = document.document_element().unwrap();
@@ -44,20 +44,31 @@ pub fn settings_panel(props: &Props) -> Html {
                 crate::models::Theme::Light => "theme-transitioning",
                 crate::models::Theme::System => {
                     let window = gloo::utils::window();
-                    let is_dark = window.match_media("(prefers-color-scheme: dark)").unwrap().unwrap().matches();
-                    if is_dark { "dark theme-transitioning" } else { "theme-transitioning" }
+                    let is_dark = window
+                        .match_media("(prefers-color-scheme: dark)")
+                        .unwrap()
+                        .unwrap()
+                        .matches();
+                    if is_dark {
+                        "dark theme-transitioning"
+                    } else {
+                        "theme-transitioning"
+                    }
                 }
                 crate::models::Theme::AmoledBlack => "dark amoled theme-transitioning",
             };
             let _ = html.set_attribute("class", theme_class);
             // Remove transitioning class after animation completes
-            let final_class = theme_class.replace(" theme-transitioning", "").replace("theme-transitioning", "");
+            let final_class = theme_class
+                .replace(" theme-transitioning", "")
+                .replace("theme-transitioning", "");
             gloo::timers::callback::Timeout::new(350, move || {
                 if let Some(html_el) = gloo::utils::document().document_element() {
                     let _ = html_el.set_attribute("class", final_class.trim());
                 }
-            }).forget();
-            
+            })
+            .forget();
+
             config.set(new_config);
         })
     };
@@ -130,7 +141,7 @@ pub fn settings_panel(props: &Props) -> Html {
                         <div class="font-medium text-gray-800 dark:text-gray-200">{"Social Features"}</div>
                         <div class="text-sm text-gray-500 dark:text-gray-400">{"Enable friend syncing and leaderboards"}</div>
                     </div>
-                    <button 
+                    <button
                         onclick={on_toggle_social}
                         class={classes!(
                             "relative", "inline-flex", "h-6", "w-11", "items-center", "rounded-full", "transition-colors", "focus:outline-none",
@@ -151,7 +162,7 @@ pub fn settings_panel(props: &Props) -> Html {
                         <div class="font-medium text-gray-800 dark:text-gray-200">{"App Theme"}</div>
                         <div class="text-sm text-gray-500 dark:text-gray-400">{"Choose your preferred appearance"}</div>
                     </div>
-                    <select 
+                    <select
                         onchange={on_change_theme}
                         class="bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm rounded-lg px-2 py-1 outline-none border border-gray-300 dark:border-transparent focus:ring-1 focus:ring-blue-500"
                     >

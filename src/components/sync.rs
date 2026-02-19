@@ -1,8 +1,8 @@
-use yew::prelude::*;
+use crate::models::TrustedDevice;
+use crate::storage;
 use wasm_bindgen::prelude::*;
 use wasm_bindgen::JsCast;
-use crate::storage;
-use crate::models::TrustedDevice;
+use yew::prelude::*;
 
 #[wasm_bindgen]
 extern "C" {
@@ -47,7 +47,11 @@ fn now_iso() -> String {
     date.to_iso_string().as_string().unwrap_or_default()
 }
 
-fn handle_sync_data(conn: &DataConnection, devices: UseStateHandle<Vec<TrustedDevice>>, status: UseStateHandle<String>) {
+fn handle_sync_data(
+    conn: &DataConnection,
+    devices: UseStateHandle<Vec<TrustedDevice>>,
+    status: UseStateHandle<String>,
+) {
     let devices = devices.clone();
     let status = status.clone();
     let on_data = Closure::wrap(Box::new(move |data: JsValue| {
@@ -57,8 +61,16 @@ fn handle_sync_data(conn: &DataConnection, devices: UseStateHandle<Vec<TrustedDe
                     if let Some(payload) = val.get("data").and_then(|d| d.as_str()) {
                         match storage::merge_all_data(payload) {
                             Ok(_) => {
-                                let remote_id = val.get("peer_id").and_then(|p| p.as_str()).unwrap_or("").to_string();
-                                let remote_name = val.get("name").and_then(|n| n.as_str()).unwrap_or("Device").to_string();
+                                let remote_id = val
+                                    .get("peer_id")
+                                    .and_then(|p| p.as_str())
+                                    .unwrap_or("")
+                                    .to_string();
+                                let remote_name = val
+                                    .get("name")
+                                    .and_then(|n| n.as_str())
+                                    .unwrap_or("Device")
+                                    .to_string();
                                 let now = now_iso();
 
                                 // Update last_synced for this device, or auto-add it
@@ -253,7 +265,8 @@ pub fn sync_panel() -> Html {
                                 let conn_c = conn.clone();
                                 let on_open_conn = Closure::wrap(Box::new(move || {
                                     send_sync_data(&conn_c);
-                                }) as Box<dyn FnMut()>);
+                                })
+                                    as Box<dyn FnMut()>);
                                 conn.on_conn("open", on_open_conn.as_ref().unchecked_ref());
                                 on_open_conn.forget();
                                 handle_sync_data(&conn, devices_c, status_c);
@@ -263,7 +276,9 @@ pub fn sync_panel() -> Html {
                     devices_storage.set(new_devs);
                 }
             }) as Box<dyn FnMut(web_sys::StorageEvent)>);
-            window.add_event_listener_with_callback("storage", on_storage.as_ref().unchecked_ref()).ok();
+            window
+                .add_event_listener_with_callback("storage", on_storage.as_ref().unchecked_ref())
+                .ok();
             on_storage.forget();
 
             // Cleanup
@@ -386,8 +401,16 @@ pub fn sync_panel() -> Html {
             let can_share = share_fn.as_ref().map(|v| v.is_function()).unwrap_or(false);
             if can_share {
                 let data = js_sys::Object::new();
-                let _ = js_sys::Reflect::set(&data, &"title".into(), &"Pair with my Treening app".into());
-                let _ = js_sys::Reflect::set(&data, &"text".into(), &"Pair your Treening app with mine to auto-sync!".into());
+                let _ = js_sys::Reflect::set(
+                    &data,
+                    &"title".into(),
+                    &"Pair with my Treening app".into(),
+                );
+                let _ = js_sys::Reflect::set(
+                    &data,
+                    &"text".into(),
+                    &"Pair your Treening app with mine to auto-sync!".into(),
+                );
                 let _ = js_sys::Reflect::set(&data, &"url".into(), &url.into());
                 let share = share_fn.unwrap();
                 let _ = js_sys::Function::from(share).call1(&navigator, &data);
@@ -432,8 +455,16 @@ pub fn sync_panel() -> Html {
     let status_color = match (*status).as_str() {
         "Online" => "text-green-600 dark:text-green-400 bg-green-100 dark:bg-green-900/30",
         "Synced!" => "text-green-600 dark:text-green-400 bg-green-100 dark:bg-green-900/30",
-        "Active in another tab" | "Peer offline" => "text-yellow-600 dark:text-yellow-400 bg-yellow-100 dark:bg-yellow-900/30",
-        "Connecting..." | "Syncing..." | "Connecting to new device..." | "Reconnecting..." | "Network issue — retrying..." => "text-blue-600 dark:text-blue-400 bg-blue-100 dark:bg-blue-900/30",
+        "Active in another tab" | "Peer offline" => {
+            "text-yellow-600 dark:text-yellow-400 bg-yellow-100 dark:bg-yellow-900/30"
+        }
+        "Connecting..."
+        | "Syncing..."
+        | "Connecting to new device..."
+        | "Reconnecting..."
+        | "Network issue — retrying..." => {
+            "text-blue-600 dark:text-blue-400 bg-blue-100 dark:bg-blue-900/30"
+        }
         _ => "text-red-600 dark:text-red-400 bg-red-100 dark:bg-red-900/30",
     };
 

@@ -1,8 +1,10 @@
-use yew::prelude::*;
-use std::collections::HashMap;
 use chrono::{Datelike, NaiveDate};
+use std::collections::HashMap;
+use yew::prelude::*;
 
-use crate::components::charts::{BarChart, CalendarHeatmap, HorizontalBarChart, LineChart, StatCard};
+use crate::components::charts::{
+    BarChart, CalendarHeatmap, HorizontalBarChart, LineChart, StatCard,
+};
 use crate::data::default_exercises;
 use crate::models::{Category, Exercise, UnitSystem, Workout, WorkoutExercise};
 use crate::storage;
@@ -76,10 +78,7 @@ fn category_color(cat: &Category) -> &'static str {
 
 /// Build ordered list of last N weeks as (year, week) keys + labels.
 fn last_n_weeks(workouts: &[Workout], n: usize) -> Vec<((i32, u32), String)> {
-    let latest = workouts
-        .iter()
-        .filter_map(|w| parse_date(&w.date))
-        .max();
+    let latest = workouts.iter().filter_map(|w| parse_date(&w.date)).max();
 
     let latest = match latest {
         Some(d) => d,
@@ -144,7 +143,9 @@ fn personal_records(workouts: &[Workout], exercises: &[Exercise]) -> Vec<Persona
         for we in &w.exercises {
             let max_w = exercise_max_weight(we);
             if max_w > 0.0 {
-                let entry = best.entry(we.exercise_id.clone()).or_insert((0.0, String::new()));
+                let entry = best
+                    .entry(we.exercise_id.clone())
+                    .or_insert((0.0, String::new()));
                 if max_w > entry.0 {
                     *entry = (max_w, w.date.clone());
                 }
@@ -161,7 +162,13 @@ fn personal_records(workouts: &[Workout], exercises: &[Exercise]) -> Vec<Persona
         })
         .collect();
 
-    records.sort_by(|a, b| b.date.cmp(&a.date).then(b.max_weight.partial_cmp(&a.max_weight).unwrap_or(std::cmp::Ordering::Equal)));
+    records.sort_by(|a, b| {
+        b.date.cmp(&a.date).then(
+            b.max_weight
+                .partial_cmp(&a.max_weight)
+                .unwrap_or(std::cmp::Ordering::Equal),
+        )
+    });
     records.truncate(10);
     records
 }
@@ -202,7 +209,9 @@ fn volume_per_category_per_week(
     cat_totals
         .into_iter()
         .filter_map(|(cat_name, _)| {
-            let cat = Category::all().into_iter().find(|c| c.to_string() == cat_name)?;
+            let cat = Category::all()
+                .into_iter()
+                .find(|c| c.to_string() == cat_name)?;
             let week_data = cat_week_vol.get(&cat_name)?;
             let points: Vec<(String, f64)> = weeks
                 .iter()
@@ -247,13 +256,13 @@ fn days_since_category(workouts: &[Workout], exercises: &[Exercise]) -> Vec<(Cat
 
 const MILESTONES: &[(u32, &str)] = &[
     (1, "\u{1f3c6}"),   // 🏆
-    (5, "\u{2b50}"),     // ⭐
-    (10, "\u{1f4aa}"),   // 💪
-    (25, "\u{1f525}"),   // 🔥
-    (50, "\u{1f48e}"),   // 💎
-    (100, "\u{1f451}"),  // 👑
-    (250, "\u{26a1}"),   // ⚡
-    (500, "\u{1f680}"),  // 🚀
+    (5, "\u{2b50}"),    // ⭐
+    (10, "\u{1f4aa}"),  // 💪
+    (25, "\u{1f525}"),  // 🔥
+    (50, "\u{1f48e}"),  // 💎
+    (100, "\u{1f451}"), // 👑
+    (250, "\u{26a1}"),  // ⚡
+    (500, "\u{1f680}"), // 🚀
 ];
 
 // ── Analytics Page ──────────────────────────────────────────────────────────
@@ -359,9 +368,7 @@ fn overview_tab(props: &OverviewProps) -> Html {
     }
     let workouts_per_week: Vec<(String, f64)> = weeks
         .iter()
-        .map(|(key, label)| {
-            (label.clone(), *week_counts.get(key).unwrap_or(&0.0))
-        })
+        .map(|(key, label)| (label.clone(), *week_counts.get(key).unwrap_or(&0.0)))
         .collect();
 
     // ── Volume per week (line chart)
@@ -373,9 +380,7 @@ fn overview_tab(props: &OverviewProps) -> Html {
     }
     let volume_per_week: Vec<(String, f64)> = weeks
         .iter()
-        .map(|(key, label)| {
-            (label.clone(), *week_volume.get(key).unwrap_or(&0.0))
-        })
+        .map(|(key, label)| (label.clone(), *week_volume.get(key).unwrap_or(&0.0)))
         .collect();
 
     // ── Muscle group distribution
@@ -411,7 +416,8 @@ fn overview_tab(props: &OverviewProps) -> Html {
 
     // ── Training frequency warnings
     let days_since = days_since_category(workouts, exercises);
-    let stale_cats: Vec<&(Category, i64)> = days_since.iter().filter(|(_, days)| *days > 7).collect();
+    let stale_cats: Vec<&(Category, i64)> =
+        days_since.iter().filter(|(_, days)| *days > 7).collect();
 
     html! {
         <div class="space-y-6">
@@ -610,7 +616,11 @@ fn progress_tab(props: &ProgressProps) -> Html {
 
         let mut relevant: Vec<&Workout> = workouts
             .iter()
-            .filter(|w| w.exercises.iter().any(|we| we.exercise_id == *selected_exercise))
+            .filter(|w| {
+                w.exercises
+                    .iter()
+                    .any(|we| we.exercise_id == *selected_exercise)
+            })
             .collect();
         relevant.sort_by(|a, b| a.date.cmp(&b.date));
 
@@ -626,7 +636,9 @@ fn progress_tab(props: &ProgressProps) -> Html {
                     };
 
                     // Compute max est. 1RM for this session
-                    let max_e1rm = we.sets.iter()
+                    let max_e1rm = we
+                        .sets
+                        .iter()
                         .filter(|s| s.completed && s.weight > 0.0 && s.reps > 0)
                         .map(|s| estimate_1rm(s.weight, s.reps))
                         .fold(0.0_f64, f64::max);
@@ -805,12 +817,14 @@ fn body_tab() -> Html {
         };
     }
 
-    let mut weight_data: Vec<(String, f64)> = metrics.iter()
+    let mut weight_data: Vec<(String, f64)> = metrics
+        .iter()
         .filter_map(|m| m.weight.map(|w| (m.date[5..].to_string(), w)))
         .collect();
     weight_data.sort_by(|a, b| a.0.cmp(&b.0));
 
-    let mut fat_data: Vec<(String, f64)> = metrics.iter()
+    let mut fat_data: Vec<(String, f64)> = metrics
+        .iter()
         .filter_map(|m| m.body_fat.map(|f| (m.date[5..].to_string(), f)))
         .collect();
     fat_data.sort_by(|a, b| a.0.cmp(&b.0));

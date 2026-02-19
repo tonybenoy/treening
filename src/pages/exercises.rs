@@ -1,12 +1,12 @@
-use yew::prelude::*;
-use crate::components::exercise_list::ExerciseList;
-use crate::components::exercise_detail::ExerciseDetail;
 use crate::components::custom_exercise::CustomExerciseForm;
+use crate::components::exercise_detail::ExerciseDetail;
+use crate::components::exercise_list::ExerciseList;
 use crate::components::share_modal::ShareModal;
+use crate::data;
 use crate::models::Exercise;
 use crate::sharing::{self, ShareableData};
 use crate::storage;
-use crate::data;
+use yew::prelude::*;
 
 #[function_component(ExercisesPage)]
 pub fn exercises_page() -> Html {

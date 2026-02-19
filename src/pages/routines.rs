@@ -1,11 +1,11 @@
-use yew::prelude::*;
-use gloo::storage::{LocalStorage, Storage};
 use crate::components::routine_editor::RoutineEditor;
+use crate::data;
 use crate::models::{Exercise, Routine};
 use crate::storage;
-use crate::data;
-use yew_router::prelude::*;
 use crate::Route;
+use gloo::storage::{LocalStorage, Storage};
+use yew::prelude::*;
+use yew_router::prelude::*;
 
 #[function_component(RoutinesPage)]
 pub fn routines_page() -> Html {

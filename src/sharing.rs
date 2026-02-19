@@ -1,12 +1,20 @@
-use serde::{Deserialize, Serialize};
 use crate::models::{Exercise, Routine, Workout};
+use serde::{Deserialize, Serialize};
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
 #[serde(tag = "type")]
 pub enum ShareableData {
-    Workout { workout: Workout, exercises: Vec<Exercise> },
-    Routine { routine: Routine, exercises: Vec<Exercise> },
-    Exercise { exercise: Exercise },
+    Workout {
+        workout: Workout,
+        exercises: Vec<Exercise>,
+    },
+    Routine {
+        routine: Routine,
+        exercises: Vec<Exercise>,
+    },
+    Exercise {
+        exercise: Exercise,
+    },
 }
 
 pub fn encode(data: &ShareableData) -> Result<String, String> {
@@ -40,7 +48,11 @@ pub fn build_share_url(data: &ShareableData) -> Result<String, String> {
 }
 
 pub fn collect_workout_exercises(workout: &Workout, all_exercises: &[Exercise]) -> Vec<Exercise> {
-    let ids: Vec<&str> = workout.exercises.iter().map(|we| we.exercise_id.as_str()).collect();
+    let ids: Vec<&str> = workout
+        .exercises
+        .iter()
+        .map(|we| we.exercise_id.as_str())
+        .collect();
     all_exercises
         .iter()
         .filter(|e| ids.contains(&e.id.as_str()))
@@ -82,17 +94,34 @@ pub fn format_workout_text(workout: &Workout, exercises: &[Exercise]) -> String 
             .find(|e| e.id == we.exercise_id)
             .map(|e| e.name.as_str())
             .unwrap_or(&we.exercise_id);
-        let superset_tag = if we.superset_group.is_some() { " [Superset]" } else { "" };
+        let superset_tag = if we.superset_group.is_some() {
+            " [Superset]"
+        } else {
+            ""
+        };
         lines.push(format!("  {}{}", name, superset_tag));
         for (i, s) in we.sets.iter().enumerate() {
             if s.completed {
                 let mut set_line = if let Some(dist) = s.distance {
                     let dur = s.duration_secs.unwrap_or(0);
-                    format!("    Set {}: {:.1}{} / {}:{:02}", i + 1, units.display_distance(dist), dl, dur / 60, dur % 60)
+                    format!(
+                        "    Set {}: {:.1}{} / {}:{:02}",
+                        i + 1,
+                        units.display_distance(dist),
+                        dl,
+                        dur / 60,
+                        dur % 60
+                    )
                 } else if let Some(secs) = s.duration_secs {
                     format!("    Set {}: {}:{:02}", i + 1, secs / 60, secs % 60)
                 } else {
-                    format!("    Set {}: {:.1}{} x {}", i + 1, units.display_weight(s.weight), wl, s.reps)
+                    format!(
+                        "    Set {}: {:.1}{} x {}",
+                        i + 1,
+                        units.display_weight(s.weight),
+                        wl,
+                        s.reps
+                    )
                 };
                 if let Some(ref note) = s.note {
                     if !note.is_empty() {
@@ -110,7 +139,11 @@ pub fn format_workout_text(workout: &Workout, exercises: &[Exercise]) -> String 
     let total_vol = workout.total_volume();
     if total_vol > 0.0 {
         lines.push(String::new());
-        lines.push(format!("Total volume: {:.0} {}", units.display_weight(total_vol), wl));
+        lines.push(format!(
+            "Total volume: {:.0} {}",
+            units.display_weight(total_vol),
+            wl
+        ));
     }
     lines.push(String::new());
     lines.push("Shared from Treening - https://treen.ing/".to_string());
