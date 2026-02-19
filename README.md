@@ -4,6 +4,8 @@
 
 Treening is a modern, offline-capable gym workout tracker built with Rust and WebAssembly. It is designed to be fast, private, and easy to use directly in your browser or installed as a Progressive Web App (PWA).
 
+> **Why "Treening"?** The name comes from the Estonian word *treening*, meaning "training" or "workout". It felt like the perfect fit for a no-nonsense workout tracker — and the domain [treen.ing](https://treen.ing/) was too good to pass up.
+
 ## Features
 
 - **Workout Logging:** Track your sets, reps, and weights in real-time.

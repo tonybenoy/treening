@@ -167,6 +167,10 @@ const FAQS: &[FaqItem] = &[
         answer: "Yes! The source code is available on GitHub at https://github.com/tonybenoy/treening. It is built using Rust and WebAssembly for maximum performance and privacy. Contributions are very welcome!",
     },
     FaqItem {
+        question: "What does 'Treening' mean?",
+        answer: "Treening is an Estonian word meaning 'training' or 'workout'. It felt like the perfect name for a no-nonsense workout tracker \u{2014} and the domain treen.ing was too good to pass up.",
+    },
+    FaqItem {
         question: "Why was Treening built?",
         answer: "After losing 20 kg and hitting a weight loss plateau, the developer started going to the gym but couldn\u{2019}t find a workout tracker that was both free and subscription-free. So Treening was built in a day using Claude Code and Gemini to solve that problem.",
     },
