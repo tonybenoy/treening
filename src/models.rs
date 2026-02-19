@@ -207,6 +207,84 @@ pub enum Theme {
     System,
 }
 
+#[derive(Clone, Debug, Default, Serialize, Deserialize, PartialEq)]
+pub enum UnitSystem {
+    #[default]
+    Metric,
+    Imperial,
+}
+
+impl UnitSystem {
+    /// Convert a weight from kg (storage) to display unit
+    pub fn display_weight(&self, kg: f64) -> f64 {
+        match self {
+            UnitSystem::Metric => kg,
+            UnitSystem::Imperial => kg * 2.20462,
+        }
+    }
+
+    /// Convert a weight from display unit to kg (storage)
+    pub fn to_kg(&self, val: f64) -> f64 {
+        match self {
+            UnitSystem::Metric => val,
+            UnitSystem::Imperial => val / 2.20462,
+        }
+    }
+
+    /// Convert a distance from km (storage) to display unit
+    pub fn display_distance(&self, km: f64) -> f64 {
+        match self {
+            UnitSystem::Metric => km,
+            UnitSystem::Imperial => km * 0.621371,
+        }
+    }
+
+    /// Convert a distance from display unit to km (storage)
+    pub fn to_km(&self, val: f64) -> f64 {
+        match self {
+            UnitSystem::Metric => val,
+            UnitSystem::Imperial => val / 0.621371,
+        }
+    }
+
+    pub fn weight_label(&self) -> &'static str {
+        match self {
+            UnitSystem::Metric => "kg",
+            UnitSystem::Imperial => "lbs",
+        }
+    }
+
+    pub fn distance_label(&self) -> &'static str {
+        match self {
+            UnitSystem::Metric => "km",
+            UnitSystem::Imperial => "mi",
+        }
+    }
+
+    pub fn height_label(&self) -> &'static str {
+        match self {
+            UnitSystem::Metric => "cm",
+            UnitSystem::Imperial => "in",
+        }
+    }
+
+    /// Convert height from cm (storage) to display unit
+    pub fn display_height(&self, cm: f64) -> f64 {
+        match self {
+            UnitSystem::Metric => cm,
+            UnitSystem::Imperial => cm / 2.54,
+        }
+    }
+
+    /// Convert height from display unit to cm (storage)
+    pub fn to_cm(&self, val: f64) -> f64 {
+        match self {
+            UnitSystem::Metric => val,
+            UnitSystem::Imperial => val * 2.54,
+        }
+    }
+}
+
 
 #[derive(Clone, Debug, Serialize, Deserialize, PartialEq)]
 pub struct UserConfig {
@@ -216,6 +294,8 @@ pub struct UserConfig {
     pub social_enabled: bool,
     #[serde(default)]
     pub theme: Theme,
+    #[serde(default)]
+    pub unit_system: UnitSystem,
     #[serde(default)]
     pub height: Option<f64>,
     #[serde(default)]

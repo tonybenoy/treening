@@ -411,6 +411,7 @@ pub fn workout_page() -> Html {
                 bar_weight={config.bar_weight}
                 on_set_completed={on_set_completed}
                 on_before_destructive={on_before_destructive}
+                unit_system={config.unit_system.clone()}
             />
 
             <button

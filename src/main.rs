@@ -6,6 +6,7 @@ mod sharing;
 mod components;
 mod pages;
 
+use wasm_bindgen::JsCast;
 use yew::prelude::*;
 use yew_router::prelude::*;
 
@@ -165,5 +166,33 @@ fn app() -> Html {
 
 fn main() {
     wasm_logger::init(wasm_logger::Config::default());
+
+    // Prevent swipe-back from closing the PWA by keeping a safety history entry.
+    // When the user would "leave" the app (popstate with no more back entries),
+    // we push them back to the home page instead.
+    let window = gloo::utils::window();
+    let _ = window.history().unwrap().replace_state_with_url(
+        &wasm_bindgen::JsValue::from_str("app"),
+        "",
+        Some(&window.location().href().unwrap_or_default()),
+    );
+    let on_popstate = wasm_bindgen::closure::Closure::wrap(Box::new(move |_e: web_sys::Event| {
+        let w = gloo::utils::window();
+        let hash = w.location().hash().unwrap_or_default();
+        // If hash is empty or just "#", user tried to go back past the app root
+        if hash.is_empty() || hash == "#" || hash == "#/" {
+            let _ = w.history().unwrap().push_state_with_url(
+                &wasm_bindgen::JsValue::from_str("app"),
+                "",
+                Some("/#/"),
+            );
+        }
+    }) as Box<dyn FnMut(web_sys::Event)>);
+    let _ = window.add_event_listener_with_callback(
+        "popstate",
+        on_popstate.as_ref().unchecked_ref(),
+    );
+    on_popstate.forget();
+
     yew::Renderer::<App>::new().render();
 }

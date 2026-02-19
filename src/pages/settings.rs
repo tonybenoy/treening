@@ -4,7 +4,7 @@ use wasm_bindgen::prelude::*;
 use crate::components::settings::SettingsPanel;
 use crate::components::sync::SyncPanel;
 use crate::components::custom_exercise::CustomExerciseForm;
-use crate::models::{Exercise, BodyMetric};
+use crate::models::{Exercise, BodyMetric, UnitSystem};
 use crate::storage;
 use crate::Route;
 
@@ -97,20 +97,25 @@ fn install_button() -> Html {
 fn profile_section() -> Html {
     let config = use_state(storage::load_user_config);
     let nickname = use_state(|| config.nickname.clone());
-    let height = use_state(|| config.height.map(|h| h.to_string()).unwrap_or_default());
+    let height = use_state(|| config.height.map(|h| config.unit_system.display_height(h).to_string()).unwrap_or_default());
     let birth_date = use_state(|| config.birth_date.clone().unwrap_or_default());
     let gender = use_state(|| config.gender.clone().unwrap_or_default());
     let rest_seconds = use_state(|| config.rest_seconds.to_string());
-    let bar_weight = use_state(|| config.bar_weight.to_string());
+    let unit_system = use_state(|| config.unit_system.clone());
+    let bar_weight = use_state(|| {
+        let bw = config.unit_system.display_weight(config.bar_weight);
+        format!("{:.1}", bw)
+    });
 
     let has_changes = {
         let c = &*config;
         *nickname != c.nickname
-            || *height != c.height.map(|h| h.to_string()).unwrap_or_default()
+            || *height != c.height.map(|h| c.unit_system.display_height(h).to_string()).unwrap_or_default()
             || *birth_date != c.birth_date.clone().unwrap_or_default()
             || *gender != c.gender.clone().unwrap_or_default()
             || *rest_seconds != c.rest_seconds.to_string()
-            || *bar_weight != c.bar_weight.to_string()
+            || *unit_system != c.unit_system
+            || *bar_weight != format!("{:.1}", c.unit_system.display_weight(c.bar_weight))
     };
 
     let on_save = {
@@ -121,14 +126,16 @@ fn profile_section() -> Html {
         let gender = gender.clone();
         let rest_seconds = rest_seconds.clone();
         let bar_weight = bar_weight.clone();
+        let unit_system = unit_system.clone();
         Callback::from(move |_| {
             let mut new_config = (*config_state).clone();
             new_config.nickname = (*nickname).clone();
-            new_config.height = height.parse::<f64>().ok();
+            new_config.unit_system = (*unit_system).clone();
+            new_config.height = height.parse::<f64>().ok().map(|h| unit_system.to_cm(h));
             new_config.birth_date = Some((*birth_date).clone()).filter(|s| !s.is_empty());
             new_config.gender = Some((*gender).clone()).filter(|s| !s.is_empty());
             new_config.rest_seconds = rest_seconds.parse::<u32>().unwrap_or(90);
-            new_config.bar_weight = bar_weight.parse::<f64>().unwrap_or(20.0);
+            new_config.bar_weight = unit_system.to_kg(bar_weight.parse::<f64>().unwrap_or(20.0));
             storage::save_user_config(&new_config);
             config_state.set(new_config);
         })
@@ -147,8 +154,21 @@ fn profile_section() -> Html {
                         oninput={let n = nickname.clone(); Callback::from(move |e: InputEvent| n.set(e.target_unchecked_into::<web_sys::HtmlInputElement>().value()))}
                     />
                 </div>
+                <div class="col-span-2">
+                    <label class="block text-[10px] uppercase font-bold text-gray-500 mb-1">{"Units"}</label>
+                    <select
+                        class="w-full bg-white dark:bg-gray-700 border border-gray-200 dark:border-transparent rounded-lg px-3 py-2 text-sm text-gray-900 dark:text-white outline-none focus:ring-1 focus:ring-blue-500"
+                        onchange={let u = unit_system.clone(); Callback::from(move |e: Event| {
+                            let val = e.target_unchecked_into::<web_sys::HtmlSelectElement>().value();
+                            u.set(if val == "Imperial" { UnitSystem::Imperial } else { UnitSystem::Metric });
+                        })}
+                    >
+                        <option value="Metric" selected={*unit_system == UnitSystem::Metric}>{"Metric (kg, km, cm)"}</option>
+                        <option value="Imperial" selected={*unit_system == UnitSystem::Imperial}>{"Imperial (lbs, mi, in)"}</option>
+                    </select>
+                </div>
                 <div>
-                    <label class="block text-[10px] uppercase font-bold text-gray-500 mb-1">{"Height (cm)"}</label>
+                    <label class="block text-[10px] uppercase font-bold text-gray-500 mb-1">{format!("Height ({})", unit_system.height_label())}</label>
                     <input
                         type="number" autocomplete="off"
                         class="w-full bg-white dark:bg-gray-700 border border-gray-200 dark:border-transparent rounded-lg px-3 py-2 text-sm text-gray-900 dark:text-white outline-none focus:ring-1 focus:ring-blue-500"
@@ -187,7 +207,7 @@ fn profile_section() -> Html {
                     />
                 </div>
                 <div>
-                    <label class="block text-[10px] uppercase font-bold text-gray-500 mb-1">{"Bar Weight (kg)"}</label>
+                    <label class="block text-[10px] uppercase font-bold text-gray-500 mb-1">{format!("Bar Weight ({})", unit_system.weight_label())}</label>
                     <input
                         type="number" step="0.5" autocomplete="off"
                         class="w-full bg-white dark:bg-gray-700 border border-gray-200 dark:border-transparent rounded-lg px-3 py-2 text-sm text-gray-900 dark:text-white outline-none focus:ring-1 focus:ring-blue-500"
@@ -215,19 +235,21 @@ fn body_metrics_section() -> Html {
     let weight = use_state(String::new);
     let body_fat = use_state(String::new);
     let show_form = use_state(|| false);
+    let units = storage::load_user_config().unit_system;
 
     let on_add = {
         let metrics_state = metrics.clone();
         let weight = weight.clone();
         let body_fat = body_fat.clone();
         let show = show_form.clone();
+        let units = units.clone();
         Callback::from(move |_| {
             if weight.is_empty() { return; }
             let mut new_metrics = (*metrics_state).clone();
             new_metrics.push(BodyMetric {
                 id: uuid::Uuid::new_v4().to_string(),
                 date: chrono::Local::now().format("%Y-%m-%d").to_string(),
-                weight: weight.parse().ok(),
+                weight: weight.parse::<f64>().ok().map(|w| units.to_kg(w)),
                 body_fat: body_fat.parse().ok(),
             });
             storage::save_body_metrics(&new_metrics);
@@ -266,7 +288,7 @@ fn body_metrics_section() -> Html {
                     <div class="bg-gray-100 dark:bg-gray-800 rounded-xl p-4 border border-blue-500/30 space-y-3 shadow-sm transition-colors">
                         <div class="grid grid-cols-2 gap-3">
                             <div>
-                                <label class="block text-[10px] uppercase font-bold text-gray-500 mb-1">{"Weight (kg)"}</label>
+                                <label class="block text-[10px] uppercase font-bold text-gray-500 mb-1">{format!("Weight ({})", units.weight_label())}</label>
                                 <input
                                     type="number" step="0.1"
                                     class="w-full bg-white dark:bg-gray-700 border border-gray-200 dark:border-transparent rounded-lg px-3 py-2 text-sm text-gray-900 dark:text-white outline-none focus:ring-1 focus:ring-blue-500"
@@ -300,7 +322,7 @@ fn body_metrics_section() -> Html {
                         <div class="bg-gray-100 dark:bg-gray-800 rounded-xl p-3 flex justify-between items-center border border-gray-200 dark:border-transparent transition-colors shadow-xs">
                             <div>
                                 <div class="text-sm font-bold text-gray-900 dark:text-gray-100">
-                                    {m.weight.map(|w| format!("{} kg", w)).unwrap_or_else(|| "--".to_string())}
+                                    {m.weight.map(|w| format!("{:.1} {}", units.display_weight(w), units.weight_label())).unwrap_or_else(|| "--".to_string())}
                                     {m.body_fat.map(|bf| format!(" • {}% fat", bf)).unwrap_or_default()}
                                 </div>
                                 <div class="text-[10px] text-gray-500 dark:text-gray-500 font-mono uppercase tracking-wider">{&m.date}</div>
@@ -448,23 +470,28 @@ pub fn settings_page() -> Html {
                 </a>
             </div>
 
-            <div class="bg-gray-100 dark:bg-gray-800 rounded-2xl p-4 border border-gray-200 dark:border-transparent shadow-sm transition-colors space-y-3">
-                <h3 class="font-semibold text-gray-900 dark:text-gray-100">{"About Treening"}</h3>
-                <p class="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
-                    {"Treening was born out of personal need. After losing 20 kg and hitting a weight loss plateau, I started hitting the gym \u{2014} but couldn't find a single workout tracker that was both free and subscription-free. So I built one myself in a day using Claude Code and Gemini."}
-                </p>
-                <p class="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
-                    {"This is a side project built to scratch my own itch, so I may not be able to address feature requests or bug reports right away \u{2014} but I'll do my best. The easiest way to reach out is by opening an issue on GitHub:"}
-                </p>
-                <a href="https://github.com/tonybenoy/treening/issues" target="_blank" rel="noopener noreferrer"
-                   class="inline-flex items-center gap-1 text-sm text-blue-600 dark:text-blue-400 hover:underline font-medium">
-                    {"github.com/tonybenoy/treening/issues"}
-                    <span>{"→"}</span>
-                </a>
-                <p class="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
-                    {"Even better \u{2014} if you can fix the issue yourself and submit a pull request, that would be amazing! Contributions are always welcome."}
-                </p>
-            </div>
+            <details class="group bg-gray-100 dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-transparent shadow-sm transition-colors">
+                <summary class="px-4 py-4 cursor-pointer font-semibold text-gray-900 dark:text-gray-100 list-none flex justify-between items-center">
+                    {"About Treening"}
+                    <span class="text-gray-400 group-open:rotate-180 transition-transform">{"\u{25be}"}</span>
+                </summary>
+                <div class="px-4 pb-4 space-y-3 border-t border-gray-200 dark:border-gray-700 pt-3 mt-1">
+                    <p class="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
+                        {"Treening was born out of personal need. After losing 20 kg and hitting a weight loss plateau, I started hitting the gym \u{2014} but couldn't find a single workout tracker that was both free and subscription-free. So I built one myself in a day using Claude Code and Gemini."}
+                    </p>
+                    <p class="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
+                        {"This is a side project built to scratch my own itch, so I may not be able to address feature requests or bug reports right away \u{2014} but I'll do my best. The easiest way to reach out is by opening an issue on GitHub:"}
+                    </p>
+                    <a href="https://github.com/tonybenoy/treening/issues" target="_blank" rel="noopener noreferrer"
+                       class="inline-flex items-center gap-1 text-sm text-blue-600 dark:text-blue-400 hover:underline font-medium">
+                        {"github.com/tonybenoy/treening/issues"}
+                        <span>{"→"}</span>
+                    </a>
+                    <p class="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
+                        {"Even better \u{2014} if you can fix the issue yourself and submit a pull request, that would be amazing! Contributions are always welcome."}
+                    </p>
+                </div>
+            </details>
         </div>
     }
 }

@@ -4,7 +4,7 @@ use chrono::{Datelike, NaiveDate};
 
 use crate::components::charts::{BarChart, CalendarHeatmap, HorizontalBarChart, LineChart, StatCard};
 use crate::data::default_exercises;
-use crate::models::{Category, Exercise, Workout, WorkoutExercise};
+use crate::models::{Category, Exercise, UnitSystem, Workout, WorkoutExercise};
 use crate::storage;
 
 // ── Helpers ─────────────────────────────────────────────────────────────────
@@ -263,6 +263,7 @@ pub fn analytics_page() -> Html {
     let workouts = use_state(storage::load_workouts);
     let routines = use_state(storage::load_routines);
     let exercises = use_memo((), |_| all_exercises());
+    let units = use_memo((), |_| storage::load_user_config().unit_system);
     let active_tab = use_state(|| 0u8);
 
     let tab_click = |tab: u8| {
@@ -289,8 +290,8 @@ pub fn analytics_page() -> Html {
             </div>
 
             { match *active_tab {
-                0 => html! { <OverviewTab workouts={(*workouts).clone()} exercises={(*exercises).clone()} /> },
-                1 => html! { <ProgressTab workouts={(*workouts).clone()} exercises={(*exercises).clone()} routines={(*routines).clone()} /> },
+                0 => html! { <OverviewTab workouts={(*workouts).clone()} exercises={(*exercises).clone()} units={(*units).clone()} /> },
+                1 => html! { <ProgressTab workouts={(*workouts).clone()} exercises={(*exercises).clone()} routines={(*routines).clone()} units={(*units).clone()} /> },
                 _ => html! { <BodyTab /> },
             }}
         </div>
@@ -303,6 +304,8 @@ pub fn analytics_page() -> Html {
 struct OverviewProps {
     workouts: Vec<Workout>,
     exercises: Vec<Exercise>,
+    #[prop_or_default]
+    units: UnitSystem,
 }
 
 #[function_component(OverviewTab)]
@@ -415,7 +418,7 @@ fn overview_tab(props: &OverviewProps) -> Html {
             // Stat cards
             <div class="grid grid-cols-2 gap-3">
                 <StatCard label="Total Workouts" value={format!("{}", total_workouts)} icon="\u{1f3cb}" />
-                <StatCard label="Total Volume (kg)" value={volume_display} icon="\u{1f4aa}" />
+                <StatCard label={format!("Total Volume ({})", props.units.weight_label())} value={volume_display} icon="\u{1f4aa}" />
                 <StatCard label="Day Streak" value={format!("{}", streak)} icon="\u{1f525}" />
                 <StatCard label="Avg Duration" value={format!("{}m", avg_duration)} icon="\u{23f1}" />
             </div>
@@ -488,7 +491,7 @@ fn overview_tab(props: &OverviewProps) -> Html {
 
             // Volume over time
             <div class="bg-gray-100 dark:bg-gray-800 rounded-xl p-4 border border-gray-200 dark:border-transparent transition-colors shadow-sm">
-                <LineChart data={volume_per_week} title="Volume Per Week (kg)" height={180} color="#10b981" />
+                <LineChart data={volume_per_week} title={format!("Volume Per Week ({})", props.units.weight_label())} height={180} color="#10b981" />
             </div>
 
             // Volume per muscle group over time (collapsible)
@@ -535,7 +538,7 @@ fn overview_tab(props: &OverviewProps) -> Html {
                                 <div class="flex justify-between items-center text-sm">
                                     <span class="text-gray-700 dark:text-gray-300 truncate mr-2">{&pr.exercise_name}</span>
                                     <div class="flex items-center gap-2 flex-shrink-0">
-                                        <span class="text-yellow-600 dark:text-yellow-400 font-bold">{format!("{:.1} kg", pr.max_weight)}</span>
+                                        <span class="text-yellow-600 dark:text-yellow-400 font-bold">{format!("{:.1} {}", props.units.display_weight(pr.max_weight), props.units.weight_label())}</span>
                                         <span class="text-gray-500 text-xs">{&pr.date}</span>
                                     </div>
                                 </div>
@@ -555,6 +558,8 @@ struct ProgressProps {
     workouts: Vec<Workout>,
     exercises: Vec<Exercise>,
     routines: Vec<crate::models::Routine>,
+    #[prop_or_default]
+    units: UnitSystem,
 }
 
 #[function_component(ProgressTab)]
@@ -706,13 +711,16 @@ fn progress_tab(props: &ProgressProps) -> Html {
                         ("\u{2192}", "text-gray-400")
                     };
 
+                    let wl = props.units.weight_label();
+                    let d_last = props.units.display_weight(last);
+                    let d_diff = props.units.display_weight(diff);
                     Some(html! {
                         <div class="flex justify-between text-xs">
                             <span class="text-gray-400 truncate mr-2">{name}</span>
                             <span class={color}>
-                                {format!("{:.1}kg ", last)}{arrow}
+                                {format!("{:.1}{} ", d_last, wl)}{arrow}
                                 if diff.abs() > 0.0 {
-                                    <span class="text-gray-500">{format!(" ({:+.1})", diff)}</span>
+                                    <span class="text-gray-500">{format!(" ({:+.1})", d_diff)}</span>
                                 }
                             </span>
                         </div>
@@ -756,15 +764,15 @@ fn progress_tab(props: &ProgressProps) -> Html {
                 </select>
 
                 if !weight_data.is_empty() {
-                    <LineChart data={weight_data} title="Max Weight Per Session (kg)" height={180} color="#f59e0b" />
+                    <LineChart data={weight_data} title={format!("Max Weight Per Session ({})", props.units.weight_label())} height={180} color="#f59e0b" />
                 }
 
                 if !volume_data.is_empty() {
-                    <LineChart data={volume_data} title="Volume Per Session (kg)" height={180} color="#8b5cf6" />
+                    <LineChart data={volume_data} title={format!("Volume Per Session ({})", props.units.weight_label())} height={180} color="#8b5cf6" />
                 }
 
                 if !e1rm_data.is_empty() {
-                    <LineChart data={e1rm_data} title="Est. 1RM Per Session (kg)" height={180} color="#ec4899" />
+                    <LineChart data={e1rm_data} title={format!("Est. 1RM Per Session ({})", props.units.weight_label())} height={180} color="#ec4899" />
                 }
             </div>
 
@@ -785,6 +793,7 @@ fn progress_tab(props: &ProgressProps) -> Html {
 fn body_tab() -> Html {
     let metrics = storage::load_body_metrics();
     let config = storage::load_user_config();
+    let units = &config.unit_system;
 
     if metrics.is_empty() {
         return html! {
@@ -817,13 +826,13 @@ fn body_tab() -> Html {
     html! {
         <div class="space-y-6">
             <div class="grid grid-cols-2 gap-3">
-                <StatCard label="Latest Weight" value={latest_weight.map(|w| format!("{}kg", w)).unwrap_or_else(|| "--".to_string())} icon="\u{2696}" />
+                <StatCard label="Latest Weight" value={latest_weight.map(|w| format!("{:.1}{}", units.display_weight(w), units.weight_label())).unwrap_or_else(|| "--".to_string())} icon="\u{2696}" />
                 <StatCard label="BMI" value={bmi.map(|b| format!("{:.1}", b)).unwrap_or_else(|| "--".to_string())} icon="\u{1f4cf}" />
             </div>
 
             if !weight_data.is_empty() {
                 <div class="bg-gray-100 dark:bg-gray-800 rounded-xl p-4 border border-gray-200 dark:border-transparent transition-colors shadow-sm">
-                    <LineChart data={weight_data} title="Weight Progress (kg)" height={180} color="#3b82f6" />
+                    <LineChart data={weight_data} title={format!("Weight Progress ({})", units.weight_label())} height={180} color="#3b82f6" />
                 </div>
             }
 

@@ -103,8 +103,12 @@ const FAQS: &[FaqItem] = &[
         answer: "Yes. In the History tab, you can expand any workout and tap 'Edit Workout' to change the name, delete exercises, or update sets and reps.",
     },
     FaqItem {
+        question: "Why is Treening free? What\u{2019}s the catch?",
+        answer: "There is no catch. Most workout apps charge subscriptions because they run servers, hire trainers to write programs, and collect your data to sell or use for marketing. Treening has none of that \u{2014} no servers, no accounts, no data collection. Your data never leaves your device. The entire app runs in your browser as a static file, so it costs almost nothing to host. It was built out of frustration with paid apps that gate basic features like workout logging behind a paywall.",
+    },
+    FaqItem {
         question: "Does Treening collect any data?",
-        answer: "No. Treening does not collect any data. Everything stays on your device.",
+        answer: "No. Treening does not collect any data. There are no analytics, no tracking pixels, no cookies, and no server-side storage. Everything stays on your device. When you sync between devices, data goes directly peer-to-peer \u{2014} it never touches a server.",
     },
     FaqItem {
         question: "Can I reorder exercises during a workout?",

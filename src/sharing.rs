@@ -65,6 +65,9 @@ pub fn collect_routine_exercises(routine: &Routine, all_exercises: &[Exercise]) 
 }
 
 pub fn format_workout_text(workout: &Workout, exercises: &[Exercise]) -> String {
+    let units = crate::storage::load_user_config().unit_system;
+    let wl = units.weight_label();
+    let dl = units.distance_label();
     let mut lines = Vec::new();
     lines.push(format!("Workout: {}", workout.name));
     lines.push(format!("Date: {}", workout.date));
@@ -85,11 +88,11 @@ pub fn format_workout_text(workout: &Workout, exercises: &[Exercise]) -> String 
             if s.completed {
                 let mut set_line = if let Some(dist) = s.distance {
                     let dur = s.duration_secs.unwrap_or(0);
-                    format!("    Set {}: {:.1}km / {}:{:02}", i + 1, dist, dur / 60, dur % 60)
+                    format!("    Set {}: {:.1}{} / {}:{:02}", i + 1, units.display_distance(dist), dl, dur / 60, dur % 60)
                 } else if let Some(secs) = s.duration_secs {
                     format!("    Set {}: {}:{:02}", i + 1, secs / 60, secs % 60)
                 } else {
-                    format!("    Set {}: {}kg x {}", i + 1, s.weight, s.reps)
+                    format!("    Set {}: {:.1}{} x {}", i + 1, units.display_weight(s.weight), wl, s.reps)
                 };
                 if let Some(ref note) = s.note {
                     if !note.is_empty() {
@@ -107,7 +110,7 @@ pub fn format_workout_text(workout: &Workout, exercises: &[Exercise]) -> String 
     let total_vol = workout.total_volume();
     if total_vol > 0.0 {
         lines.push(String::new());
-        lines.push(format!("Total volume: {:.0} kg", total_vol));
+        lines.push(format!("Total volume: {:.0} {}", units.display_weight(total_vol), wl));
     }
     lines.push(String::new());
     lines.push("Shared from Treening - https://treen.ing/".to_string());

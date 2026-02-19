@@ -4,6 +4,7 @@ use gloo::storage::{LocalStorage, Storage};
 use crate::models::{Exercise, Workout, WorkoutSet};
 use crate::sharing::{self, ShareableData};
 use crate::components::share_modal::ShareModal;
+use crate::storage;
 use crate::Route;
 
 #[derive(Properties, PartialEq)]
@@ -20,6 +21,7 @@ pub fn history_list(props: &Props) -> Html {
     let editing = use_state(|| None::<Workout>);
     let share_target = use_state(|| None::<(ShareableData, String)>);
     let navigator = use_navigator().unwrap();
+    let units = storage::load_user_config().unit_system;
 
     let find_exercise = |id: &str| -> String {
         props.all_exercises.iter()
@@ -293,7 +295,7 @@ pub fn history_list(props: &Props) -> Html {
                                                             html! {
                                                                 <div class="text-xs text-gray-600 dark:text-gray-400 ml-2 flex items-center gap-2">
                                                                     <span class="w-10 font-medium">{"Set "}{i+1}{":"}</span>
-                                                                    <span class="font-bold text-gray-800 dark:text-gray-200">{s.weight}{"kg x "}{s.reps}</span>
+                                                                    <span class="font-bold text-gray-800 dark:text-gray-200">{format!("{:.1}", units.display_weight(s.weight))}{units.weight_label()}{" x "}{s.reps}</span>
                                                                     { if s.completed { html!{<span class="text-green-600 dark:text-green-400 text-sm font-bold">{" \u{2713}"}</span>} } else { html!{} } }
                                                                 </div>
                                                             }

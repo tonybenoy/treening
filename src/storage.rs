@@ -88,6 +88,7 @@ pub fn load_user_config() -> UserConfig {
             gender: None,
             rest_seconds: 90,
             bar_weight: 20.0,
+            unit_system: crate::models::UnitSystem::Metric,
         };
         let _ = LocalStorage::set(USER_CONFIG_KEY, &config);
         config

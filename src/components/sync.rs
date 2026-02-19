@@ -22,6 +22,9 @@ extern "C" {
     #[wasm_bindgen(method, js_name = destroy)]
     fn destroy(this: &Peer);
 
+    #[wasm_bindgen(method, js_name = reconnect)]
+    fn reconnect(this: &Peer);
+
     #[wasm_bindgen(js_name = DataConnection)]
     #[derive(Clone)]
     type DataConnection;
@@ -178,18 +181,41 @@ pub fn sync_panel() -> Html {
                     .ok()
                     .and_then(|v| v.as_string())
                     .unwrap_or_default();
-                if err_type == "unavailable-id" {
-                    if opened_via_pair {
-                        // Device already saved, other tab will pick it up — close this tab
-                        let _ = gloo::utils::window().close();
+                log::warn!("PeerJS error: {}", err_type);
+                match err_type.as_str() {
+                    "unavailable-id" => {
+                        if opened_via_pair {
+                            let _ = gloo::utils::window().close();
+                        }
+                        status_err.set("Active in another tab".to_string());
                     }
-                    status_err.set("Active in another tab".to_string());
-                } else {
-                    status_err.set("Connection error".to_string());
+                    "peer-unavailable" => {
+                        // Remote peer is offline — not an error for the user
+                        status_err.set("Peer offline".to_string());
+                    }
+                    "network" | "disconnected" | "socket-error" | "socket-closed" => {
+                        status_err.set("Network issue — retrying...".to_string());
+                    }
+                    "server-error" => {
+                        status_err.set("Signaling server error".to_string());
+                    }
+                    _ => {
+                        status_err.set(format!("Error: {}", err_type));
+                    }
                 }
             }) as Box<dyn FnMut(JsValue)>);
             peer.on("error", on_error.as_ref().unchecked_ref());
             on_error.forget();
+
+            // On peer disconnect — try to reconnect
+            let peer_for_dc = peer.clone();
+            let status_dc = status.clone();
+            let on_disconnected = Closure::wrap(Box::new(move || {
+                status_dc.set("Reconnecting...".to_string());
+                peer_for_dc.reconnect();
+            }) as Box<dyn FnMut()>);
+            peer.on("disconnected", on_disconnected.as_ref().unchecked_ref());
+            on_disconnected.forget();
 
             // Handle incoming connections (other device connecting to us)
             let devices_incoming = devices.clone();
@@ -406,8 +432,8 @@ pub fn sync_panel() -> Html {
     let status_color = match (*status).as_str() {
         "Online" => "text-green-600 dark:text-green-400 bg-green-100 dark:bg-green-900/30",
         "Synced!" => "text-green-600 dark:text-green-400 bg-green-100 dark:bg-green-900/30",
-        "Active in another tab" => "text-yellow-600 dark:text-yellow-400 bg-yellow-100 dark:bg-yellow-900/30",
-        "Connecting..." | "Syncing..." | "Connecting to new device..." => "text-blue-600 dark:text-blue-400 bg-blue-100 dark:bg-blue-900/30",
+        "Active in another tab" | "Peer offline" => "text-yellow-600 dark:text-yellow-400 bg-yellow-100 dark:bg-yellow-900/30",
+        "Connecting..." | "Syncing..." | "Connecting to new device..." | "Reconnecting..." | "Network issue — retrying..." => "text-blue-600 dark:text-blue-400 bg-blue-100 dark:bg-blue-900/30",
         _ => "text-red-600 dark:text-red-400 bg-red-100 dark:bg-red-900/30",
     };
 

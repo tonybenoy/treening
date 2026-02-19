@@ -28,8 +28,10 @@ self.addEventListener('activate', event => {
 });
 
 self.addEventListener('fetch', event => {
-    // Cache-first for app assets, network-first for CDN
+    // Skip non-GET requests and PeerJS signaling server
+    if (event.request.method !== 'GET') return;
     const url = new URL(event.request.url);
+    if (url.hostname.includes('peerjs.com') || url.hostname === '0.peerjs.com') return;
 
     if (url.origin === location.origin) {
         // App assets: cache first

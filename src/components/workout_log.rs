@@ -1,6 +1,6 @@
 use yew::prelude::*;
 use std::collections::{HashSet, HashMap};
-use crate::models::{Exercise, Workout, WorkoutExercise, WorkoutSet, ExerciseTrackingType};
+use crate::models::{Exercise, Workout, WorkoutExercise, WorkoutSet, ExerciseTrackingType, UnitSystem};
 use crate::pages::workout::generate_warmup_sets;
 
 /// Epley formula: weight * (1 + reps/30)
@@ -61,6 +61,8 @@ pub struct Props {
     pub on_set_completed: Callback<u32>,
     #[prop_or_default]
     pub on_before_destructive: Callback<Vec<WorkoutExercise>>,
+    #[prop_or_default]
+    pub unit_system: UnitSystem,
 }
 
 #[function_component(WorkoutLog)]
@@ -119,12 +121,13 @@ pub fn workout_log(props: &Props) -> Html {
 
                 // Previous performance
                 let prev_exercise = find_previous_exercise(&props.previous_workouts, &we.exercise_id);
+                let unit_sys = &props.unit_system;
                 let prev_text = prev_exercise.map(|prev_we| {
                     prev_we.sets.iter().enumerate().map(|(i, s)| {
                         if s.weight > 0.0 {
-                            format!("S{}: {}kg x{}", i + 1, s.weight, s.reps)
+                            format!("S{}: {:.1}{} x{}", i + 1, unit_sys.display_weight(s.weight), unit_sys.weight_label(), s.reps)
                         } else if let Some(d) = s.distance {
-                            format!("S{}: {}km", i + 1, d)
+                            format!("S{}: {:.1}{}", i + 1, unit_sys.display_distance(d), unit_sys.distance_label())
                         } else if let Some(dur) = s.duration_secs {
                             format!("S{}: {}s", i + 1, dur)
                         } else {
@@ -253,13 +256,13 @@ pub fn workout_log(props: &Props) -> Html {
                                 { match tracking_type {
                                     ExerciseTrackingType::Strength => html! {
                                         <>
-                                            <div class="col-span-4">{"Weight (kg)"}</div>
+                                            <div class="col-span-4">{format!("Weight ({})", props.unit_system.weight_label())}</div>
                                             <div class="col-span-3">{"Reps"}</div>
                                         </>
                                     },
                                     ExerciseTrackingType::Cardio => html! {
                                         <>
-                                            <div class="col-span-4">{"Dist (km)"}</div>
+                                            <div class="col-span-4">{format!("Dist ({})", props.unit_system.distance_label())}</div>
                                             <div class="col-span-3">{"Time (m)"}</div>
                                         </>
                                     },
@@ -285,6 +288,8 @@ pub fn workout_log(props: &Props) -> Html {
                                 let on_before_destructive2 = on_before_destructive.clone();
                                 let completed = set.completed;
                                 let tt = tracking_type.clone();
+                                let unit_sys2 = props.unit_system.clone();
+                                let unit_sys3 = props.unit_system.clone();
                                 let on_set_completed2 = on_set_completed.clone();
                                 let resolved_rest2 = resolved_rest;
 
@@ -408,15 +413,17 @@ pub fn workout_log(props: &Props) -> Html {
                                                         <input
                                                             type="number" step="0.5"
                                                             class="w-full px-2 py-1 bg-white dark:bg-gray-700 border border-gray-300 dark:border-transparent rounded text-sm text-center text-gray-900 dark:text-gray-100 outline-none focus:ring-1 focus:ring-blue-500 transition-colors"
-                                                            value={set.weight.to_string()}
-                                                            onchange={Callback::from(move |e: Event| {
+                                                            value={format!("{:.1}", unit_sys2.display_weight(set.weight))}
+                                                            onchange={{
+                                                                let unit_sys = unit_sys2.clone();
+                                                                Callback::from(move |e: Event| {
                                                                 let input: web_sys::HtmlInputElement = e.target_unchecked_into();
                                                                 if let Ok(val) = input.value().parse::<f64>() {
                                                                     let mut exs = exercises2.clone();
-                                                                    if let Some(we) = exs.get_mut(ex_idx) { if let Some(s) = we.sets.get_mut(set_idx) { s.weight = val; } }
+                                                                    if let Some(we) = exs.get_mut(ex_idx) { if let Some(s) = we.sets.get_mut(set_idx) { s.weight = unit_sys.to_kg(val); } }
                                                                     on_update2.emit(exs);
                                                                 }
-                                                            })}
+                                                            })}}
                                                         />
                                                         <button
                                                             class="text-gray-400 hover:text-blue-400 text-xs flex-shrink-0 transition-colors"
@@ -456,15 +463,17 @@ pub fn workout_log(props: &Props) -> Html {
                                                         <input
                                                             type="number" step="0.1"
                                                             class="w-full px-2 py-1 bg-white dark:bg-gray-700 border border-gray-300 dark:border-transparent rounded text-sm text-center text-gray-900 dark:text-gray-100 outline-none focus:ring-1 focus:ring-blue-500 transition-colors"
-                                                            value={set.distance.unwrap_or(0.0).to_string()}
-                                                            onchange={Callback::from(move |e: Event| {
+                                                            value={format!("{:.1}", unit_sys3.display_distance(set.distance.unwrap_or(0.0)))}
+                                                            onchange={{
+                                                                let unit_sys = unit_sys3.clone();
+                                                                Callback::from(move |e: Event| {
                                                                 let input: web_sys::HtmlInputElement = e.target_unchecked_into();
                                                                 if let Ok(val) = input.value().parse::<f64>() {
                                                                     let mut exs = exercises2.clone();
-                                                                    if let Some(we) = exs.get_mut(ex_idx) { if let Some(s) = we.sets.get_mut(set_idx) { s.distance = Some(val); } }
+                                                                    if let Some(we) = exs.get_mut(ex_idx) { if let Some(s) = we.sets.get_mut(set_idx) { s.distance = Some(unit_sys.to_km(val)); } }
                                                                     on_update2.emit(exs);
                                                                 }
-                                                            })}
+                                                            })}}
                                                         />
                                                     </div>
                                                     <div class="col-span-3">
@@ -581,22 +590,23 @@ pub fn workout_log(props: &Props) -> Html {
 
                                     // 1RM estimate
                                     { if show_1rm {
-                                        html! { <div class="text-[10px] text-gray-400 dark:text-gray-500 pl-6 -mt-1 mb-1 font-mono">{format!("Est. 1RM: {:.1} kg", est_1rm)}</div> }
+                                        html! { <div class="text-[10px] text-gray-400 dark:text-gray-500 pl-6 -mt-1 mb-1 font-mono">{format!("Est. 1RM: {:.1} {}", props.unit_system.display_weight(est_1rm), props.unit_system.weight_label())}</div> }
                                     } else { html! {} }}
 
                                     // Plate calculator popup
                                     { if show_plate_calc && set.weight > bar_weight {
                                         let plates = compute_plates(set.weight, bar_weight);
+                                        let wl = props.unit_system.weight_label();
                                         html! {
                                             <div class="ml-6 mb-2 p-2 bg-gray-200 dark:bg-gray-700 rounded text-xs text-gray-700 dark:text-gray-300">
-                                                <div class="font-bold mb-1">{format!("Plates per side ({:.1}kg bar):", bar_weight)}</div>
+                                                <div class="font-bold mb-1">{format!("Plates per side ({:.1}{} bar):", props.unit_system.display_weight(bar_weight), wl)}</div>
                                                 { if plates.is_empty() {
                                                     html! { <span class="text-gray-500">{"Bar only"}</span> }
                                                 } else {
                                                     html! {
                                                         <div class="flex flex-wrap gap-1">
                                                             { for plates.iter().map(|(w, c)| {
-                                                                html! { <span class="bg-blue-500/20 text-blue-400 px-1.5 py-0.5 rounded font-mono">{format!("{}kg x{}", w, c)}</span> }
+                                                                html! { <span class="bg-blue-500/20 text-blue-400 px-1.5 py-0.5 rounded font-mono">{format!("{:.1}{} x{}", props.unit_system.display_weight(*w), wl, c)}</span> }
                                                             })}
                                                         </div>
                                                     }
