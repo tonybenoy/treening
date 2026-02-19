@@ -55,7 +55,7 @@ pub fn achievement_badges() -> Html {
         }
     };
 
-    let badges = vec![
+    let badges = [
         Badge {
             name: "Wooden Spoon",
             emoji: "🥄",
