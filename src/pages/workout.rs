@@ -1,4 +1,5 @@
 use crate::components::exercise_list::ExerciseList;
+use crate::components::toast::Toast;
 use crate::components::workout_log::WorkoutLog;
 use crate::data;
 use crate::models::{Exercise, ExerciseTrackingType, Workout, WorkoutExercise, WorkoutSet};
@@ -26,6 +27,40 @@ fn try_vibrate() {
             let func = js_sys::Function::from(f);
             func.call1(&nav_val, &JsValue::from(200)).ok()
         });
+}
+
+fn request_notification_permission() {
+    let window = web_sys::window().unwrap();
+    let notification = js_sys::Reflect::get(&window, &"Notification".into());
+    if let Ok(notif_class) = notification {
+        if !notif_class.is_undefined() {
+            let _ = js_sys::Reflect::get(&notif_class, &"requestPermission".into())
+                .ok()
+                .and_then(|f| {
+                    let func = js_sys::Function::from(f);
+                    func.call0(&notif_class).ok()
+                });
+        }
+    }
+}
+
+fn try_notify(msg: &str) {
+    let window = web_sys::window().unwrap();
+    let notification = js_sys::Reflect::get(&window, &"Notification".into());
+    if let Ok(notif_class) = notification {
+        if notif_class.is_undefined() {
+            return;
+        }
+        let permission = js_sys::Reflect::get(&notif_class, &"permission".into())
+            .ok()
+            .and_then(|v| v.as_string());
+        if permission.as_deref() == Some("granted") {
+            let _ = js_sys::Reflect::construct(
+                &js_sys::Function::from(notif_class),
+                &js_sys::Array::of1(&JsValue::from_str(msg)),
+            );
+        }
+    }
 }
 
 /// Auto-fill a set from the most recent previous workout containing this exercise.
@@ -189,6 +224,7 @@ pub fn rest_timer(props: &RestTimerProps) -> Html {
                         remaining.set(0);
                         active_handle.set(false);
                         try_vibrate();
+                        try_notify("Rest complete!");
                     } else {
                         remaining.set(r - 1);
                     }
@@ -247,6 +283,10 @@ pub fn workout_page() -> Html {
     // Rest timer trigger: incremented to signal RestTimer to start
     let rest_trigger = use_state(|| (0u32, 0u32)); // (counter, seconds)
 
+    // Toast state for PR celebrations
+    let toast_message = use_state(String::new);
+    let toast_visible = use_state(|| false);
+
     // Undo state
     let undo_snapshot = use_state(|| None::<Vec<WorkoutExercise>>);
     let undo_timeout = use_state(|| None::<Timeout>);
@@ -260,6 +300,14 @@ pub fn workout_page() -> Html {
         exs.extend(custom_exercises);
         exs
     };
+
+    // Request notification permission on mount
+    {
+        use_effect_with((), |_| {
+            request_notification_permission();
+            || ()
+        });
+    }
 
     // Load from routine if set
     {
@@ -332,6 +380,23 @@ pub fn workout_page() -> Html {
             move || drop(interval)
         });
     }
+
+    // PR toast callback
+    let on_pr = {
+        let toast_message = toast_message.clone();
+        let toast_visible = toast_visible.clone();
+        Callback::from(move |msg: String| {
+            toast_message.set(msg);
+            toast_visible.set(true);
+        })
+    };
+
+    let on_toast_dismiss = {
+        let toast_visible = toast_visible.clone();
+        Callback::from(move |_: ()| {
+            toast_visible.set(false);
+        })
+    };
 
     // on_set_completed now receives resolved rest seconds
     let on_set_completed = {
@@ -514,6 +579,7 @@ pub fn workout_page() -> Html {
                 on_set_completed={on_set_completed}
                 on_before_destructive={on_before_destructive}
                 unit_system={config.unit_system.clone()}
+                on_pr={on_pr}
             />
 
             <button
@@ -532,6 +598,7 @@ pub fn workout_page() -> Html {
 
             <RestTimer trigger={rest_trigger_val} />
             {undo_html}
+            <Toast message={(*toast_message).clone()} visible={*toast_visible} on_dismiss={on_toast_dismiss} />
         </div>
     }
 }

@@ -17,6 +17,7 @@ use pages::exercises::ExercisesPage;
 use pages::faq::FaqPage;
 use pages::history::HistoryPage;
 use pages::home::HomePage;
+use pages::plate_calculator::PlateCalculatorPage;
 use pages::routines::RoutinesPage;
 use pages::settings::SettingsPage;
 use pages::shared::SharedPage;
@@ -86,6 +87,8 @@ pub enum Route {
     Analytics,
     #[at("/shared")]
     Shared,
+    #[at("/plate-calc")]
+    PlateCalc,
     #[not_found]
     #[at("/404")]
     NotFound,
@@ -103,6 +106,7 @@ fn switch(routes: Route) -> Html {
         Route::Faq => ("faq", html! { <FaqPage /> }),
         Route::Analytics => ("analytics", html! { <AnalyticsPage /> }),
         Route::Shared => ("shared", html! { <SharedPage /> }),
+        Route::PlateCalc => ("plate-calc", html! { <PlateCalculatorPage /> }),
         Route::NotFound => ("home", html! { <HomePage /> }),
     };
     html! { <div key={key} class="page-enter">{page}</div> }

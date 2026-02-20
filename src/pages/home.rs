@@ -1,5 +1,5 @@
 use crate::components::achievements::AchievementBadges;
-use crate::models::{Exercise, Workout};
+use crate::models::{self, Exercise, Workout};
 use crate::storage;
 use crate::Route;
 use gloo::storage::{LocalStorage, Storage};
@@ -35,35 +35,8 @@ fn summary_stats() -> Html {
         "Total Volume"
     };
 
-    let streak = {
-        let mut dates: Vec<chrono::NaiveDate> = workouts
-            .iter()
-            .filter_map(|w| chrono::NaiveDate::parse_from_str(&w.date, "%Y-%m-%d").ok())
-            .collect();
-        dates.sort();
-        dates.dedup();
-
-        if dates.is_empty() {
-            0
-        } else {
-            let today = chrono::Local::now().date_naive();
-            let last = *dates.last().unwrap();
-
-            if (today - last).num_days() > 1 {
-                0
-            } else {
-                let mut s = 1u32;
-                for i in (0..dates.len() - 1).rev() {
-                    if (dates[i + 1] - dates[i]).num_days() == 1 {
-                        s += 1;
-                    } else {
-                        break;
-                    }
-                }
-                s
-            }
-        }
-    };
+    let streak = models::current_streak(&workouts);
+    let best = models::best_streak(&workouts);
 
     html! {
         <div class="space-y-3">
@@ -88,6 +61,7 @@ fn summary_stats() -> Html {
                     <div class="text-xl mb-1">{"🔥"}</div>
                     <div class="text-lg font-bold text-gray-800 dark:text-gray-200">{streak}</div>
                     <div class="text-[10px] text-gray-500 dark:text-gray-500 uppercase font-bold">{"Day Streak"}</div>
+                    <div class="text-[9px] text-gray-400 dark:text-gray-600 mt-0.5">{format!("Best: {}d", best)}</div>
                 </div>
             </div>
         </div>
@@ -231,6 +205,13 @@ pub fn home_page() -> Html {
                 class="w-full py-4 bg-blue-600 rounded-xl text-lg font-bold hover:bg-blue-700 active:bg-blue-800 transition neu-btn btn-press"
                 onclick={start_empty}
             >{"Start New Workout"}</button>
+
+            <div class="flex gap-3">
+                <Link<Route> to={Route::PlateCalc} classes="flex-1 py-3 bg-gray-100 dark:bg-gray-800/50 rounded-xl text-center hover:bg-gray-200 dark:hover:bg-gray-800 transition neu-flat">
+                    <div class="text-lg">{"🏋️"}</div>
+                    <div class="text-xs font-bold text-gray-600 dark:text-gray-400">{"Plate Calc"}</div>
+                </Link<Route>>
+            </div>
 
             <SummaryStats />
 

@@ -284,8 +284,21 @@ pub fn calendar_heatmap(props: &CalendarHeatmapProps) -> Html {
         .map(|c| c.contains("dark"))
         .unwrap_or(false);
     let today = chrono::Local::now().date_naive();
-    // 20 columns (weeks) x 7 rows (days, Mon=0..Sun=6)
-    let cols = 20u32;
+
+    // Compute cols dynamically: earliest workout date to today, capped at 52, min 20
+    let earliest = props
+        .data
+        .keys()
+        .filter_map(|d| chrono::NaiveDate::parse_from_str(d, "%Y-%m-%d").ok())
+        .min();
+    let cols = if let Some(earliest_date) = earliest {
+        let days_span = (today - earliest_date).num_days().max(0) as u32;
+        let weeks_needed = (days_span / 7) + 2; // +2 for partial weeks on both ends
+        weeks_needed.clamp(20, 52)
+    } else {
+        20u32
+    };
+
     let rows = 7u32;
     let cell = 14.0_f64;
     let gap = 2.0_f64;
@@ -307,7 +320,8 @@ pub fn calendar_heatmap(props: &CalendarHeatmapProps) -> Html {
     html! {
         <div class="w-full">
             <h3 class="text-sm font-semibold text-gray-600 dark:text-gray-300 mb-2 transition-colors">{"Workout Calendar"}</h3>
-            <svg viewBox={viewbox} class="w-full" preserveAspectRatio="xMidYMid meet">
+            <div class="overflow-x-auto">
+            <svg viewBox={viewbox} class="w-full" style={if cols > 26 { format!("min-width: {}px", cols as f64 * 12.0) } else { String::new() }} preserveAspectRatio="xMidYMid meet">
                 // Day labels
                 { for (0..rows).map(|row| {
                     let label = day_labels[row as usize];
@@ -355,6 +369,7 @@ pub fn calendar_heatmap(props: &CalendarHeatmapProps) -> Html {
                     })
                 })}
             </svg>
+            </div>
         </div>
     }
 }

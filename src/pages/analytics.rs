@@ -96,38 +96,7 @@ fn last_n_weeks(workouts: &[Workout], n: usize) -> Vec<((i32, u32), String)> {
     weeks
 }
 
-// ── Streak calculation ──────────────────────────────────────────────────────
-
-fn current_streak(workouts: &[Workout]) -> u32 {
-    if workouts.is_empty() {
-        return 0;
-    }
-    let mut dates: Vec<NaiveDate> = workouts
-        .iter()
-        .filter_map(|w| parse_date(&w.date))
-        .collect();
-    dates.sort();
-    dates.dedup();
-    if dates.is_empty() {
-        return 0;
-    }
-
-    let today = chrono::Local::now().date_naive();
-    let last = *dates.last().unwrap();
-    if (today - last).num_days() > 1 {
-        return 0;
-    }
-
-    let mut streak = 1u32;
-    for i in (0..dates.len() - 1).rev() {
-        if (dates[i + 1] - dates[i]).num_days() == 1 {
-            streak += 1;
-        } else {
-            break;
-        }
-    }
-    streak
-}
+use crate::models::{best_streak, current_streak};
 
 // ── Personal Records ────────────────────────────────────────────────────────
 
@@ -338,6 +307,7 @@ fn overview_tab(props: &OverviewProps) -> Html {
     let total_workouts = workouts.len();
     let total_volume: f64 = workouts.iter().map(workout_volume).sum();
     let streak = current_streak(workouts);
+    let best = best_streak(workouts);
     let avg_duration: u32 = if total_workouts > 0 {
         let total_dur: u32 = workouts.iter().map(|w| w.duration_mins).sum();
         total_dur / total_workouts as u32
@@ -427,6 +397,7 @@ fn overview_tab(props: &OverviewProps) -> Html {
                 <StatCard label="Total Workouts" value={format!("{}", total_workouts)} icon="\u{1f3cb}" />
                 <StatCard label={format!("Total Volume ({})", props.units.weight_label())} value={volume_display} icon="\u{1f4aa}" />
                 <StatCard label="Day Streak" value={format!("{}", streak)} icon="\u{1f525}" />
+                <StatCard label="Best Streak" value={format!("{}d", best)} icon="\u{1f3c6}" />
                 <StatCard label="Avg Duration" value={format!("{}m", avg_duration)} icon="\u{23f1}" />
             </div>
 

@@ -323,3 +323,57 @@ fn default_bar_weight() -> f64 {
 fn default_social_enabled() -> bool {
     true
 }
+
+/// Compute unique sorted workout dates.
+fn workout_dates(workouts: &[Workout]) -> Vec<chrono::NaiveDate> {
+    let mut dates: Vec<chrono::NaiveDate> = workouts
+        .iter()
+        .filter_map(|w| chrono::NaiveDate::parse_from_str(&w.date, "%Y-%m-%d").ok())
+        .collect();
+    dates.sort();
+    dates.dedup();
+    dates
+}
+
+/// Compute the current workout streak (consecutive days ending today or yesterday).
+pub fn current_streak(workouts: &[Workout]) -> u32 {
+    let dates = workout_dates(workouts);
+    if dates.is_empty() {
+        return 0;
+    }
+    let today = chrono::Local::now().date_naive();
+    let last = *dates.last().unwrap();
+    if (today - last).num_days() > 1 {
+        return 0;
+    }
+    let mut streak = 1u32;
+    for i in (0..dates.len() - 1).rev() {
+        if (dates[i + 1] - dates[i]).num_days() == 1 {
+            streak += 1;
+        } else {
+            break;
+        }
+    }
+    streak
+}
+
+/// Compute the best (longest) workout streak ever.
+pub fn best_streak(workouts: &[Workout]) -> u32 {
+    let dates = workout_dates(workouts);
+    if dates.is_empty() {
+        return 0;
+    }
+    let mut best = 1u32;
+    let mut current = 1u32;
+    for i in 1..dates.len() {
+        if (dates[i] - dates[i - 1]).num_days() == 1 {
+            current += 1;
+            if current > best {
+                best = current;
+            }
+        } else {
+            current = 1;
+        }
+    }
+    best
+}

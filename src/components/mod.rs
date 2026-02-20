@@ -9,4 +9,5 @@ pub mod routine_editor;
 pub mod settings;
 pub mod share_modal;
 pub mod sync;
+pub mod toast;
 pub mod workout_log;

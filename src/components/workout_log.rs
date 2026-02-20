@@ -96,7 +96,7 @@ fn estimate_1rm(weight: f64, reps: u32) -> f64 {
 }
 
 /// Compute plates per side for a target weight given bar weight.
-fn compute_plates(target: f64, bar: f64) -> Vec<(f64, u32)> {
+pub fn compute_plates(target: f64, bar: f64) -> Vec<(f64, u32)> {
     let available = [25.0, 20.0, 15.0, 10.0, 5.0, 2.5, 1.25];
     let mut remaining = (target - bar) / 2.0;
     if remaining <= 0.0 {
@@ -155,6 +155,8 @@ pub struct Props {
     pub on_before_destructive: Callback<Vec<WorkoutExercise>>,
     #[prop_or_default]
     pub unit_system: UnitSystem,
+    #[prop_or_default]
+    pub on_pr: Callback<String>,
 }
 
 #[function_component(WorkoutLog)]
@@ -387,6 +389,9 @@ pub fn workout_log(props: &Props) -> Html {
                                 let unit_sys2 = props.unit_system.clone();
                                 let unit_sys3 = props.unit_system.clone();
                                 let on_set_completed2 = on_set_completed.clone();
+                                let on_pr2 = props.on_pr.clone();
+                                let pr_weight2 = pr_weight;
+                                let exercise_name_for_pr = name.clone();
                                 let resolved_rest2 = resolved_rest;
 
                                 // 1RM calculation for completed strength sets
@@ -636,6 +641,9 @@ pub fn workout_log(props: &Props) -> Html {
                                                             s.completed = !s.completed;
                                                             if !was_completed && s.completed {
                                                                 on_set_completed2.emit(resolved_rest2);
+                                                                if s.weight > 0.0 && s.weight > pr_weight2 {
+                                                                    on_pr2.emit(format!("New PR! {} - {:.1}kg", exercise_name_for_pr, s.weight));
+                                                                }
                                                             }
                                                         }
                                                     }
