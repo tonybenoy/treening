@@ -38,6 +38,7 @@
             "Exercise logging with sets, reps, and weights",
             "Progress analytics and charts",
             "Peer-to-peer data sync",
+            "Local AI workout assistant (WebGPU)",
             "Open source"
         ]
     }
@@ -71,13 +72,19 @@
         import { CreateMLCEngine } from "https://esm.run/@mlc-ai/web-llm";
 
         let engine = null;
-        const MODEL_ID = "Qwen3-0.6B-q4f16_1-MLC";
+        let loadedModelId = null;
 
         window.webllmIsSupported = () => !!navigator.gpu;
 
-        window.webllmInit = async (progressCallback) => {
-            if (engine) return;
-            engine = await CreateMLCEngine(MODEL_ID, {
+        window.webllmInit = async (modelId, progressCallback) => {
+            // If already loaded with same model, skip
+            if (engine && loadedModelId === modelId) return;
+            // If switching models, reset first
+            if (engine && loadedModelId !== modelId) {
+                engine = null;
+                loadedModelId = null;
+            }
+            engine = await CreateMLCEngine(modelId, {
                 initProgressCallback: (progress) => {
                     if (progressCallback) {
                         progressCallback(JSON.stringify({
@@ -87,6 +94,7 @@
                     }
                 }
             });
+            loadedModelId = modelId;
         };
 
         window.webllmChat = async (systemPrompt, messagesJson) => {

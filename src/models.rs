@@ -309,6 +309,71 @@ pub struct UserConfig {
     pub bar_weight: f64,
     #[serde(default)]
     pub ai_enabled: bool,
+    #[serde(default)]
+    pub ai_model: AiModel,
+}
+
+#[derive(Clone, Debug, Default, Serialize, Deserialize, PartialEq)]
+pub enum AiModel {
+    SmolLM2_360M,
+    #[default]
+    Qwen3_0_6B,
+    Qwen2_5_0_5B,
+    Llama3_2_1B,
+    Gemma2_2B,
+}
+
+impl AiModel {
+    pub fn model_id(&self) -> &'static str {
+        match self {
+            AiModel::SmolLM2_360M => "SmolLM2-360M-Instruct-q4f16_1-MLC",
+            AiModel::Qwen3_0_6B => "Qwen3-0.6B-q4f16_1-MLC",
+            AiModel::Qwen2_5_0_5B => "Qwen2.5-0.5B-Instruct-q4f16_1-MLC",
+            AiModel::Llama3_2_1B => "Llama-3.2-1B-Instruct-q4f16_1-MLC",
+            AiModel::Gemma2_2B => "gemma-2-2b-it-q4f16_1-MLC-1k",
+        }
+    }
+
+    pub fn display_name(&self) -> &'static str {
+        match self {
+            AiModel::SmolLM2_360M => "SmolLM2 360M (~200MB)",
+            AiModel::Qwen3_0_6B => "Qwen3 0.6B (~500MB)",
+            AiModel::Qwen2_5_0_5B => "Qwen2.5 0.5B (~350MB)",
+            AiModel::Llama3_2_1B => "Llama 3.2 1B (~600MB)",
+            AiModel::Gemma2_2B => "Gemma 2 2B (~1GB)",
+        }
+    }
+
+    pub fn all() -> Vec<AiModel> {
+        vec![
+            AiModel::SmolLM2_360M,
+            AiModel::Qwen3_0_6B,
+            AiModel::Qwen2_5_0_5B,
+            AiModel::Llama3_2_1B,
+            AiModel::Gemma2_2B,
+        ]
+    }
+
+    pub fn from_str(s: &str) -> AiModel {
+        match s {
+            "smollm2" => AiModel::SmolLM2_360M,
+            "qwen3" => AiModel::Qwen3_0_6B,
+            "qwen2.5" => AiModel::Qwen2_5_0_5B,
+            "llama3.2" => AiModel::Llama3_2_1B,
+            "gemma2" => AiModel::Gemma2_2B,
+            _ => AiModel::default(),
+        }
+    }
+
+    pub fn to_key(&self) -> &'static str {
+        match self {
+            AiModel::SmolLM2_360M => "smollm2",
+            AiModel::Qwen3_0_6B => "qwen3",
+            AiModel::Qwen2_5_0_5B => "qwen2.5",
+            AiModel::Llama3_2_1B => "llama3.2",
+            AiModel::Gemma2_2B => "gemma2",
+        }
+    }
 }
 
 fn default_rest_seconds() -> u32 {

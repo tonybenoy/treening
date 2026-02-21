@@ -183,6 +183,26 @@ const FAQS: &[FaqItem] = &[
         answer: "After losing 20 kg and hitting a weight loss plateau, the developer started going to the gym but couldn\u{2019}t find a workout tracker that was both free and subscription-free. So Treening was built in a day using Claude Code and Gemini to solve that problem.",
     },
     FaqItem {
+        question: "What is the AI Assistant?",
+        answer: "The AI Assistant is an optional local AI coach that can answer questions about your workouts, suggest what to train, and analyze your progress. It runs entirely in your browser using WebGPU (via WebLLM) \u{2014} no data is sent to any server. Enable it in Settings under 'AI Assistant'.",
+    },
+    FaqItem {
+        question: "How do I enable the AI Assistant?",
+        answer: "Go to Settings and toggle on 'AI Assistant'. You can also choose which AI model to use \u{2014} from SmolLM2 360M (~200MB, fastest) to Gemma 2 2B (~1GB, best quality). Then navigate to the AI page from the home screen. On your first use you will need to download the selected model. This is a one-time download that is cached in your browser for offline use.",
+    },
+    FaqItem {
+        question: "Which AI model should I choose?",
+        answer: "It depends on your device. SmolLM2 360M (~200MB) is the fastest and lightest but gives basic answers. Qwen3 0.6B (~500MB, default) is a good balance of quality and size. Llama 3.2 1B (~600MB) and Gemma 2 2B (~1GB) give the best answers but need more GPU memory. If responses seem slow or your browser struggles, try a smaller model.",
+    },
+    FaqItem {
+        question: "Which browsers support the AI Assistant?",
+        answer: "The AI Assistant requires WebGPU, which is available in Chrome/Edge 113+ (Desktop and Android) and Safari 18+ (macOS). If your browser does not support WebGPU, you will see an 'Unsupported' message. Firefox does not yet support WebGPU by default.",
+    },
+    FaqItem {
+        question: "Does the AI Assistant send my data anywhere?",
+        answer: "No. The AI model runs 100% locally in your browser. Your workout data is computed into a summary and fed to the model as context on your device only. Nothing is sent to any server or API. This is possible because the models are small enough to run directly on your GPU via WebGPU.",
+    },
+    FaqItem {
         question: "Is there a community for Treening users?",
         answer: "Yes! We have GitHub Discussions at https://github.com/tonybenoy/treening/discussions. You can introduce yourself, suggest features, ask questions, share your achievements, and chat with other users. Feature requests with the most upvotes get prioritized.",
     },

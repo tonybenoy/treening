@@ -1,5 +1,6 @@
 use crate::models;
 use crate::storage;
+use chrono::Datelike;
 use gloo::storage::Storage as _;
 use wasm_bindgen::prelude::*;
 use wasm_bindgen_futures::JsFuture;
@@ -122,7 +123,7 @@ extern "C" {
     fn webllm_is_supported() -> bool;
 
     #[wasm_bindgen(js_name = webllmInit)]
-    fn webllm_init(cb: &JsValue) -> js_sys::Promise;
+    fn webllm_init(model_id: &str, cb: &JsValue) -> js_sys::Promise;
 
     #[wasm_bindgen(js_name = webllmChat)]
     fn webllm_chat(sys: &str, msgs: &str) -> js_sys::Promise;
@@ -158,14 +159,28 @@ enum ModelState {
 }
 
 fn build_system_prompt() -> String {
+    use std::collections::HashMap;
+
     let config = storage::load_user_config();
     let workouts = storage::load_workouts();
     let body_metrics = storage::load_body_metrics();
     let routines = storage::load_routines();
 
-    let unit = match config.unit_system {
-        models::UnitSystem::Metric => "kg/km",
-        models::UnitSystem::Imperial => "lbs/mi",
+    let us = &config.unit_system;
+    let wl = us.weight_label();
+
+    // All exercises for lookups
+    let all_exercises = {
+        let mut exs = crate::data::default_exercises();
+        exs.extend(storage::load_custom_exercises());
+        exs
+    };
+    let find_ex =
+        |id: &str| -> Option<&models::Exercise> { all_exercises.iter().find(|e| e.id == id) };
+    let ex_name = |id: &str| -> String {
+        find_ex(id)
+            .map(|e| e.name.clone())
+            .unwrap_or_else(|| id.to_string())
     };
 
     let total_workouts = workouts.len();
@@ -173,132 +188,362 @@ fn build_system_prompt() -> String {
     let streak = models::current_streak(&workouts);
     let best_streak = models::best_streak(&workouts);
 
-    // Latest body metrics
-    let body_info = if let Some(m) = body_metrics.first() {
-        let mut parts = Vec::new();
-        if let Some(w) = m.weight {
-            parts.push(format!(
-                "weight: {:.1}{}",
-                config.unit_system.display_weight(w),
-                config.unit_system.weight_label()
-            ));
-        }
-        if let Some(bf) = m.body_fat {
-            parts.push(format!("body fat: {:.1}%", bf));
-        }
-        if parts.is_empty() {
-            String::new()
-        } else {
-            format!("Body: {}.", parts.join(", "))
-        }
-    } else {
-        String::new()
-    };
+    // Sort workouts by date (newest first)
+    let mut sorted: Vec<&crate::models::Workout> = workouts.iter().collect();
+    sorted.sort_by(|a, b| b.date.cmp(&a.date));
 
-    // Top 5 most-trained exercises
-    let all_exercises = {
-        let mut exs = crate::data::default_exercises();
-        exs.extend(storage::load_custom_exercises());
-        exs
-    };
-    let mut exercise_counts: std::collections::HashMap<String, u32> =
-        std::collections::HashMap::new();
-    for w in &workouts {
-        for we in &w.exercises {
-            *exercise_counts.entry(we.exercise_id.clone()).or_insert(0) += 1;
+    // --- Body metrics (latest + trend) ---
+    let mut body_str = String::new();
+    if !body_metrics.is_empty() {
+        let latest = &body_metrics[0];
+        if let Some(w) = latest.weight {
+            body_str.push_str(&format!(
+                "Current weight: {:.1}{} ({})",
+                us.display_weight(w),
+                wl,
+                latest.date
+            ));
+            // Find oldest weight for trend
+            if body_metrics.len() > 1 {
+                if let Some(oldest_w) = body_metrics.last().and_then(|m| m.weight) {
+                    let diff = w - oldest_w;
+                    let sign = if diff > 0.0 { "+" } else { "" };
+                    body_str.push_str(&format!(
+                        ", change: {}{:.1}{}",
+                        sign,
+                        us.display_weight(diff),
+                        wl
+                    ));
+                }
+            }
+        }
+        if let Some(bf) = latest.body_fat {
+            if !body_str.is_empty() {
+                body_str.push_str(", ");
+            }
+            body_str.push_str(&format!("body fat: {:.1}%", bf));
         }
     }
-    let mut top_exercises: Vec<(String, u32)> = exercise_counts.into_iter().collect();
-    top_exercises.sort_by(|a, b| b.1.cmp(&a.1));
-    let top_exercises_str: Vec<String> = top_exercises
+
+    // --- PRs for every exercise (all-time best weight) ---
+    let mut prs: HashMap<String, (f64, u32, String)> = HashMap::new(); // id -> (weight, reps, date)
+    for w in &workouts {
+        for we in &w.exercises {
+            for s in &we.sets {
+                if s.completed && s.weight > 0.0 {
+                    let entry =
+                        prs.entry(we.exercise_id.clone())
+                            .or_insert((0.0, 0, String::new()));
+                    if s.weight > entry.0 {
+                        *entry = (s.weight, s.reps, w.date.clone());
+                    }
+                }
+            }
+        }
+    }
+    let mut pr_list: Vec<(String, f64, u32, String)> = prs
+        .into_iter()
+        .map(|(id, (w, r, d))| (id, w, r, d))
+        .collect();
+    pr_list.sort_by(|a, b| b.1.partial_cmp(&a.1).unwrap_or(std::cmp::Ordering::Equal));
+    let pr_str: Vec<String> = pr_list
         .iter()
-        .take(5)
-        .map(|(id, count)| {
-            let name = all_exercises
-                .iter()
-                .find(|e| e.id == *id)
-                .map(|e| e.name.clone())
-                .unwrap_or_else(|| id.clone());
-            format!("{} ({}x)", name, count)
+        .take(15)
+        .map(|(id, w, r, d)| {
+            format!(
+                "{}: {:.1}{}x{} ({})",
+                ex_name(id),
+                us.display_weight(*w),
+                wl,
+                r,
+                d
+            )
         })
         .collect();
 
-    // Last 5 workouts summary
-    let mut sorted_workouts: Vec<&crate::models::Workout> = workouts.iter().collect();
-    sorted_workouts.sort_by(|a, b| b.date.cmp(&a.date));
-    let recent: Vec<String> = sorted_workouts
+    // --- Volume by muscle group (all-time + this week) ---
+    let today = chrono::Local::now().date_naive();
+    let week_start = today - chrono::Duration::days(today.weekday().num_days_from_monday() as i64);
+
+    let mut muscle_total: HashMap<String, f64> = HashMap::new();
+    let mut muscle_this_week: HashMap<String, f64> = HashMap::new();
+    let mut muscle_last_trained: HashMap<String, String> = HashMap::new();
+    for w in &sorted {
+        let w_date = chrono::NaiveDate::parse_from_str(&w.date, "%Y-%m-%d").ok();
+        for we in &w.exercises {
+            if let Some(ex) = find_ex(&we.exercise_id) {
+                let cat = ex.category.to_string();
+                let vol = we.volume();
+                *muscle_total.entry(cat.clone()).or_insert(0.0) += vol;
+                if let Some(wd) = w_date {
+                    if wd >= week_start {
+                        *muscle_this_week.entry(cat.clone()).or_insert(0.0) += vol;
+                    }
+                }
+                muscle_last_trained
+                    .entry(cat)
+                    .or_insert_with(|| w.date.clone());
+            }
+        }
+    }
+    let muscle_breakdown: Vec<String> = {
+        let mut items: Vec<(String, f64)> =
+            muscle_total.iter().map(|(k, v)| (k.clone(), *v)).collect();
+        items.sort_by(|a, b| b.1.partial_cmp(&a.1).unwrap_or(std::cmp::Ordering::Equal));
+        items
+            .iter()
+            .map(|(group, total)| {
+                let week = muscle_this_week.get(group).copied().unwrap_or(0.0);
+                let last = muscle_last_trained.get(group).cloned().unwrap_or_default();
+                format!(
+                    "{}: {:.0}{} total, {:.0}{} this week, last: {}",
+                    group,
+                    us.display_weight(*total),
+                    wl,
+                    us.display_weight(week),
+                    wl,
+                    last
+                )
+            })
+            .collect()
+    };
+
+    // --- Exercise frequency + progression (first vs latest weight) ---
+    let mut ex_stats: HashMap<String, (u32, f64, f64, String, String)> = HashMap::new(); // id -> (count, first_weight, latest_weight, first_date, latest_date)
+    for w in sorted.iter().rev() {
+        // iterate oldest first for first/latest tracking
+        for we in &w.exercises {
+            let best_weight = we
+                .sets
+                .iter()
+                .filter(|s| s.completed && s.weight > 0.0)
+                .map(|s| s.weight)
+                .fold(0.0f64, f64::max);
+            let entry = ex_stats.entry(we.exercise_id.clone()).or_insert((
+                0,
+                best_weight,
+                best_weight,
+                w.date.clone(),
+                w.date.clone(),
+            ));
+            entry.0 += 1;
+            if best_weight > 0.0 {
+                entry.2 = best_weight; // latest (we iterate oldest->newest)
+                entry.4 = w.date.clone();
+            }
+        }
+    }
+    let ex_progression: Vec<String> = {
+        let mut items: Vec<(String, u32, f64, f64)> = ex_stats
+            .iter()
+            .map(|(id, (count, first, latest, _, _))| (id.clone(), *count, *first, *latest))
+            .collect();
+        items.sort_by(|a, b| b.1.cmp(&a.1));
+        items
+            .iter()
+            .take(15)
+            .map(|(id, count, first, latest)| {
+                let cat = find_ex(id)
+                    .map(|e| e.category.to_string())
+                    .unwrap_or_default();
+                if *first > 0.0 && *latest > 0.0 {
+                    let diff = latest - first;
+                    let sign = if diff > 0.0 { "+" } else { "" };
+                    format!(
+                        "{} [{}]: {}x, {:.1}{} -> {:.1}{} ({}{:.1}{})",
+                        ex_name(id),
+                        cat,
+                        count,
+                        us.display_weight(*first),
+                        wl,
+                        us.display_weight(*latest),
+                        wl,
+                        sign,
+                        us.display_weight(diff),
+                        wl,
+                    )
+                } else {
+                    format!("{} [{}]: {}x", ex_name(id), cat, count)
+                }
+            })
+            .collect()
+    };
+
+    // --- Weekly volume trend (last 4 weeks) ---
+    let mut weekly_volumes: Vec<(String, f64, usize)> = Vec::new(); // (week_label, volume, session_count)
+    for i in 0..4 {
+        let ws = week_start - chrono::Duration::weeks(i);
+        let we = ws + chrono::Duration::days(6);
+        let mut vol = 0.0;
+        let mut count = 0;
+        for w in &sorted {
+            if let Ok(wd) = chrono::NaiveDate::parse_from_str(&w.date, "%Y-%m-%d") {
+                if wd >= ws && wd <= we {
+                    vol += w.total_volume();
+                    count += 1;
+                }
+            }
+        }
+        let label = if i == 0 {
+            "This week".to_string()
+        } else if i == 1 {
+            "Last week".to_string()
+        } else {
+            format!("{}w ago", i)
+        };
+        weekly_volumes.push((label, vol, count));
+    }
+
+    // --- Last 7 workouts with full detail ---
+    let recent: Vec<String> = sorted
         .iter()
-        .take(5)
+        .take(7)
         .map(|w| {
-            let ex_names: Vec<String> = w
+            let exercises: Vec<String> = w
                 .exercises
                 .iter()
-                .take(3)
                 .map(|we| {
-                    all_exercises
+                    let name = ex_name(&we.exercise_id);
+                    let completed_sets: Vec<String> = we
+                        .sets
                         .iter()
-                        .find(|e| e.id == we.exercise_id)
-                        .map(|e| e.name.clone())
-                        .unwrap_or_else(|| we.exercise_id.clone())
+                        .filter(|s| s.completed)
+                        .map(|s| {
+                            if s.weight > 0.0 {
+                                format!("{:.0}{}x{}", us.display_weight(s.weight), wl, s.reps)
+                            } else if let Some(d) = s.duration_secs {
+                                format!("{}s", d)
+                            } else if s.reps > 0 {
+                                format!("x{}", s.reps)
+                            } else {
+                                "done".to_string()
+                            }
+                        })
+                        .collect();
+                    if completed_sets.is_empty() {
+                        name
+                    } else {
+                        format!("{}: {}", name, completed_sets.join(", "))
+                    }
                 })
                 .collect();
             let dur = if w.duration_mins > 0 {
-                format!(", {}min", w.duration_mins)
+                format!(" ({}min)", w.duration_mins)
             } else {
                 String::new()
             };
-            format!("{}: {}{}", w.date, ex_names.join(", "), dur)
+            format!(
+                "  {} \"{}\"{}: {}",
+                w.date,
+                w.name,
+                dur,
+                exercises.join(" | ")
+            )
         })
         .collect();
 
-    let routine_names: Vec<String> = routines.iter().map(|r| r.name.clone()).collect();
+    // --- Routines with exercises ---
+    let routine_info: Vec<String> = routines
+        .iter()
+        .map(|r| {
+            let ex_names: Vec<String> = r.exercise_ids.iter().map(|id| ex_name(id)).collect();
+            format!("{}: {}", r.name, ex_names.join(", "))
+        })
+        .collect();
 
+    // === Build prompt ===
     let mut prompt = format!(
         "You are a friendly, knowledgeable personal gym coach for {}. \
-         You have access to their workout data below.\n\n\
+         You have COMPLETE access to their workout data below. \
+         Use this data to give accurate, specific answers.\n\n\
          RULES:\n\
-         - Reference their actual data (exercises, volume, streaks, recent workouts) in your answers\n\
+         - ALWAYS reference their actual numbers (weights, sets, dates, muscle groups)\n\
          - Be encouraging and celebrate progress, but stay honest\n\
-         - Give specific, actionable advice (not generic tips)\n\
-         - Use bullet points or numbered lists when listing suggestions\n\
-         - Keep responses focused: 3-5 sentences for simple questions, longer for detailed analysis\n\
-         - Use their unit system ({})\n\
+         - Give specific, actionable advice based on their data\n\
+         - Use bullet points or numbered lists when helpful\n\
+         - Keep responses focused but thorough\n\
+         - Units: {}\n\
          - If they have no data yet, welcome them and suggest getting started\n\n\
-         USER DATA:\n",
-        config.nickname, unit
+         === USER DATA ===\n",
+        config.nickname,
+        if *us == models::UnitSystem::Metric {
+            "kg/km"
+        } else {
+            "lbs/mi"
+        }
     );
 
+    // Overview
     if total_workouts > 0 {
         prompt.push_str(&format!(
-            "- Total: {} workouts, {:.0}{} volume lifted\n\
-             - Current streak: {} days (personal best: {} days)\n",
+            "OVERVIEW: {} workouts, {:.0}{} total volume, streak: {}d (best: {}d)\n",
             total_workouts,
-            config.unit_system.display_weight(total_volume),
-            config.unit_system.weight_label(),
+            us.display_weight(total_volume),
+            wl,
             streak,
             best_streak
         ));
     } else {
-        prompt.push_str("- No workouts logged yet (new user)\n");
+        prompt.push_str("OVERVIEW: New user, no workouts yet\n");
     }
 
-    if !body_info.is_empty() {
-        prompt.push_str(&format!("- {}\n", body_info));
+    // Body
+    if !body_str.is_empty() {
+        prompt.push_str(&format!("BODY: {}\n", body_str));
     }
 
-    if !top_exercises_str.is_empty() {
-        prompt.push_str(&format!(
-            "- Most trained: {}\n",
-            top_exercises_str.join(", ")
-        ));
+    // Weekly trend
+    if weekly_volumes.iter().any(|(_, v, _)| *v > 0.0) {
+        let trend: Vec<String> = weekly_volumes
+            .iter()
+            .map(|(label, vol, count)| {
+                format!(
+                    "{}: {:.0}{} ({}sessions)",
+                    label,
+                    us.display_weight(*vol),
+                    wl,
+                    count
+                )
+            })
+            .collect();
+        prompt.push_str(&format!("WEEKLY TREND: {}\n", trend.join(", ")));
     }
 
+    // Muscle groups
+    if !muscle_breakdown.is_empty() {
+        prompt.push_str("MUSCLE GROUPS:\n");
+        for m in &muscle_breakdown {
+            prompt.push_str(&format!("  {}\n", m));
+        }
+    }
+
+    // PRs
+    if !pr_str.is_empty() {
+        prompt.push_str("PERSONAL RECORDS (best weight):\n");
+        for p in &pr_str {
+            prompt.push_str(&format!("  {}\n", p));
+        }
+    }
+
+    // Exercise progression
+    if !ex_progression.is_empty() {
+        prompt.push_str("EXERCISE PROGRESSION (first->latest):\n");
+        for e in &ex_progression {
+            prompt.push_str(&format!("  {}\n", e));
+        }
+    }
+
+    // Recent workouts
     if !recent.is_empty() {
-        prompt.push_str(&format!("- Recent workouts: {}\n", recent.join("; ")));
+        prompt.push_str("RECENT WORKOUTS (newest first):\n");
+        for r in &recent {
+            prompt.push_str(&format!("{}\n", r));
+        }
     }
 
-    if !routine_names.is_empty() {
-        prompt.push_str(&format!("- Saved routines: {}\n", routine_names.join(", ")));
+    // Routines
+    if !routine_info.is_empty() {
+        prompt.push_str(&format!("ROUTINES: {}\n", routine_info.join("; ")));
     }
 
     prompt
@@ -317,14 +562,16 @@ pub fn ai_chat() -> Html {
     let input_text = use_state(String::new);
     let input_ref = use_node_ref();
     let messages_end_ref = use_node_ref();
+    let chat_container_ref = use_node_ref();
 
     // Auto-scroll to bottom when messages change
     {
-        let messages_end_ref = messages_end_ref.clone();
+        let chat_container_ref = chat_container_ref.clone();
         let messages_len = messages.len();
-        use_effect_with(messages_len, move |_| {
-            if let Some(el) = messages_end_ref.cast::<web_sys::HtmlElement>() {
-                el.scroll_into_view();
+        let model_state_dep = (*model_state).clone();
+        use_effect_with((messages_len, model_state_dep), move |_| {
+            if let Some(el) = chat_container_ref.cast::<web_sys::HtmlElement>() {
+                el.set_scroll_top(el.scroll_height());
             }
             || ()
         });
@@ -334,6 +581,8 @@ pub fn ai_chat() -> Html {
         let model_state = model_state.clone();
         Callback::from(move |_: MouseEvent| {
             let model_state = model_state.clone();
+            let config = storage::load_user_config();
+            let model_id = config.ai_model.model_id().to_string();
             model_state.set(ModelState::Downloading {
                 progress: 0.0,
                 text: "Initializing...".to_string(),
@@ -358,7 +607,8 @@ pub fn ai_chat() -> Html {
                     }) as Box<dyn FnMut(JsValue)>)
                 };
                 let result =
-                    JsFuture::from(webllm_init(progress_cb.as_ref().unchecked_ref())).await;
+                    JsFuture::from(webllm_init(&model_id, progress_cb.as_ref().unchecked_ref()))
+                        .await;
                 progress_cb.forget();
                 match result {
                     Ok(_) => ms.set(ModelState::Ready),
@@ -392,11 +642,6 @@ pub fn ai_chat() -> Html {
                 content: text,
             });
 
-            // Trim to last 6 messages (3 turns)
-            if msgs.len() > 6 {
-                msgs = msgs[msgs.len() - 6..].to_vec();
-            }
-
             save_chat_history(&msgs);
             messages.set(msgs.clone());
             model_state.set(ModelState::Generating);
@@ -407,7 +652,13 @@ pub fn ai_chat() -> Html {
 
             wasm_bindgen_futures::spawn_local(async move {
                 let system_prompt = build_system_prompt();
-                let chat_msgs: Vec<serde_json::Value> = msgs
+                // Only send last 6 messages to the model (context window limit)
+                let context_msgs: Vec<&ChatMessage> = if msgs.len() > 6 {
+                    msgs[msgs.len() - 6..].iter().collect()
+                } else {
+                    msgs.iter().collect()
+                };
+                let chat_msgs: Vec<serde_json::Value> = context_msgs
                     .iter()
                     .map(|m| {
                         serde_json::json!({
@@ -426,9 +677,6 @@ pub fn ai_chat() -> Html {
                             role: "assistant".to_string(),
                             content: reply,
                         });
-                        if updated.len() > 6 {
-                            updated = updated[updated.len() - 6..].to_vec();
-                        }
                         save_chat_history(&updated);
                         messages.set(updated);
                         model_state.set(ModelState::Ready);
@@ -486,9 +734,6 @@ pub fn ai_chat() -> Html {
                     role: "user".to_string(),
                     content: prompt.to_string(),
                 });
-                if msgs.len() > 6 {
-                    msgs = msgs[msgs.len() - 6..].to_vec();
-                }
                 save_chat_history(&msgs);
                 messages.set(msgs.clone());
                 model_state.set(ModelState::Generating);
@@ -497,7 +742,12 @@ pub fn ai_chat() -> Html {
                 let model_state = model_state.clone();
                 wasm_bindgen_futures::spawn_local(async move {
                     let system_prompt = build_system_prompt();
-                    let chat_msgs: Vec<serde_json::Value> = msgs
+                    let context_msgs: Vec<&ChatMessage> = if msgs.len() > 6 {
+                        msgs[msgs.len() - 6..].iter().collect()
+                    } else {
+                        msgs.iter().collect()
+                    };
+                    let chat_msgs: Vec<serde_json::Value> = context_msgs
                         .iter()
                         .map(|m| serde_json::json!({"role": m.role, "content": m.content}))
                         .collect();
@@ -511,9 +761,6 @@ pub fn ai_chat() -> Html {
                                 role: "assistant".to_string(),
                                 content: reply,
                             });
-                            if updated.len() > 6 {
-                                updated = updated[updated.len() - 6..].to_vec();
-                            }
                             save_chat_history(&updated);
                             messages.set(updated);
                             model_state.set(ModelState::Ready);
@@ -561,7 +808,7 @@ pub fn ai_chat() -> Html {
             </div>
 
             // Main content area
-            <div class="flex-1 overflow-y-auto px-4 py-4 space-y-4">
+            <div ref={chat_container_ref} class="flex-1 overflow-y-auto px-4 py-4 space-y-4">
                 { match &*model_state {
                     ModelState::Unsupported => html! {
                         <div class="bg-yellow-50 dark:bg-yellow-900/20 rounded-2xl p-6 neu-flat">
@@ -579,7 +826,9 @@ pub fn ai_chat() -> Html {
                             </div>
                         </div>
                     },
-                    ModelState::NotLoaded => html! {
+                    ModelState::NotLoaded => {
+                        let selected_model = storage::load_user_config().ai_model;
+                        html! {
                         <div class="space-y-4">
                             <div class="bg-gray-100 dark:bg-gray-800/50 rounded-2xl p-6 neu-flat text-center space-y-4">
                                 <span class="text-4xl">{"🤖"}</span>
@@ -591,10 +840,10 @@ pub fn ai_chat() -> Html {
                                     onclick={on_load_model}
                                     class="w-full py-3 bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white rounded-xl font-bold transition neu-btn btn-press"
                                 >
-                                    {"Load AI Model (~500MB)"}
+                                    {format!("Load {}", selected_model.display_name())}
                                 </button>
                                 <p class="text-[10px] text-gray-400">
-                                    {"One-time download, cached for offline use. Runs entirely on your device."}
+                                    {"One-time download, cached for offline use. Runs entirely on your device. Change model in Settings."}
                                 </p>
                             </div>
 
@@ -607,7 +856,7 @@ pub fn ai_chat() -> Html {
                                 </div>
                             </div>
                         </div>
-                    },
+                    }},
                     ModelState::Downloading { progress, text } => html! {
                         <div class="bg-gray-100 dark:bg-gray-800/50 rounded-2xl p-6 neu-flat text-center space-y-4">
                             <span class="text-3xl">{"⏳"}</span>

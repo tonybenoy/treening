@@ -33,6 +33,17 @@ pub fn settings_panel(props: &Props) -> Html {
         })
     };
 
+    let on_change_ai_model = {
+        let config = config.clone();
+        Callback::from(move |e: Event| {
+            let input: web_sys::HtmlSelectElement = e.target_unchecked_into();
+            let mut new_config = (*config).clone();
+            new_config.ai_model = crate::models::AiModel::from_str(&input.value());
+            storage::save_user_config(&new_config);
+            config.set(new_config);
+        })
+    };
+
     let on_change_theme = {
         let config = config.clone();
         Callback::from(move |e: Event| {
@@ -189,6 +200,27 @@ pub fn settings_panel(props: &Props) -> Html {
                         />
                     </button>
                 </div>
+
+                if config.ai_enabled {
+                    <div class="pt-3 mt-3 border-t border-gray-200 dark:border-gray-700/50 flex items-center justify-between">
+                        <div>
+                            <div class="font-medium text-gray-800 dark:text-gray-200">{"AI Model"}</div>
+                            <div class="text-sm text-gray-500 dark:text-gray-400">{"Larger = better quality, bigger download"}</div>
+                        </div>
+                        <select
+                            onchange={on_change_ai_model}
+                            class="bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm rounded-lg px-2 py-1 outline-none neu-pressed"
+                        >
+                            { for crate::models::AiModel::all().iter().map(|m| {
+                                html! {
+                                    <option value={m.to_key()} selected={config.ai_model == *m}>
+                                        {m.display_name()}
+                                    </option>
+                                }
+                            })}
+                        </select>
+                    </div>
+                }
 
                 <div class="pt-4 mt-4 border-t border-gray-200 dark:border-gray-700/50 flex items-center justify-between">
                     <div>
