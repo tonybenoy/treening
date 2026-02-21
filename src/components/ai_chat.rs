@@ -1,8 +1,119 @@
 use crate::models;
 use crate::storage;
+use gloo::storage::Storage as _;
 use wasm_bindgen::prelude::*;
 use wasm_bindgen_futures::JsFuture;
 use yew::prelude::*;
+use yew::virtual_dom::VNode;
+
+/// Render simple markdown-like text to HTML nodes.
+/// Handles: **bold**, paragraphs (double newline), bullet lists (- or *), and numbered lists.
+fn render_markdown(text: &str) -> VNode {
+    let paragraphs: Vec<&str> = text.split("\n\n").collect();
+    let nodes: Vec<VNode> = paragraphs
+        .iter()
+        .map(|para| {
+            let trimmed = para.trim();
+            // Check if this paragraph is a list
+            let lines: Vec<&str> = trimmed.lines().collect();
+            let is_bullet_list = lines.iter().all(|l| {
+                let t = l.trim();
+                t.starts_with("- ") || t.starts_with("* ") || t.is_empty()
+            }) && lines.iter().any(|l| {
+                let t = l.trim();
+                t.starts_with("- ") || t.starts_with("* ")
+            });
+            let is_numbered_list = lines.iter().all(|l| {
+                let t = l.trim();
+                t.is_empty()
+                    || t.chars()
+                        .next()
+                        .map(|c| c.is_ascii_digit())
+                        .unwrap_or(false)
+                        && t.contains(". ")
+            }) && lines.iter().any(|l| {
+                let t = l.trim();
+                t.chars()
+                    .next()
+                    .map(|c| c.is_ascii_digit())
+                    .unwrap_or(false)
+                    && t.contains(". ")
+            });
+
+            if is_bullet_list {
+                let items: Vec<VNode> = lines
+                    .iter()
+                    .filter(|l| !l.trim().is_empty())
+                    .map(|l| {
+                        let content = l.trim().trim_start_matches("- ").trim_start_matches("* ");
+                        html! { <li class="ml-4">{render_inline(content)}</li> }
+                    })
+                    .collect();
+                html! { <ul class="list-disc pl-2 space-y-0.5">{items}</ul> }
+            } else if is_numbered_list {
+                let items: Vec<VNode> = lines
+                    .iter()
+                    .filter(|l| !l.trim().is_empty())
+                    .map(|l| {
+                        let content = l.trim();
+                        // Strip "1. " prefix
+                        let content = if let Some(pos) = content.find(". ") {
+                            &content[pos + 2..]
+                        } else {
+                            content
+                        };
+                        html! { <li class="ml-4">{render_inline(content)}</li> }
+                    })
+                    .collect();
+                html! { <ol class="list-decimal pl-2 space-y-0.5">{items}</ol> }
+            } else {
+                // Regular paragraph - handle single newlines as line breaks
+                let line_nodes: Vec<VNode> = lines
+                    .iter()
+                    .enumerate()
+                    .flat_map(|(i, line)| {
+                        let mut nodes = vec![render_inline(line.trim())];
+                        if i < lines.len() - 1 {
+                            nodes.push(html! { <br /> });
+                        }
+                        nodes
+                    })
+                    .collect();
+                html! { <p class="mb-1.5 last:mb-0">{line_nodes}</p> }
+            }
+        })
+        .collect();
+
+    html! { <div class="space-y-2">{nodes}</div> }
+}
+
+/// Render inline formatting: **bold** and *italic*
+fn render_inline(text: &str) -> VNode {
+    let mut nodes: Vec<VNode> = Vec::new();
+    let mut remaining = text;
+
+    while !remaining.is_empty() {
+        // Look for **bold**
+        if let Some(start) = remaining.find("**") {
+            if start > 0 {
+                nodes.push(html! { <>{&remaining[..start]}</> });
+            }
+            let after_start = &remaining[start + 2..];
+            if let Some(end) = after_start.find("**") {
+                nodes.push(html! { <strong class="font-bold">{&after_start[..end]}</strong> });
+                remaining = &after_start[end + 2..];
+            } else {
+                nodes.push(html! { <>{"**"}</> });
+                remaining = after_start;
+            }
+        } else {
+            nodes.push(html! { <>{remaining}</> });
+            break;
+        }
+    }
+
+    html! { <>{nodes}</> }
+}
 
 // JS bindings for WebLLM wrapper functions
 #[wasm_bindgen]
@@ -20,10 +131,20 @@ extern "C" {
     fn webllm_reset() -> js_sys::Promise;
 }
 
-#[derive(Clone, PartialEq)]
+#[derive(Clone, PartialEq, serde::Serialize, serde::Deserialize)]
 struct ChatMessage {
     role: String,
     content: String,
+}
+
+const CHAT_HISTORY_KEY: &str = "treening_ai_chat_history";
+
+fn load_chat_history() -> Vec<ChatMessage> {
+    gloo::storage::LocalStorage::get(CHAT_HISTORY_KEY).unwrap_or_default()
+}
+
+fn save_chat_history(messages: &[ChatMessage]) {
+    let _ = gloo::storage::LocalStorage::set(CHAT_HISTORY_KEY, messages);
 }
 
 #[derive(Clone, PartialEq)]
@@ -133,13 +254,24 @@ fn build_system_prompt() -> String {
     let routine_names: Vec<String> = routines.iter().map(|r| r.name.clone()).collect();
 
     let mut prompt = format!(
-        "You are a helpful gym assistant for {}. Units: {}. ",
+        "You are a friendly, knowledgeable personal gym coach for {}. \
+         You have access to their workout data below.\n\n\
+         RULES:\n\
+         - Reference their actual data (exercises, volume, streaks, recent workouts) in your answers\n\
+         - Be encouraging and celebrate progress, but stay honest\n\
+         - Give specific, actionable advice (not generic tips)\n\
+         - Use bullet points or numbered lists when listing suggestions\n\
+         - Keep responses focused: 3-5 sentences for simple questions, longer for detailed analysis\n\
+         - Use their unit system ({})\n\
+         - If they have no data yet, welcome them and suggest getting started\n\n\
+         USER DATA:\n",
         config.nickname, unit
     );
 
     if total_workouts > 0 {
         prompt.push_str(&format!(
-            "Stats: {} workouts, {:.0}{} total volume, streak: {}d (best: {}d). ",
+            "- Total: {} workouts, {:.0}{} volume lifted\n\
+             - Current streak: {} days (personal best: {} days)\n",
             total_workouts,
             config.unit_system.display_weight(total_volume),
             config.unit_system.weight_label(),
@@ -147,36 +279,34 @@ fn build_system_prompt() -> String {
             best_streak
         ));
     } else {
-        prompt.push_str("No workouts logged yet. ");
+        prompt.push_str("- No workouts logged yet (new user)\n");
     }
 
     if !body_info.is_empty() {
-        prompt.push_str(&body_info);
-        prompt.push(' ');
+        prompt.push_str(&format!("- {}\n", body_info));
     }
 
     if !top_exercises_str.is_empty() {
         prompt.push_str(&format!(
-            "Top exercises: {}. ",
+            "- Most trained: {}\n",
             top_exercises_str.join(", ")
         ));
     }
 
     if !recent.is_empty() {
-        prompt.push_str(&format!("Recent: {}. ", recent.join("; ")));
+        prompt.push_str(&format!("- Recent workouts: {}\n", recent.join("; ")));
     }
 
     if !routine_names.is_empty() {
-        prompt.push_str(&format!("Routines: {}. ", routine_names.join(", ")));
+        prompt.push_str(&format!("- Saved routines: {}\n", routine_names.join(", ")));
     }
 
-    prompt.push_str("Be encouraging, practical, and reference user data when relevant. Keep answers concise (2-4 sentences).");
     prompt
 }
 
 #[function_component(AiChat)]
 pub fn ai_chat() -> Html {
-    let messages = use_state(Vec::<ChatMessage>::new);
+    let messages = use_state(load_chat_history);
     let model_state = use_state(|| {
         if webllm_is_supported() {
             ModelState::NotLoaded
@@ -267,6 +397,7 @@ pub fn ai_chat() -> Html {
                 msgs = msgs[msgs.len() - 6..].to_vec();
             }
 
+            save_chat_history(&msgs);
             messages.set(msgs.clone());
             model_state.set(ModelState::Generating);
 
@@ -298,6 +429,7 @@ pub fn ai_chat() -> Html {
                         if updated.len() > 6 {
                             updated = updated[updated.len() - 6..].to_vec();
                         }
+                        save_chat_history(&updated);
                         messages.set(updated);
                         model_state.set(ModelState::Ready);
                     }
@@ -357,6 +489,7 @@ pub fn ai_chat() -> Html {
                 if msgs.len() > 6 {
                     msgs = msgs[msgs.len() - 6..].to_vec();
                 }
+                save_chat_history(&msgs);
                 messages.set(msgs.clone());
                 model_state.set(ModelState::Generating);
 
@@ -381,6 +514,7 @@ pub fn ai_chat() -> Html {
                             if updated.len() > 6 {
                                 updated = updated[updated.len() - 6..].to_vec();
                             }
+                            save_chat_history(&updated);
                             messages.set(updated);
                             model_state.set(ModelState::Ready);
                         }
@@ -399,6 +533,7 @@ pub fn ai_chat() -> Html {
     let on_reset = {
         let messages = messages.clone();
         Callback::from(move |_: MouseEvent| {
+            save_chat_history(&[]);
             messages.set(Vec::new());
             wasm_bindgen_futures::spawn_local(async move {
                 let _ = JsFuture::from(webllm_reset()).await;
@@ -542,7 +677,11 @@ pub fn ai_chat() -> Html {
                                                 "bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-100 neu-flat rounded-bl-md"
                                             }
                                         )}>
-                                            <p class="whitespace-pre-wrap">{&msg.content}</p>
+                                            { if is_user {
+                                                html! { <p class="whitespace-pre-wrap">{&msg.content}</p> }
+                                            } else {
+                                                render_markdown(&msg.content)
+                                            }}
                                         </div>
                                     </div>
                                 }
