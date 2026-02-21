@@ -67,9 +67,10 @@
 
     <script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script>
 
-    <!-- WebLLM for local AI chat -->
+    <!-- WebLLM for local AI chat (runs in Web Worker to avoid blocking UI) -->
+    <link data-trunk rel="copy-file" href="webllm-worker.js" />
     <script type="module">
-        import { CreateMLCEngine } from "https://esm.run/@mlc-ai/web-llm";
+        import { CreateWebWorkerMLCEngine } from "https://esm.run/@mlc-ai/web-llm";
 
         let engine = null;
         let loadedModelId = null;
@@ -84,7 +85,11 @@
                 engine = null;
                 loadedModelId = null;
             }
-            engine = await CreateMLCEngine(modelId, {
+            const worker = new Worker(
+                new URL("webllm-worker.js", window.location.href),
+                { type: "module" }
+            );
+            engine = await CreateWebWorkerMLCEngine(worker, modelId, {
                 initProgressCallback: (progress) => {
                     if (progressCallback) {
                         progressCallback(JSON.stringify({

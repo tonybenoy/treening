@@ -635,8 +635,8 @@ pub fn ai_chat() -> Html {
             }
             input_text.set(String::new());
 
-            // Add user message
-            let mut msgs = (*messages).clone();
+            // Add user message — read from localStorage for fresh state
+            let mut msgs = load_chat_history();
             msgs.push(ChatMessage {
                 role: "user".to_string(),
                 content: text,
@@ -672,8 +672,8 @@ pub fn ai_chat() -> Html {
                 match JsFuture::from(webllm_chat(&system_prompt, &msgs_json)).await {
                     Ok(response) => {
                         let reply = response.as_string().unwrap_or_default();
-                        // Use msgs (which has the user message) not the stale state handle
-                        let mut updated = msgs;
+                        // Read fresh from localStorage, not stale state handle
+                        let mut updated = load_chat_history();
                         updated.push(ChatMessage {
                             role: "assistant".to_string(),
                             content: reply,
@@ -730,7 +730,8 @@ pub fn ai_chat() -> Html {
             let messages = messages.clone();
             let model_state = model_state.clone();
             Callback::from(move |_: MouseEvent| {
-                let mut msgs = (*messages).clone();
+                // Read from localStorage for fresh state
+                let mut msgs = load_chat_history();
                 msgs.push(ChatMessage {
                     role: "user".to_string(),
                     content: prompt.to_string(),
@@ -757,7 +758,8 @@ pub fn ai_chat() -> Html {
                     match JsFuture::from(webllm_chat(&system_prompt, &msgs_json)).await {
                         Ok(response) => {
                             let reply = response.as_string().unwrap_or_default();
-                            let mut updated = msgs;
+                            // Read fresh from localStorage
+                            let mut updated = load_chat_history();
                             updated.push(ChatMessage {
                                 role: "assistant".to_string(),
                                 content: reply,
