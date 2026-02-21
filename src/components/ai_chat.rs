@@ -646,7 +646,7 @@ pub fn ai_chat() -> Html {
             messages.set(msgs.clone());
             model_state.set(ModelState::Generating);
 
-            let messages = messages.clone();
+            let messages_handle = messages.clone();
             let model_state = model_state.clone();
             let input_ref = input_ref.clone();
 
@@ -672,13 +672,14 @@ pub fn ai_chat() -> Html {
                 match JsFuture::from(webllm_chat(&system_prompt, &msgs_json)).await {
                     Ok(response) => {
                         let reply = response.as_string().unwrap_or_default();
-                        let mut updated = (*messages).clone();
+                        // Use msgs (which has the user message) not the stale state handle
+                        let mut updated = msgs;
                         updated.push(ChatMessage {
                             role: "assistant".to_string(),
                             content: reply,
                         });
                         save_chat_history(&updated);
-                        messages.set(updated);
+                        messages_handle.set(updated);
                         model_state.set(ModelState::Ready);
                     }
                     Err(e) => {
@@ -738,7 +739,7 @@ pub fn ai_chat() -> Html {
                 messages.set(msgs.clone());
                 model_state.set(ModelState::Generating);
 
-                let messages = messages.clone();
+                let messages_handle = messages.clone();
                 let model_state = model_state.clone();
                 wasm_bindgen_futures::spawn_local(async move {
                     let system_prompt = build_system_prompt();
@@ -756,13 +757,13 @@ pub fn ai_chat() -> Html {
                     match JsFuture::from(webllm_chat(&system_prompt, &msgs_json)).await {
                         Ok(response) => {
                             let reply = response.as_string().unwrap_or_default();
-                            let mut updated = (*messages).clone();
+                            let mut updated = msgs;
                             updated.push(ChatMessage {
                                 role: "assistant".to_string(),
                                 content: reply,
                             });
                             save_chat_history(&updated);
-                            messages.set(updated);
+                            messages_handle.set(updated);
                             model_state.set(ModelState::Ready);
                         }
                         Err(e) => {
