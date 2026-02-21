@@ -211,6 +211,16 @@ pub fn home_page() -> Html {
                     <div class="text-lg">{"🏋️"}</div>
                     <div class="text-xs font-bold text-gray-600 dark:text-gray-400">{"Plate Calc"}</div>
                 </Link<Route>>
+                { if storage::load_user_config().ai_enabled {
+                    html! {
+                        <Link<Route> to={Route::AiChat} classes="flex-1 py-3 bg-gray-100 dark:bg-gray-800/50 rounded-xl text-center hover:bg-gray-200 dark:hover:bg-gray-800 transition neu-flat">
+                            <div class="text-lg">{"🤖"}</div>
+                            <div class="text-xs font-bold text-gray-600 dark:text-gray-400">{"AI Assistant"}</div>
+                        </Link<Route>>
+                    }
+                } else {
+                    html! {}
+                }}
             </div>
 
             <SummaryStats />

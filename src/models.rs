@@ -307,6 +307,8 @@ pub struct UserConfig {
     pub rest_seconds: u32,
     #[serde(default = "default_bar_weight")]
     pub bar_weight: f64,
+    #[serde(default)]
+    pub ai_enabled: bool,
 }
 
 fn default_rest_seconds() -> u32 {

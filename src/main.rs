@@ -12,6 +12,7 @@ use yew_router::prelude::*;
 
 use crate::models::Theme;
 use components::nav::BottomNav;
+use pages::ai_chat::AiChatPage;
 use pages::analytics::AnalyticsPage;
 use pages::exercises::ExercisesPage;
 use pages::faq::FaqPage;
@@ -89,6 +90,8 @@ pub enum Route {
     Shared,
     #[at("/plate-calc")]
     PlateCalc,
+    #[at("/ai")]
+    AiChat,
     #[not_found]
     #[at("/404")]
     NotFound,
@@ -107,6 +110,7 @@ fn switch(routes: Route) -> Html {
         Route::Analytics => ("analytics", html! { <AnalyticsPage /> }),
         Route::Shared => ("shared", html! { <SharedPage /> }),
         Route::PlateCalc => ("plate-calc", html! { <PlateCalculatorPage /> }),
+        Route::AiChat => ("ai-chat", html! { <AiChatPage /> }),
         Route::NotFound => ("home", html! { <HomePage /> }),
     };
     html! { <div key={key} class="page-enter">{page}</div> }

@@ -66,6 +66,51 @@
 
     <script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script>
 
+    <!-- WebLLM for local AI chat -->
+    <script type="module">
+        import { CreateMLCEngine } from "https://esm.run/@mlc-ai/web-llm";
+
+        let engine = null;
+        const MODEL_ID = "Qwen3-0.6B-q4f16_1-MLC";
+
+        window.webllmIsSupported = () => !!navigator.gpu;
+
+        window.webllmInit = async (progressCallback) => {
+            if (engine) return;
+            engine = await CreateMLCEngine(MODEL_ID, {
+                initProgressCallback: (progress) => {
+                    if (progressCallback) {
+                        progressCallback(JSON.stringify({
+                            progress: progress.progress || 0,
+                            text: progress.text || ""
+                        }));
+                    }
+                }
+            });
+        };
+
+        window.webllmChat = async (systemPrompt, messagesJson) => {
+            if (!engine) throw new Error("Model not loaded");
+            const messages = JSON.parse(messagesJson);
+            const fullMessages = [
+                { role: "system", content: systemPrompt },
+                ...messages
+            ];
+            const reply = await engine.chat.completions.create({
+                messages: fullMessages,
+                max_tokens: 300,
+                temperature: 0.7,
+            });
+            return reply.choices[0].message.content;
+        };
+
+        window.webllmReset = async () => {
+            if (engine) {
+                await engine.resetChat();
+            }
+        };
+    </script>
+
     <link data-trunk rel="rust" data-wasm-opt="z" />
     <link data-trunk rel="copy-file" href="sw.js" />
     <link data-trunk rel="copy-file" href="manifest.json" />

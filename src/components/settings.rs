@@ -23,6 +23,16 @@ pub fn settings_panel(props: &Props) -> Html {
         })
     };
 
+    let on_toggle_ai = {
+        let config = config.clone();
+        Callback::from(move |_| {
+            let mut new_config = (*config).clone();
+            new_config.ai_enabled = !new_config.ai_enabled;
+            storage::save_user_config(&new_config);
+            config.set(new_config);
+        })
+    };
+
     let on_change_theme = {
         let config = config.clone();
         Callback::from(move |e: Event| {
@@ -154,6 +164,27 @@ pub fn settings_panel(props: &Props) -> Html {
                             class={classes!(
                                 "inline-block", "h-4", "w-4", "transform", "rounded-full", "bg-white", "transition-transform",
                                 if config.social_enabled { "translate-x-6" } else { "translate-x-1" }
+                            )}
+                        />
+                    </button>
+                </div>
+
+                <div class="pt-4 mt-4 border-t border-gray-200 dark:border-gray-700/50 flex items-center justify-between">
+                    <div>
+                        <div class="font-medium text-gray-800 dark:text-gray-200">{"AI Assistant"}</div>
+                        <div class="text-sm text-gray-500 dark:text-gray-400">{"Local AI chat powered by WebGPU"}</div>
+                    </div>
+                    <button
+                        onclick={on_toggle_ai}
+                        class={classes!(
+                            "relative", "inline-flex", "h-6", "w-11", "items-center", "rounded-full", "transition-colors", "focus:outline-none",
+                            if config.ai_enabled { "bg-blue-600" } else { "bg-gray-300 dark:bg-gray-700" }
+                        )}
+                    >
+                        <span
+                            class={classes!(
+                                "inline-block", "h-4", "w-4", "transform", "rounded-full", "bg-white", "transition-transform",
+                                if config.ai_enabled { "translate-x-6" } else { "translate-x-1" }
                             )}
                         />
                     </button>
