@@ -2,9 +2,7 @@ use chrono::{Datelike, NaiveDate};
 use std::collections::HashMap;
 use yew::prelude::*;
 
-use crate::components::charts::{
-    BarChart, CalendarHeatmap, HorizontalBarChart, LineChart, StatCard,
-};
+use crate::components::charts::{BarChart, HorizontalBarChart, LineChart, StatCard};
 use crate::data::default_exercises;
 use crate::models::{Category, Exercise, UnitSystem, Workout, WorkoutExercise};
 use crate::storage;
@@ -73,7 +71,6 @@ fn category_color(cat: &Category) -> &'static str {
         Category::Arms => "#a855f7",
         Category::Core => "#ec4899",
         Category::Cardio => "#06b6d4",
-        Category::Machines => "#64748b",
     }
 }
 
@@ -323,12 +320,6 @@ fn overview_tab(props: &OverviewProps) -> Html {
         format!("{:.0}", total_volume)
     };
 
-    // ── Calendar heatmap data
-    let mut heatmap_data: HashMap<String, u32> = HashMap::new();
-    for w in workouts {
-        *heatmap_data.entry(w.date.clone()).or_default() += 1;
-    }
-
     // ── Workouts per week (bar chart)
     let weeks = last_n_weeks(workouts, 8);
     let mut week_counts: HashMap<(i32, u32), f64> = HashMap::new();
@@ -456,11 +447,6 @@ fn overview_tab(props: &OverviewProps) -> Html {
                     </div>
                 }
             } else { html! {} }}
-
-            // Calendar heatmap
-            <div class="bg-gray-100 dark:bg-gray-800 rounded-xl p-4 neu-flat transition-colors">
-                <CalendarHeatmap data={heatmap_data} />
-            </div>
 
             // Workouts per week
             <div class="bg-gray-100 dark:bg-gray-800 rounded-xl p-4 neu-flat transition-colors">
