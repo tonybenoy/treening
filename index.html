@@ -120,11 +120,84 @@
             return content;
         };
 
+        window.webllmChatStream = async (systemPrompt, messagesJson, onChunk) => {
+            if (!engine) throw new Error("Model not loaded");
+            const messages = JSON.parse(messagesJson);
+            const fullMessages = [
+                { role: "system", content: systemPrompt },
+                ...messages
+            ];
+            const chunks = await engine.chat.completions.create({
+                messages: fullMessages,
+                max_tokens: 1024,
+                temperature: 0.7,
+                stream: true,
+                stream_options: { include_usage: true },
+            });
+            let fullContent = "";
+            let inThink = false;
+            for await (const chunk of chunks) {
+                const delta = chunk.choices[0]?.delta?.content || "";
+                fullContent += delta;
+                // Strip <think>...</think> tags progressively
+                let cleaned = fullContent.replace(/<think>[\s\S]*?<\/think>/g, "").trim();
+                // If we have an unclosed <think> tag, hide everything after it
+                const openIdx = cleaned.lastIndexOf("<think>");
+                if (openIdx !== -1 && cleaned.indexOf("</think>", openIdx) === -1) {
+                    cleaned = cleaned.substring(0, openIdx).trim();
+                }
+                if (onChunk) onChunk(cleaned);
+            }
+            let finalContent = fullContent.replace(/<think>[\s\S]*?<\/think>/g, "").trim();
+            return finalContent;
+        };
+
+        window.webllmIsLoaded = () => !!engine;
+
         window.webllmReset = async () => {
             if (engine) {
                 await engine.resetChat();
             }
         };
+    </script>
+
+    <!-- Speech Recognition & Synthesis -->
+    <script>
+        window.speechRecognitionSupported = () => !!(window.SpeechRecognition || window.webkitSpeechRecognition);
+        window.startSpeechRecognition = (onResult, onEnd) => {
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            if (!SpeechRecognition) { if (onEnd) onEnd(); return; }
+            const recognition = new SpeechRecognition();
+            recognition.lang = navigator.language || 'en-US';
+            recognition.interimResults = false;
+            recognition.maxAlternatives = 1;
+            recognition.onresult = (event) => {
+                const transcript = event.results[0][0].transcript;
+                if (onResult) onResult(transcript);
+            };
+            recognition.onerror = () => { if (onEnd) onEnd(); };
+            recognition.onend = () => { if (onEnd) onEnd(); };
+            recognition.start();
+        };
+
+        window.speechSynthesisSupported = () => 'speechSynthesis' in window;
+        let currentUtterance = null;
+        window.speakText = (text, onEnd) => {
+            if (!window.speechSynthesis) { if (onEnd) onEnd(); return; }
+            window.speechSynthesis.cancel();
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.lang = navigator.language || 'en-US';
+            utterance.rate = 1.0;
+            utterance.onend = () => { currentUtterance = null; if (onEnd) onEnd(); };
+            utterance.onerror = () => { currentUtterance = null; if (onEnd) onEnd(); };
+            currentUtterance = utterance;
+            window.speechSynthesis.speak(utterance);
+        };
+        window.stopSpeaking = () => {
+            if (window.speechSynthesis) window.speechSynthesis.cancel();
+            currentUtterance = null;
+        };
+        window.isSpeaking = () => !!(window.speechSynthesis && window.speechSynthesis.speaking);
     </script>
 
     <link data-trunk rel="rust" data-wasm-opt="z" />

@@ -1,8 +1,11 @@
 use crate::components::achievements::AchievementBadges;
+use crate::components::ai_chat;
 use crate::models::{self, Exercise, Workout};
 use crate::storage;
 use crate::Route;
+use chrono::Datelike;
 use gloo::storage::{LocalStorage, Storage};
+use wasm_bindgen_futures::JsFuture;
 use yew::prelude::*;
 use yew_router::prelude::*;
 
@@ -131,6 +134,197 @@ fn community_summary() -> Html {
     }
 }
 
+// --- Weekly AI Summary ---
+const WEEKLY_SUMMARIES_KEY: &str = "treening_weekly_summaries";
+
+#[derive(Clone, PartialEq, serde::Serialize, serde::Deserialize)]
+struct WeeklySummaryData {
+    week: String, // ISO week like "2026-W08"
+    summary: String,
+}
+
+fn current_iso_week() -> String {
+    let now = chrono::Local::now().date_naive();
+    format!("{}-W{:02}", now.iso_week().year(), now.iso_week().week())
+}
+
+fn load_weekly_summaries() -> Vec<WeeklySummaryData> {
+    gloo::storage::LocalStorage::get(WEEKLY_SUMMARIES_KEY).unwrap_or_default()
+}
+
+fn save_weekly_summaries(summaries: &[WeeklySummaryData]) {
+    let _ = gloo::storage::LocalStorage::set(WEEKLY_SUMMARIES_KEY, summaries);
+}
+
+#[function_component(WeeklySummary)]
+fn weekly_summary() -> Html {
+    let config = storage::load_user_config();
+    let summary_text = use_state(|| Option::<String>::None);
+    let is_generating = use_state(|| false);
+
+    // Check for existing summary
+    let week = current_iso_week();
+    let existing: Option<String> = {
+        let summaries = load_weekly_summaries();
+        summaries
+            .iter()
+            .find(|s| s.week == week)
+            .map(|s| s.summary.clone())
+    };
+
+    // Set existing summary on first render
+    {
+        let summary_text = summary_text.clone();
+        let existing = existing.clone();
+        use_effect_with((), move |_| {
+            if let Some(text) = existing {
+                summary_text.set(Some(text));
+            }
+            || ()
+        });
+    }
+
+    // Auto-generate if conditions are met
+    {
+        let summary_text = summary_text.clone();
+        let is_generating = is_generating.clone();
+        let week = week.clone();
+        let ai_enabled = config.ai_enabled;
+        let has_existing = existing.is_some();
+        use_effect_with((), move |_| {
+            if ai_enabled
+                && !has_existing
+                && ai_chat::webllm_is_loaded()
+                && !storage::load_workouts().is_empty()
+            {
+                is_generating.set(true);
+                let summary_text = summary_text.clone();
+                let is_generating = is_generating.clone();
+                let week = week.clone();
+                wasm_bindgen_futures::spawn_local(async move {
+                    let system_prompt = ai_chat::build_system_prompt();
+                    let user_msg = serde_json::json!([{
+                        "role": "user",
+                        "content": "Give me a brief weekly summary of my training. Include: sessions this week, total volume, highlights, and one tip for next week. Keep it to 3-4 sentences."
+                    }]);
+                    let msgs_json = serde_json::to_string(&user_msg).unwrap_or_default();
+                    if let Ok(response) =
+                        JsFuture::from(ai_chat::webllm_chat(&system_prompt, &msgs_json)).await
+                    {
+                        let reply = response.as_string().unwrap_or_default();
+                        if !reply.is_empty() {
+                            let mut summaries = load_weekly_summaries();
+                            // Keep only last 8 weeks
+                            summaries.retain(|s| s.week != week);
+                            summaries.insert(
+                                0,
+                                WeeklySummaryData {
+                                    week,
+                                    summary: reply.clone(),
+                                },
+                            );
+                            summaries.truncate(8);
+                            save_weekly_summaries(&summaries);
+                            summary_text.set(Some(reply));
+                        }
+                    }
+                    is_generating.set(false);
+                });
+            }
+            || ()
+        });
+    }
+
+    // Regenerate callback
+    let on_regenerate = {
+        let summary_text = summary_text.clone();
+        let is_generating = is_generating.clone();
+        let week = week.clone();
+        Callback::from(move |_: MouseEvent| {
+            if *is_generating {
+                return;
+            }
+            if !ai_chat::webllm_is_loaded() {
+                return;
+            }
+            is_generating.set(true);
+            let summary_text = summary_text.clone();
+            let is_generating = is_generating.clone();
+            let week = week.clone();
+            wasm_bindgen_futures::spawn_local(async move {
+                let system_prompt = ai_chat::build_system_prompt();
+                let user_msg = serde_json::json!([{
+                    "role": "user",
+                    "content": "Give me a brief weekly summary of my training. Include: sessions this week, total volume, highlights, and one tip for next week. Keep it to 3-4 sentences."
+                }]);
+                let msgs_json = serde_json::to_string(&user_msg).unwrap_or_default();
+                if let Ok(response) =
+                    JsFuture::from(ai_chat::webllm_chat(&system_prompt, &msgs_json)).await
+                {
+                    let reply = response.as_string().unwrap_or_default();
+                    if !reply.is_empty() {
+                        let mut summaries = load_weekly_summaries();
+                        summaries.retain(|s| s.week != week);
+                        summaries.insert(
+                            0,
+                            WeeklySummaryData {
+                                week,
+                                summary: reply.clone(),
+                            },
+                        );
+                        summaries.truncate(8);
+                        save_weekly_summaries(&summaries);
+                        summary_text.set(Some(reply));
+                    }
+                }
+                is_generating.set(false);
+            });
+        })
+    };
+
+    if !config.ai_enabled {
+        return html! {};
+    }
+
+    // Show card if we have a summary or are generating
+    if summary_text.is_none() && !*is_generating {
+        return html! {};
+    }
+
+    html! {
+        <div class="space-y-3">
+            <div class="flex justify-between items-center px-1">
+                <h2 class="text-lg font-semibold text-gray-900 dark:text-gray-100">{"Weekly AI Summary"}</h2>
+                <button
+                    onclick={on_regenerate}
+                    disabled={*is_generating}
+                    class="text-xs text-blue-600 dark:text-blue-400 hover:underline disabled:opacity-50"
+                >
+                    { if *is_generating { "Generating..." } else { "Regenerate" } }
+                </button>
+            </div>
+            <div class="bg-gray-100 dark:bg-gray-800/50 rounded-2xl p-4 neu-flat transition-colors">
+                { if *is_generating && summary_text.is_none() {
+                    html! {
+                        <div class="flex items-center gap-2 text-sm text-gray-500">
+                            <div class="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style="animation-delay: 0ms;" />
+                            <div class="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style="animation-delay: 150ms;" />
+                            <div class="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style="animation-delay: 300ms;" />
+                            <span class="ml-1">{"Generating summary..."}</span>
+                        </div>
+                    }
+                } else if let Some(text) = &*summary_text {
+                    html! {
+                        <p class="text-sm text-gray-700 dark:text-gray-300 whitespace-pre-wrap">{text}</p>
+                    }
+                } else {
+                    html! {}
+                }}
+            </div>
+        </div>
+    }
+}
+
 #[function_component(HomePage)]
 pub fn home_page() -> Html {
     let workouts = use_state(storage::load_workouts);
@@ -224,6 +418,8 @@ pub fn home_page() -> Html {
             </div>
 
             <SummaryStats />
+
+            <WeeklySummary />
 
             <AchievementBadges />
 
