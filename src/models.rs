@@ -320,7 +320,6 @@ pub enum AiModel {
     Qwen3_0_6B,
     Qwen2_5_0_5B,
     Llama3_2_1B,
-    Gemma2_2B,
 }
 
 impl AiModel {
@@ -330,7 +329,6 @@ impl AiModel {
             AiModel::Qwen3_0_6B => "Qwen3-0.6B-q4f16_1-MLC",
             AiModel::Qwen2_5_0_5B => "Qwen2.5-0.5B-Instruct-q4f16_1-MLC",
             AiModel::Llama3_2_1B => "Llama-3.2-1B-Instruct-q4f16_1-MLC",
-            AiModel::Gemma2_2B => "gemma-2-2b-it-q4f16_1-MLC-1k",
         }
     }
 
@@ -340,7 +338,6 @@ impl AiModel {
             AiModel::Qwen3_0_6B => "Qwen3 0.6B (~500MB)",
             AiModel::Qwen2_5_0_5B => "Qwen2.5 0.5B (~350MB)",
             AiModel::Llama3_2_1B => "Llama 3.2 1B (~600MB)",
-            AiModel::Gemma2_2B => "Gemma 2 2B (~1GB)",
         }
     }
 
@@ -350,7 +347,6 @@ impl AiModel {
             AiModel::Qwen3_0_6B,
             AiModel::Qwen2_5_0_5B,
             AiModel::Llama3_2_1B,
-            AiModel::Gemma2_2B,
         ]
     }
 
@@ -360,7 +356,6 @@ impl AiModel {
             "qwen3" => AiModel::Qwen3_0_6B,
             "qwen2.5" => AiModel::Qwen2_5_0_5B,
             "llama3.2" => AiModel::Llama3_2_1B,
-            "gemma2" => AiModel::Gemma2_2B,
             _ => AiModel::default(),
         }
     }
@@ -371,7 +366,6 @@ impl AiModel {
             AiModel::Qwen3_0_6B => "qwen3",
             AiModel::Qwen2_5_0_5B => "qwen2.5",
             AiModel::Llama3_2_1B => "llama3.2",
-            AiModel::Gemma2_2B => "gemma2",
         }
     }
 }

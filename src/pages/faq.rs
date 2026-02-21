@@ -192,7 +192,7 @@ const FAQS: &[FaqItem] = &[
     },
     FaqItem {
         question: "Which AI model should I choose?",
-        answer: "It depends on your device. SmolLM2 360M (~200MB) is the fastest and lightest but gives basic answers. Qwen3 0.6B (~500MB, default) is a good balance of quality and size. Llama 3.2 1B (~600MB) and Gemma 2 2B (~1GB) give the best answers but need more GPU memory. If responses seem slow or your browser struggles, try a smaller model.",
+        answer: "It depends on your device. SmolLM2 360M (~200MB) is the fastest and lightest but gives basic answers. Qwen3 0.6B (~500MB, default) is a good balance of quality and size. Llama 3.2 1B (~600MB) gives the best answers but needs more GPU memory. If responses seem slow or your browser struggles, try a smaller model.",
     },
     FaqItem {
         question: "Which browsers support the AI Assistant?",

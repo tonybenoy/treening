@@ -41,7 +41,7 @@ Treening is a modern, offline-capable gym workout tracker built with Rust and We
 - **Share Links:** Share your Friend Code or Device Pairing link via the native share sheet (mobile) or clipboard — recipients are auto-added when they open the link.
 - **Auto Backup:** Automatic IndexedDB backup mirror with auto-restore if localStorage is cleared. Persistent storage is requested to prevent browser eviction.
 - **Storage Awareness:** Detects when localStorage quota is exceeded and shows a warning banner so you can export your data before anything is lost.
-- **AI Workout Assistant:** Chat with a local AI coach that knows your workout history. Powered by WebLLM running entirely in your browser via WebGPU — no server, no API keys, fully offline after a one-time model download. Choose from 5 models (SmolLM2 360M to Gemma 2 2B) in Settings based on your device capability. Enable it in Settings.
+- **AI Workout Assistant:** Chat with a local AI coach that knows your workout history. Powered by WebLLM running entirely in your browser via WebGPU — no server, no API keys, fully offline after a one-time model download. Choose from 4 models (SmolLM2 360M to Llama 3.2 1B) in Settings based on your device capability. Enable it in Settings.
 - **Privacy Focused:** Your data stays on your device. No accounts, no tracking.
 - **PWA Support:** Installable on iOS and Android for a native app-like experience.
 
