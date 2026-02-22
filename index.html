@@ -77,6 +77,26 @@
 
         window.webllmIsSupported = () => !!navigator.gpu;
 
+        // Detect disposed/GC'd WASM object errors (common on iOS Safari)
+        function isDisposedError(err) {
+            const msg = String(err?.message || err || "");
+            return msg.includes("disposed") || msg.includes("BindingError") || msg.includes("Tokenizer");
+        }
+
+        // Force re-create the engine (model is cached so this is fast)
+        async function reinitEngine() {
+            const modelId = loadedModelId;
+            engine = null;
+            loadedModelId = null;
+            if (!modelId) throw new Error("No model to reinitialize");
+            const worker = new Worker(
+                new URL("webllm-worker.js", window.location.href),
+                { type: "module" }
+            );
+            engine = await CreateWebWorkerMLCEngine(worker, modelId, {});
+            loadedModelId = modelId;
+        }
+
         window.webllmInit = async (modelId, progressCallback) => {
             // If already loaded with same model, skip
             if (engine && loadedModelId === modelId) return;
@@ -109,15 +129,30 @@
                 { role: "system", content: systemPrompt },
                 ...messages
             ];
-            const reply = await engine.chat.completions.create({
-                messages: fullMessages,
-                max_tokens: 1024,
-                temperature: 0.7,
-            });
-            let content = reply.choices[0].message.content || "";
-            // Strip Qwen3 thinking tags if present
-            content = content.replace(/<think>[\s\S]*?<\/think>/g, "").trim();
-            return content;
+            try {
+                const reply = await engine.chat.completions.create({
+                    messages: fullMessages,
+                    max_tokens: 1024,
+                    temperature: 0.7,
+                });
+                let content = reply.choices[0].message.content || "";
+                content = content.replace(/<think>[\s\S]*?<\/think>/g, "").trim();
+                return content;
+            } catch (err) {
+                if (isDisposedError(err)) {
+                    console.warn("WebLLM engine disposed, reinitializing...", err);
+                    await reinitEngine();
+                    const reply = await engine.chat.completions.create({
+                        messages: fullMessages,
+                        max_tokens: 1024,
+                        temperature: 0.7,
+                    });
+                    let content = reply.choices[0].message.content || "";
+                    content = content.replace(/<think>[\s\S]*?<\/think>/g, "").trim();
+                    return content;
+                }
+                throw err;
+            }
         };
 
         window.webllmChatStream = async (systemPrompt, messagesJson, onChunk) => {
@@ -127,36 +162,71 @@
                 { role: "system", content: systemPrompt },
                 ...messages
             ];
-            const chunks = await engine.chat.completions.create({
-                messages: fullMessages,
-                max_tokens: 1024,
-                temperature: 0.7,
-                stream: true,
-                stream_options: { include_usage: true },
-            });
-            let fullContent = "";
-            let inThink = false;
-            for await (const chunk of chunks) {
-                const delta = chunk.choices[0]?.delta?.content || "";
-                fullContent += delta;
-                // Strip <think>...</think> tags progressively
-                let cleaned = fullContent.replace(/<think>[\s\S]*?<\/think>/g, "").trim();
-                // If we have an unclosed <think> tag, hide everything after it
-                const openIdx = cleaned.lastIndexOf("<think>");
-                if (openIdx !== -1 && cleaned.indexOf("</think>", openIdx) === -1) {
-                    cleaned = cleaned.substring(0, openIdx).trim();
+            try {
+                const chunks = await engine.chat.completions.create({
+                    messages: fullMessages,
+                    max_tokens: 1024,
+                    temperature: 0.7,
+                    stream: true,
+                    stream_options: { include_usage: true },
+                });
+                let fullContent = "";
+                for await (const chunk of chunks) {
+                    const delta = chunk.choices[0]?.delta?.content || "";
+                    fullContent += delta;
+                    let cleaned = fullContent.replace(/<think>[\s\S]*?<\/think>/g, "").trim();
+                    const openIdx = cleaned.lastIndexOf("<think>");
+                    if (openIdx !== -1 && cleaned.indexOf("</think>", openIdx) === -1) {
+                        cleaned = cleaned.substring(0, openIdx).trim();
+                    }
+                    if (onChunk) onChunk(cleaned);
                 }
-                if (onChunk) onChunk(cleaned);
+                let finalContent = fullContent.replace(/<think>[\s\S]*?<\/think>/g, "").trim();
+                return finalContent;
+            } catch (err) {
+                if (isDisposedError(err)) {
+                    console.warn("WebLLM engine disposed, reinitializing...", err);
+                    await reinitEngine();
+                    // Retry after reinit
+                    const chunks = await engine.chat.completions.create({
+                        messages: fullMessages,
+                        max_tokens: 1024,
+                        temperature: 0.7,
+                        stream: true,
+                        stream_options: { include_usage: true },
+                    });
+                    let fullContent = "";
+                    for await (const chunk of chunks) {
+                        const delta = chunk.choices[0]?.delta?.content || "";
+                        fullContent += delta;
+                        let cleaned = fullContent.replace(/<think>[\s\S]*?<\/think>/g, "").trim();
+                        const openIdx = cleaned.lastIndexOf("<think>");
+                        if (openIdx !== -1 && cleaned.indexOf("</think>", openIdx) === -1) {
+                            cleaned = cleaned.substring(0, openIdx).trim();
+                        }
+                        if (onChunk) onChunk(cleaned);
+                    }
+                    let finalContent = fullContent.replace(/<think>[\s\S]*?<\/think>/g, "").trim();
+                    return finalContent;
+                }
+                throw err;
             }
-            let finalContent = fullContent.replace(/<think>[\s\S]*?<\/think>/g, "").trim();
-            return finalContent;
         };
 
         window.webllmIsLoaded = () => !!engine;
 
         window.webllmReset = async () => {
             if (engine) {
-                await engine.resetChat();
+                try {
+                    await engine.resetChat();
+                } catch (err) {
+                    if (isDisposedError(err)) {
+                        console.warn("WebLLM engine disposed during reset, reinitializing...");
+                        await reinitEngine();
+                    } else {
+                        throw err;
+                    }
+                }
             }
         };
     </script>

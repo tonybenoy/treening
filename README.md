@@ -109,3 +109,7 @@ The output will be in the `dist/` directory.
 ## License
 
 [MIT](LICENSE)
+
+## Acknowledgements
+
+Thanks to [@pulkitsaxena14](https://github.com/pulkitsaxena14) for testing the iOS PWA.
