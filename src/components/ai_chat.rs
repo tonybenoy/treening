@@ -1034,6 +1034,11 @@ pub fn ai_chat() -> Html {
                     Err(e) => {
                         let msg = e
                             .as_string()
+                            .or_else(|| {
+                                js_sys::Reflect::get(&e, &"message".into())
+                                    .ok()
+                                    .and_then(|v| v.as_string())
+                            })
                             .unwrap_or_else(|| "Failed to load model".to_string());
                         ms.set(ModelState::Error(msg));
                     }
@@ -1183,6 +1188,11 @@ pub fn ai_chat() -> Html {
                         threads_handle.set(ts);
                         let msg = e
                             .as_string()
+                            .or_else(|| {
+                                js_sys::Reflect::get(&e, &"message".into())
+                                    .ok()
+                                    .and_then(|v| v.as_string())
+                            })
                             .unwrap_or_else(|| "Generation failed".to_string());
                         model_state.set(ModelState::Error(msg));
                     }
