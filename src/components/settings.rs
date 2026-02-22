@@ -182,8 +182,8 @@ pub fn settings_panel(props: &Props) -> Html {
 
                 <div class="pt-4 mt-4 border-t border-gray-200 dark:border-gray-700/50 flex items-center justify-between">
                     <div>
-                        <div class="font-medium text-gray-800 dark:text-gray-200">{"AI Assistant"}</div>
-                        <div class="text-sm text-gray-500 dark:text-gray-400">{"Local AI chat powered by WebGPU"}</div>
+                        <div class="font-medium text-gray-800 dark:text-gray-200">{"Coach T"}</div>
+                        <div class="text-sm text-gray-500 dark:text-gray-400">{"Your personal workout coach, powered by local AI"}</div>
                     </div>
                     <button
                         onclick={on_toggle_ai}

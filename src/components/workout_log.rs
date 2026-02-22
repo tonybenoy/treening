@@ -261,7 +261,7 @@ pub fn workout_log(props: &Props) -> Html {
                                     html! {
                                         <button
                                             class="text-gray-400 hover:text-gray-200 text-sm transition-colors"
-                                            title="Move up"
+                                            title="Move exercise up"
                                             onclick={Callback::from(move |_| {
                                                 let mut exs = exercises_c.clone();
                                                 exs.swap(ex_idx, ex_idx - 1);
@@ -276,7 +276,7 @@ pub fn workout_log(props: &Props) -> Html {
                                     html! {
                                         <button
                                             class="text-gray-400 hover:text-gray-200 text-sm transition-colors"
-                                            title="Move down"
+                                            title="Move exercise down"
                                             onclick={Callback::from(move |_| {
                                                 let mut exs = exercises_c.clone();
                                                 exs.swap(ex_idx, ex_idx + 1);
@@ -292,6 +292,7 @@ pub fn workout_log(props: &Props) -> Html {
                                     html! {
                                         <button
                                             class="text-purple-500 text-[10px] font-bold hover:text-purple-400 transition-colors"
+                                            title="Group with previous exercise as superset"
                                             onclick={Callback::from(move |_| {
                                                 let mut exs = exercises_c.clone();
                                                 let above_group = exs[ex_idx - 1].superset_group;
@@ -530,7 +531,7 @@ pub fn workout_log(props: &Props) -> Html {
                                                         />
                                                         <button
                                                             class="text-gray-400 hover:text-blue-400 text-xs flex-shrink-0 transition-colors"
-                                                            title="Plate calculator"
+                                                            title="Plate calculator \u{2014} see plates per side"
                                                             onclick={{
                                                                 let pc = plate_calc_target.clone();
                                                                 Callback::from(move |_| {
@@ -662,7 +663,7 @@ pub fn workout_log(props: &Props) -> Html {
                                                         "text-blue-400 hover:text-blue-300"
                                                     }
                                                 )}
-                                                title="Set note"
+                                                title="Add a note to this set"
                                                 onclick={{
                                                     let notes = expanded_notes.clone();
                                                     Callback::from(move |_| {
@@ -757,6 +758,7 @@ pub fn workout_log(props: &Props) -> Html {
                             html! {
                                 <button
                                     class="mt-2 text-xs font-bold text-orange-500 hover:text-orange-400 transition-colors"
+                                    title="Generate warm-up sets at 40/60/75/90%"
                                     onclick={Callback::from(move |_| {
                                         let mut exs = exercises_wu.clone();
                                         if let Some(we) = exs.get_mut(ex_idx) {

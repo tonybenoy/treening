@@ -295,7 +295,7 @@ fn overview_tab(props: &OverviewProps) -> Html {
             <div class="text-center py-12 bg-gray-50 dark:bg-gray-800/20 rounded-2xl border border-dashed border-gray-200 dark:border-gray-700 transition-colors">
                 <p class="text-4xl mb-4">{"📊"}</p>
                 <p class="text-lg font-bold text-gray-900 dark:text-gray-100">{"No workouts yet"}</p>
-                <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">{"Complete your first workout to see analytics here."}</p>
+                <p class="text-sm text-gray-500 dark:text-gray-400 mt-1 px-4">{"Log workouts to see your training stats and muscle group breakdown."}</p>
             </div>
         };
     }
@@ -539,7 +539,7 @@ fn progress_tab(props: &ProgressProps) -> Html {
             <div class="text-center py-12 bg-gray-50 dark:bg-gray-800/20 rounded-2xl border border-dashed border-gray-200 dark:border-gray-700 transition-colors">
                 <p class="text-4xl mb-4">{"📈"}</p>
                 <p class="text-lg font-bold text-gray-900 dark:text-gray-100">{"No workouts yet"}</p>
-                <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">{"Complete workouts to track your progress."}</p>
+                <p class="text-sm text-gray-500 dark:text-gray-400 mt-1 px-4">{"Track exercises consistently to see strength progress charts."}</p>
             </div>
         };
     }
@@ -770,7 +770,7 @@ fn body_tab() -> Html {
             <div class="text-center py-12 bg-gray-50 dark:bg-gray-800/20 rounded-2xl border border-dashed border-gray-200 dark:border-gray-700 transition-colors">
                 <p class="text-4xl mb-4">{"⚖️"}</p>
                 <p class="text-lg font-bold text-gray-900 dark:text-gray-100">{"No body metrics yet"}</p>
-                <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">{"Log your weight in Settings to see trends here."}</p>
+                <p class="text-sm text-gray-500 dark:text-gray-400 mt-1 px-4">{"Log your weight in Settings → Profile to unlock body metrics."}</p>
             </div>
         };
     }

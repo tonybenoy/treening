@@ -819,7 +819,7 @@ pub fn build_system_prompt() -> String {
 
     // === Build prompt ===
     let mut prompt = format!(
-        "You are a friendly, knowledgeable personal gym coach for {}. \
+        "You are Coach T, a friendly and knowledgeable personal gym coach for {}. \
          You have COMPLETE access to their workout data below. \
          Use this data to give accurate, specific answers.\n\n\
          RULES:\n\
@@ -946,6 +946,7 @@ pub fn ai_chat() -> Html {
     let show_export_toast = use_state(|| false);
     let speaking_msg_idx = use_state(|| Option::<usize>::None);
     let saved_workout_indices = use_state(HashSet::<usize>::new);
+    let streaming_content = use_state(String::new);
     let navigator = use_navigator().unwrap();
 
     // Get active thread messages
@@ -1042,12 +1043,14 @@ pub fn ai_chat() -> Html {
     };
 
     // Helper: send a message (used by on_send and on_quick)
+    let streaming_content_for_render = streaming_content.clone();
     let do_send = {
         let threads = threads.clone();
         let active_thread_id = active_thread_id.clone();
         let model_state = model_state.clone();
         let input_ref = input_ref.clone();
         let scroll_trigger = scroll_trigger.clone();
+        let streaming_content = streaming_content.clone();
         move |text: String| {
             if text.is_empty() {
                 return;
@@ -1093,6 +1096,7 @@ pub fn ai_chat() -> Html {
             let model_state = model_state.clone();
             let input_ref = input_ref.clone();
             let scroll_trigger = scroll_trigger.clone();
+            let streaming_content = streaming_content.clone();
             let tid = tid.clone();
 
             wasm_bindgen_futures::spawn_local(async move {
@@ -1127,22 +1131,13 @@ pub fn ai_chat() -> Html {
                     .collect();
                 let msgs_json = serde_json::to_string(&chat_msgs).unwrap_or_default();
 
-                // Stream response — only update in-memory state (no localStorage per chunk)
+                // Stream response — only update streaming_content state (no thread cloning per chunk)
                 let chunk_cb = {
-                    let threads_handle = threads_handle.clone();
+                    let streaming_content = streaming_content.clone();
                     let scroll_trigger = scroll_trigger.clone();
-                    let tid = tid.clone();
                     Closure::wrap(Box::new(move |chunk: JsValue| {
                         if let Some(content) = chunk.as_string() {
-                            let mut ts = (*threads_handle).clone();
-                            if let Some(thread) = ts.iter_mut().find(|t| t.id == tid) {
-                                if let Some(last) = thread.messages.last_mut() {
-                                    if last.role == "assistant" {
-                                        last.content = content;
-                                    }
-                                }
-                            }
-                            threads_handle.set(ts);
+                            streaming_content.set(content);
                             scroll_trigger.set(*scroll_trigger + 1);
                         }
                     }) as Box<dyn FnMut(JsValue)>)
@@ -1159,6 +1154,7 @@ pub fn ai_chat() -> Html {
                 match result {
                     Ok(response) => {
                         let final_content = response.as_string().unwrap_or_default();
+                        streaming_content.set(String::new());
                         // Update with final content
                         let mut ts = load_threads();
                         if let Some(thread) = ts.iter_mut().find(|t| t.id == tid) {
@@ -1173,6 +1169,7 @@ pub fn ai_chat() -> Html {
                         model_state.set(ModelState::Ready);
                     }
                     Err(e) => {
+                        streaming_content.set(String::new());
                         // Remove empty assistant message on error
                         let mut ts = load_threads();
                         if let Some(thread) = ts.iter_mut().find(|t| t.id == tid) {
@@ -1351,7 +1348,7 @@ pub fn ai_chat() -> Html {
                     .messages
                     .iter()
                     .map(|m| {
-                        let role = if m.role == "user" { "You" } else { "AI" };
+                        let role = if m.role == "user" { "You" } else { "Coach T" };
                         format!("{}: {}", role, m.content)
                     })
                     .collect::<Vec<_>>()
@@ -1501,7 +1498,7 @@ pub fn ai_chat() -> Html {
                 let workout = models::Workout {
                     id: uuid(),
                     date: chrono::Local::now().format("%Y-%m-%d").to_string(),
-                    name: "AI Logged Workout".to_string(),
+                    name: "Coach T Workout".to_string(),
                     exercises: workout_exercises,
                     duration_mins: 0,
                 };
@@ -1529,7 +1526,8 @@ pub fn ai_chat() -> Html {
         }
     };
 
-    let quick_prompts = generate_quick_prompts();
+    let quick_prompts_dep = active_messages.len();
+    let quick_prompts = use_memo(quick_prompts_dep, |_| generate_quick_prompts());
 
     // Check voice support
     let voice_supported = speech_recognition_supported();
@@ -1540,7 +1538,7 @@ pub fn ai_chat() -> Html {
             // Header
             <div class="px-4 py-3 flex items-center justify-between border-b border-gray-200 dark:border-gray-700/50">
                 <div class="flex items-center gap-2 min-w-0 flex-1">
-                    <span class="text-xl flex-shrink-0">{"🤖"}</span>
+                    <span class="text-xl flex-shrink-0">{"🏋️‍♂️"}</span>
                     <button
                         onclick={on_toggle_thread_list.clone()}
                         class="text-sm font-bold text-gray-900 dark:text-gray-100 truncate hover:text-blue-600 dark:hover:text-blue-400 transition flex items-center gap-1"
@@ -1550,7 +1548,7 @@ pub fn ai_chat() -> Html {
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
                         </svg>
                     </button>
-                    <span class="px-2 py-0.5 bg-blue-100 dark:bg-blue-600/20 text-blue-600 dark:text-blue-400 text-[10px] font-bold rounded-full uppercase flex-shrink-0">{"Local"}</span>
+                    <span class="px-2 py-0.5 bg-blue-100 dark:bg-blue-600/20 text-blue-600 dark:text-blue-400 text-[10px] font-bold rounded-full uppercase flex-shrink-0">{"Offline"}</span>
                 </div>
                 if *model_state == ModelState::Ready || *model_state == ModelState::Generating {
                     <div class="flex items-center gap-1 flex-shrink-0">
@@ -1632,7 +1630,7 @@ pub fn ai_chat() -> Html {
                                 <span class="text-3xl">{"⚠️"}</span>
                                 <h2 class="text-lg font-bold text-gray-900 dark:text-gray-100">{"WebGPU Not Available"}</h2>
                                 <p class="text-sm text-gray-600 dark:text-gray-400">
-                                    {"The AI assistant requires WebGPU, which is not supported in your current browser."}
+                                    {"Coach T requires WebGPU, which is not supported in your current browser."}
                                 </p>
                                 <div class="text-xs text-gray-500 space-y-1">
                                     <p class="font-bold">{"Supported browsers:"}</p>
@@ -1647,10 +1645,10 @@ pub fn ai_chat() -> Html {
                         html! {
                         <div class="space-y-4">
                             <div class="bg-gray-100 dark:bg-gray-800/50 rounded-2xl p-6 neu-flat text-center space-y-4">
-                                <span class="text-4xl">{"🤖"}</span>
-                                <h2 class="text-lg font-bold text-gray-900 dark:text-gray-100">{"AI Workout Assistant"}</h2>
+                                <span class="text-4xl">{"🏋️‍♂️"}</span>
+                                <h2 class="text-lg font-bold text-gray-900 dark:text-gray-100">{"Coach T"}</h2>
                                 <p class="text-sm text-gray-600 dark:text-gray-400">
-                                    {"Ask questions about your workouts, get training advice, and track your progress — all powered by AI running locally in your browser."}
+                                    {"Your personal workout coach — ask questions, get training advice, and track your progress. Runs locally in your browser, fully private."}
                                 </p>
                                 <button
                                     onclick={on_load_model}
@@ -1663,8 +1661,27 @@ pub fn ai_chat() -> Html {
                                 </p>
                             </div>
 
-                            <div class="space-y-2">
-                                <p class="text-xs font-bold text-gray-500 dark:text-gray-400 px-1">{"Example questions:"}</p>
+                            <div class="space-y-3">
+                                <p class="text-xs font-bold text-gray-500 dark:text-gray-400 px-1">{"How to use Coach T:"}</p>
+                                <div class="space-y-2 text-xs text-gray-600 dark:text-gray-400 px-1">
+                                    <div class="flex gap-2 items-start">
+                                        <span class="font-bold text-blue-600 dark:text-blue-400 flex-shrink-0">{"1."}</span>
+                                        <span>{"Load the model below (one-time download, cached offline)."}</span>
+                                    </div>
+                                    <div class="flex gap-2 items-start">
+                                        <span class="font-bold text-blue-600 dark:text-blue-400 flex-shrink-0">{"2."}</span>
+                                        <span>{"Ask anything about your workouts — progress, what to train, muscle balance."}</span>
+                                    </div>
+                                    <div class="flex gap-2 items-start">
+                                        <span class="font-bold text-blue-600 dark:text-blue-400 flex-shrink-0">{"3."}</span>
+                                        <span>{"Say \"I did bench press 80kg 3x10\" to log workouts directly through chat."}</span>
+                                    </div>
+                                    <div class="flex gap-2 items-start">
+                                        <span class="font-bold text-blue-600 dark:text-blue-400 flex-shrink-0">{"4."}</span>
+                                        <span>{"Ask for a workout suggestion and tap \"Start workout\" to jump right in."}</span>
+                                    </div>
+                                </div>
+                                <p class="text-xs font-bold text-gray-500 dark:text-gray-400 px-1 pt-1">{"Try asking:"}</p>
                                 <div class="flex flex-wrap gap-2">
                                     <span class="neu-chip rounded-full px-3 py-1.5 text-xs text-gray-600 dark:text-gray-300 bg-gray-100 dark:bg-gray-800 cursor-default">{"\"How was my week?\""}</span>
                                     <span class="neu-chip rounded-full px-3 py-1.5 text-xs text-gray-600 dark:text-gray-300 bg-gray-100 dark:bg-gray-800 cursor-default">{"\"What should I train today?\""}</span>
@@ -1676,7 +1693,7 @@ pub fn ai_chat() -> Html {
                     ModelState::Downloading { progress, text } => html! {
                         <div class="bg-gray-100 dark:bg-gray-800/50 rounded-2xl p-6 neu-flat text-center space-y-4">
                             <span class="text-3xl">{"⏳"}</span>
-                            <h2 class="text-lg font-bold text-gray-900 dark:text-gray-100">{"Loading AI Model"}</h2>
+                            <h2 class="text-lg font-bold text-gray-900 dark:text-gray-100">{"Loading Coach T"}</h2>
                             <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-3 overflow-hidden">
                                 <div
                                     class="bg-blue-600 h-3 rounded-full transition-all duration-300"
@@ -1706,7 +1723,7 @@ pub fn ai_chat() -> Html {
                         <>
                             if active_messages.is_empty() {
                                 <div class="space-y-3 pt-4">
-                                    <p class="text-center text-sm text-gray-500">{"Ask me about your workouts!"}</p>
+                                    <p class="text-center text-sm text-gray-500">{"Ask Coach T about your workouts!"}</p>
                                     <div class="flex flex-wrap gap-2 justify-center">
                                         { for quick_prompts.iter().map(|p| {
                                             let prompt = p.clone();
@@ -1725,8 +1742,19 @@ pub fn ai_chat() -> Html {
 
                             { for active_messages.iter().enumerate().map(|(idx, msg)| {
                                 let is_user = msg.role == "user";
-                                let is_empty_assistant = !is_user && msg.content.is_empty();
-                                let content = msg.content.clone();
+                                let is_generating = *model_state == ModelState::Generating;
+                                let is_last_assistant = !is_user && idx == active_messages.len() - 1;
+                                // During streaming, show streaming_content for the last assistant message
+                                let display_content = if is_generating && is_last_assistant && !streaming_content_for_render.is_empty() {
+                                    (*streaming_content_for_render).clone()
+                                } else {
+                                    msg.content.clone()
+                                };
+                                let is_empty_assistant = !is_user && display_content.is_empty();
+                                let content = display_content.clone();
+                                // Only parse workout buttons on the last assistant message and not during streaming
+                                let should_parse = !is_user && !is_empty_assistant
+                                    && !is_generating;
                                 let is_this_speaking = *speaking_msg_idx == Some(idx);
                                 // TTS button for non-empty assistant messages
                                 let speak_btn = if !is_user && !is_empty_assistant && tts_supported {
@@ -1802,9 +1830,15 @@ pub fn ai_chat() -> Html {
                                             } else {
                                                 html! {
                                                     <>
-                                                        {render_markdown(&msg.content)}
-                                                        {render_save_workout_btn(&content, idx)}
-                                                        {render_start_workout_btn(&content)}
+                                                        {render_markdown(&display_content)}
+                                                        { if should_parse {
+                                                            html! {
+                                                                <>
+                                                                    {render_save_workout_btn(&content, idx)}
+                                                                    {render_start_workout_btn(&content)}
+                                                                </>
+                                                            }
+                                                        } else { html! {} }}
                                                         {speak_btn}
                                                     </>
                                                 }
@@ -1830,7 +1864,7 @@ pub fn ai_chat() -> Html {
             // Disclaimer
             <div class="px-4 py-1">
                 <p class="text-[10px] text-gray-400 text-center">
-                    {"AI responses are generated locally and may not always be accurate."}
+                    {"Coach T runs locally on your device. Responses may not always be accurate."}
                 </p>
             </div>
 
@@ -1841,7 +1875,7 @@ pub fn ai_chat() -> Html {
                         <input
                             ref={input_ref}
                             type="text"
-                            placeholder="Ask about your workouts..."
+                            placeholder="Ask Coach T anything..."
                             value={(*input_text).clone()}
                             oninput={on_input}
                             onkeypress={on_keypress}

@@ -294,7 +294,7 @@ fn weekly_summary() -> Html {
     html! {
         <div class="space-y-3">
             <div class="flex justify-between items-center px-1">
-                <h2 class="text-lg font-semibold text-gray-900 dark:text-gray-100">{"Weekly AI Summary"}</h2>
+                <h2 class="text-lg font-semibold text-gray-900 dark:text-gray-100">{"Coach T Weekly Summary"}</h2>
                 <button
                     onclick={on_regenerate}
                     disabled={*is_generating}
@@ -408,8 +408,8 @@ pub fn home_page() -> Html {
                 { if storage::load_user_config().ai_enabled {
                     html! {
                         <Link<Route> to={Route::AiChat} classes="flex-1 py-3 bg-gray-100 dark:bg-gray-800/50 rounded-xl text-center hover:bg-gray-200 dark:hover:bg-gray-800 transition neu-flat">
-                            <div class="text-lg">{"🤖"}</div>
-                            <div class="text-xs font-bold text-gray-600 dark:text-gray-400">{"AI Assistant"}</div>
+                            <div class="text-lg">{"🏋️‍♂️"}</div>
+                            <div class="text-xs font-bold text-gray-600 dark:text-gray-400">{"Coach T"}</div>
                         </Link<Route>>
                     }
                 } else {
@@ -534,6 +534,13 @@ pub fn home_page() -> Html {
                                     <div>
                                         <div class="font-bold text-gray-800 dark:text-gray-200">{"Track Body Progress"}</div>
                                         <p class="text-sm text-gray-600 dark:text-gray-400">{"Log your weight in Settings to unlock 'Relative Volume' stats and charts."}</p>
+                                    </div>
+                                </div>
+                                <div class="flex gap-4">
+                                    <div class="flex-shrink-0 w-8 h-8 bg-blue-600 text-white rounded-full flex items-center justify-center font-bold">{"5"}</div>
+                                    <div>
+                                        <div class="font-bold text-gray-800 dark:text-gray-200">{"Meet Coach T"}</div>
+                                        <p class="text-sm text-gray-600 dark:text-gray-400">{"Enable Coach T in Settings for a personal AI coach. Ask for advice, log workouts via chat, and get weekly summaries — all offline."}</p>
                                     </div>
                                 </div>
                             </div>

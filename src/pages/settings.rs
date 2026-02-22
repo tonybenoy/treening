@@ -220,6 +220,7 @@ fn profile_section() -> Html {
                         value={(*rest_seconds).clone()}
                         onchange={let r = rest_seconds.clone(); Callback::from(move |e: Event| r.set(e.target_unchecked_into::<web_sys::HtmlInputElement>().value()))}
                     />
+                    <p class="text-[10px] text-gray-400 mt-0.5">{"Countdown after completing a set"}</p>
                 </div>
                 <div>
                     <label class="block text-[10px] uppercase font-bold text-gray-500 mb-1">{format!("Bar Weight ({})", unit_system.weight_label())}</label>
@@ -229,6 +230,7 @@ fn profile_section() -> Html {
                         value={(*bar_weight).clone()}
                         onchange={let bw = bar_weight.clone(); Callback::from(move |e: Event| bw.set(e.target_unchecked_into::<web_sys::HtmlInputElement>().value()))}
                     />
+                    <p class="text-[10px] text-gray-400 mt-0.5">{"Empty barbell weight, used for warm-ups and plate calculator"}</p>
                 </div>
             </div>
             <button

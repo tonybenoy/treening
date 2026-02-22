@@ -183,24 +183,28 @@ const FAQS: &[FaqItem] = &[
         answer: "After losing 20 kg and hitting a weight loss plateau, the developer started going to the gym but couldn\u{2019}t find a workout tracker that was both free and subscription-free. So Treening was built in a day using Claude Code and Gemini to solve that problem.",
     },
     FaqItem {
-        question: "What is the AI Assistant?",
-        answer: "The AI Assistant is an optional local AI coach that can answer questions about your workouts, suggest what to train, and analyze your progress. It runs entirely in your browser using WebGPU (via WebLLM) \u{2014} no data is sent to any server. Enable it in Settings under 'AI Assistant'.",
+        question: "What is Coach T?",
+        answer: "Coach T is your personal workout coach built into Treening. It can answer questions about your workouts, suggest what to train, analyze your progress, and even log workouts through chat. It runs entirely in your browser using WebGPU (via WebLLM) \u{2014} no data is sent to any server. Enable it in Settings under 'Coach T'.",
     },
     FaqItem {
-        question: "How do I enable the AI Assistant?",
-        answer: "Go to Settings and toggle on 'AI Assistant'. You can also choose which AI model to use \u{2014} from SmolLM2 360M (~200MB, fastest) to Gemma 2 2B (~1GB, best quality). Then navigate to the AI page from the home screen. On your first use you will need to download the selected model. This is a one-time download that is cached in your browser for offline use.",
+        question: "How do I enable Coach T?",
+        answer: "Go to Settings and toggle on 'Coach T'. You can also choose which AI model to use \u{2014} from SmolLM2 360M (~200MB, fastest) to Llama 3.2 1B (~600MB, best quality). Then tap 'Coach T' on the home screen. On your first use you will need to download the selected model. This is a one-time download that is cached in your browser for offline use.",
     },
     FaqItem {
         question: "Which AI model should I choose?",
         answer: "It depends on your device. SmolLM2 360M (~200MB) is the fastest and lightest but gives basic answers. Qwen3 0.6B (~500MB, default) is a good balance of quality and size. Llama 3.2 1B (~600MB) gives the best answers but needs more GPU memory. If responses seem slow or your browser struggles, try a smaller model.",
     },
     FaqItem {
-        question: "Which browsers support the AI Assistant?",
-        answer: "The AI Assistant requires WebGPU, which is available in Chrome/Edge 113+ (Desktop and Android) and Safari 18+ (macOS). If your browser does not support WebGPU, you will see an 'Unsupported' message. Firefox does not yet support WebGPU by default.",
+        question: "Which browsers support Coach T?",
+        answer: "Coach T requires WebGPU, which is available in Chrome/Edge 113+ (Desktop and Android) and Safari 18+ (macOS). If your browser does not support WebGPU, you will see an 'Unsupported' message. Firefox does not yet support WebGPU by default.",
     },
     FaqItem {
-        question: "Does the AI Assistant send my data anywhere?",
-        answer: "No. The AI model runs 100% locally in your browser. Your workout data is computed into a summary and fed to the model as context on your device only. Nothing is sent to any server or API. This is possible because the models are small enough to run directly on your GPU via WebGPU.",
+        question: "Coach T won't load or is very slow. What can I do?",
+        answer: "Coach T runs an AI model directly on your device's GPU, so it needs a reasonably powerful device with WebGPU support. If the model fails to load, freezes, or responds very slowly, your device may not have enough GPU memory or processing power. Try switching to a smaller model (e.g. SmolLM2 360M) in Settings. If that still doesn't work, your device unfortunately may not support running local AI models.",
+    },
+    FaqItem {
+        question: "Does Coach T send my data anywhere?",
+        answer: "No. Coach T runs 100% locally in your browser. Your workout data is computed into a summary and fed to the model as context on your device only. Nothing is sent to any server or API. This is possible because the models are small enough to run directly on your GPU via WebGPU.",
     },
     FaqItem {
         question: "Is there a community for Treening users?",

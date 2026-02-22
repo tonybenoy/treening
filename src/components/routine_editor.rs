@@ -213,7 +213,13 @@ pub fn routine_editor(props: &Props) -> Html {
                             }
                         })}
                         { if props.routines.is_empty() {
-                            html! { <p class="text-gray-500 text-center py-4">{"No routines yet. Create one to quickly start workouts."}</p> }
+                            html! {
+                                <div class="text-center py-8 px-4 bg-gray-50 dark:bg-gray-800/20 rounded-2xl border border-dashed border-gray-200 dark:border-gray-700 transition-colors">
+                                    <p class="text-4xl mb-3">{"📝"}</p>
+                                    <p class="text-lg font-bold text-gray-900 dark:text-gray-100 mb-1">{"No routines yet"}</p>
+                                    <p class="text-sm text-gray-500 dark:text-gray-400">{"Save your favorite workout combinations as routines. E.g., \"Push Day\" with Bench Press, OHP, Tricep Extensions \u{2014} start any routine with one tap."}</p>
+                                </div>
+                            }
                         } else { html! {} }}
                     </>
                 }

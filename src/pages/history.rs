@@ -43,12 +43,24 @@ pub fn history_page() -> Html {
                 <h1 class="text-2xl font-bold mb-1 text-gray-900 dark:text-gray-100">{"Workout History"}</h1>
                 <p class="text-gray-500 dark:text-gray-400 text-sm mb-3">{"Your past workouts."}</p>
             </div>
-            <HistoryList
-                workouts={(*workouts).clone()}
-                all_exercises={all_exercises}
-                on_delete={on_delete_workout}
-                on_update={on_update_workout}
-            />
+            { if workouts.is_empty() {
+                html! {
+                    <div class="mx-4 text-center py-12 bg-gray-50 dark:bg-gray-800/20 rounded-2xl border border-dashed border-gray-200 dark:border-gray-700 transition-colors">
+                        <p class="text-4xl mb-4">{"📋"}</p>
+                        <p class="text-lg font-bold text-gray-900 dark:text-gray-100">{"No workouts yet!"}</p>
+                        <p class="text-sm text-gray-500 dark:text-gray-400 mt-1 px-4">{"Tap \"Start New Workout\" on the home page to log your first session."}</p>
+                    </div>
+                }
+            } else {
+                html! {
+                    <HistoryList
+                        workouts={(*workouts).clone()}
+                        all_exercises={all_exercises}
+                        on_delete={on_delete_workout}
+                        on_update={on_update_workout}
+                    />
+                }
+            }}
         </div>
     }
 }

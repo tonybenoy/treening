@@ -17,6 +17,15 @@ extern "C" {
     fn vibrate(ms: u32) -> bool;
 }
 
+const WIP_KEY: &str = "treening_wip_workout";
+
+#[derive(serde::Serialize, serde::Deserialize)]
+struct WipWorkout {
+    name: String,
+    exercises: Vec<WorkoutExercise>,
+    started_at: f64, // js_sys::Date::now() in ms
+}
+
 fn try_vibrate() {
     let window = web_sys::window().unwrap();
     let navigator = window.navigator();
@@ -156,11 +165,26 @@ fn format_time(secs: u32) -> String {
 #[derive(Properties, PartialEq)]
 pub struct ElapsedTimerProps {
     pub active: bool,
+    #[prop_or(0)]
+    pub initial_seconds: u32,
 }
 
 #[function_component(ElapsedTimer)]
 pub fn elapsed_timer(props: &ElapsedTimerProps) -> Html {
-    let seconds = use_state(|| 0u32);
+    let seconds = use_state(|| props.initial_seconds);
+
+    // Sync from initial_seconds prop when it changes (e.g. WIP restore after mount)
+    {
+        let seconds = seconds.clone();
+        let initial = props.initial_seconds;
+        use_effect_with(initial, move |initial| {
+            if *initial > 0 {
+                seconds.set(*initial);
+            }
+            || ()
+        });
+    }
+
     {
         let seconds = seconds.clone();
         let active = props.active;
@@ -278,6 +302,8 @@ pub fn workout_page() -> Html {
     let elapsed_ref = use_mut_ref(|| 0u32);
     let workout_active = use_state(|| false);
     let saved = use_state(|| false);
+    let started_at = use_mut_ref(|| 0.0_f64);
+    let elapsed_initial = use_state(|| 0u32);
     let navigator = use_navigator().unwrap();
 
     // Rest timer trigger: incremented to signal RestTimer to start
@@ -309,16 +335,22 @@ pub fn workout_page() -> Html {
         });
     }
 
-    // Load from routine if set
+    // Load from routine, repeat, or WIP on mount
     {
         let workout_exercises = workout_exercises.clone();
         let workout_name = workout_name.clone();
         let workout_active = workout_active.clone();
         let previous = (*previous_workouts).clone();
         let all_ex = all_exercises.clone();
+        let started_at = started_at.clone();
+        let elapsed_initial = elapsed_initial.clone();
+        let elapsed_ref = elapsed_ref.clone();
         use_effect_with((), move |_| {
+            let mut loaded_from_intent = false;
+
             if let Ok(routine_id) = LocalStorage::get::<String>("treening_active_routine") {
                 LocalStorage::delete("treening_active_routine");
+                LocalStorage::delete(WIP_KEY);
                 let routines = storage::load_routines();
                 if let Some(routine) = routines.iter().find(|r| r.id == routine_id) {
                     workout_name.set(routine.name.clone());
@@ -338,26 +370,51 @@ pub fn workout_page() -> Html {
                         .collect();
                     workout_exercises.set(exs);
                     workout_active.set(true);
+                    *started_at.borrow_mut() = js_sys::Date::now();
+                    loaded_from_intent = true;
                 }
             }
-            // Load from repeat if set
-            if let Ok(repeat_json) = LocalStorage::get::<String>("treening_active_repeat") {
-                LocalStorage::delete("treening_active_repeat");
-                if let Ok(exs) = serde_json::from_str::<Vec<WorkoutExercise>>(&repeat_json) {
-                    // Reset completed status on all sets
-                    let exs: Vec<WorkoutExercise> = exs
-                        .into_iter()
-                        .map(|mut we| {
-                            for s in we.sets.iter_mut() {
-                                s.completed = false;
-                            }
-                            we
-                        })
-                        .collect();
-                    workout_exercises.set(exs);
-                    workout_active.set(true);
+
+            if !loaded_from_intent {
+                if let Ok(repeat_json) = LocalStorage::get::<String>("treening_active_repeat") {
+                    LocalStorage::delete("treening_active_repeat");
+                    LocalStorage::delete(WIP_KEY);
+                    if let Ok(exs) = serde_json::from_str::<Vec<WorkoutExercise>>(&repeat_json) {
+                        let exs: Vec<WorkoutExercise> = exs
+                            .into_iter()
+                            .map(|mut we| {
+                                for s in we.sets.iter_mut() {
+                                    s.completed = false;
+                                }
+                                we
+                            })
+                            .collect();
+                        workout_exercises.set(exs);
+                        workout_active.set(true);
+                        *started_at.borrow_mut() = js_sys::Date::now();
+                        loaded_from_intent = true;
+                    }
                 }
             }
+
+            // Restore WIP if no routine/repeat was loaded
+            if !loaded_from_intent {
+                if let Ok(json) = LocalStorage::get::<String>(WIP_KEY) {
+                    if let Ok(wip) = serde_json::from_str::<WipWorkout>(&json) {
+                        if !wip.exercises.is_empty() {
+                            workout_name.set(wip.name);
+                            workout_exercises.set(wip.exercises);
+                            workout_active.set(true);
+                            *started_at.borrow_mut() = wip.started_at;
+                            let elapsed_secs =
+                                ((js_sys::Date::now() - wip.started_at) / 1000.0).max(0.0) as u32;
+                            elapsed_initial.set(elapsed_secs);
+                            *elapsed_ref.borrow_mut() = elapsed_secs;
+                        }
+                    }
+                }
+            }
+
             || ()
         });
     }
@@ -379,6 +436,35 @@ pub fn workout_page() -> Html {
             };
             move || drop(interval)
         });
+    }
+
+    // Auto-save WIP workout to localStorage
+    {
+        let exs = (*workout_exercises).clone();
+        let name = (*workout_name).clone();
+        let active = *workout_active;
+        let started_at = started_at.clone();
+        use_effect_with(
+            (exs.clone(), name.clone(), active),
+            move |(exs, name, active)| {
+                if *active && !exs.is_empty() {
+                    let mut sa = *started_at.borrow();
+                    if sa == 0.0 {
+                        sa = js_sys::Date::now();
+                        *started_at.borrow_mut() = sa;
+                    }
+                    let wip = WipWorkout {
+                        name: name.clone(),
+                        exercises: exs.clone(),
+                        started_at: sa,
+                    };
+                    if let Ok(json) = serde_json::to_string(&wip) {
+                        let _ = LocalStorage::set(WIP_KEY, json);
+                    }
+                }
+                || ()
+            },
+        );
     }
 
     // PR toast callback
@@ -493,6 +579,7 @@ pub fn workout_page() -> Html {
             let mut workouts = storage::load_workouts();
             workouts.push(workout);
             storage::save_workouts(&workouts);
+            LocalStorage::delete(WIP_KEY);
             saved.set(true);
             nav.replace(&Route::History);
         })
@@ -527,6 +614,12 @@ pub fn workout_page() -> Html {
     }
 
     let rest_trigger_val = *rest_trigger;
+
+    // Tip banner for new users (< 3 workouts)
+    let tips_dismissed = use_state(|| {
+        gloo::storage::LocalStorage::get::<bool>("treening_tips_dismissed").unwrap_or(false)
+    });
+    let show_tips = *workout_active && previous_workouts.len() < 3 && !*tips_dismissed;
 
     // Undo pill
     let undo_html = if undo_snapshot.is_some() {
@@ -564,9 +657,46 @@ pub fn workout_page() -> Html {
                     />
                 </div>
                 { if *workout_active {
-                    html! { <ElapsedTimer active={true} /> }
+                    html! {
+                        <div class="flex items-center gap-2">
+                            <ElapsedTimer active={true} initial_seconds={*elapsed_initial} />
+                            <button
+                                class="text-xs text-red-500 hover:text-red-400 font-bold transition-colors"
+                                onclick={{
+                                    let we = workout_exercises.clone();
+                                    let name = workout_name.clone();
+                                    let active = workout_active.clone();
+                                    Callback::from(move |_| {
+                                        LocalStorage::delete(WIP_KEY);
+                                        we.set(Vec::new());
+                                        name.set("Workout".to_string());
+                                        active.set(false);
+                                    })
+                                }}
+                            >{"Discard"}</button>
+                        </div>
+                    }
                 } else { html! {} }}
             </div>
+
+            { if show_tips {
+                let tips_dismissed = tips_dismissed.clone();
+                html! {
+                    <div class="bg-blue-50 dark:bg-blue-900/20 rounded-xl px-3 py-2 flex items-start gap-2 text-xs text-blue-700 dark:text-blue-300">
+                        <span class="flex-shrink-0">{"💡"}</span>
+                        <div class="flex-1">
+                            {"Swipe left on a set to delete it · Tap 🏋️ for plate calculator · Complete sets for rest timer"}
+                        </div>
+                        <button
+                            class="flex-shrink-0 text-blue-500 dark:text-blue-400 font-bold hover:text-blue-700 dark:hover:text-blue-200"
+                            onclick={Callback::from(move |_| {
+                                let _ = gloo::storage::LocalStorage::set("treening_tips_dismissed", true);
+                                tips_dismissed.set(true);
+                            })}
+                        >{"✕"}</button>
+                    </div>
+                }
+            } else { html! {} }}
 
             <WorkoutLog
                 workout_exercises={(*workout_exercises).clone()}

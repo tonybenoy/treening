@@ -155,7 +155,7 @@
             }
         };
 
-        // Process a stream with throttled chunk callbacks (~50ms)
+        // Process a stream with throttled chunk callbacks (~150ms)
         async function processStream(chunks, onChunk) {
             let fullContent = "";
             let lastEmit = 0;
@@ -163,7 +163,7 @@
                 const delta = chunk.choices[0]?.delta?.content || "";
                 fullContent += delta;
                 const now = performance.now();
-                if (onChunk && now - lastEmit >= 50) {
+                if (onChunk && now - lastEmit >= 150) {
                     lastEmit = now;
                     let cleaned = fullContent.replace(/<think>[\s\S]*?<\/think>/g, "").trim();
                     const openIdx = cleaned.lastIndexOf("<think>");
