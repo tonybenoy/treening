@@ -155,6 +155,30 @@
             }
         };
 
+        // Process a stream with throttled chunk callbacks (~50ms)
+        async function processStream(chunks, onChunk) {
+            let fullContent = "";
+            let lastEmit = 0;
+            for await (const chunk of chunks) {
+                const delta = chunk.choices[0]?.delta?.content || "";
+                fullContent += delta;
+                const now = performance.now();
+                if (onChunk && now - lastEmit >= 50) {
+                    lastEmit = now;
+                    let cleaned = fullContent.replace(/<think>[\s\S]*?<\/think>/g, "").trim();
+                    const openIdx = cleaned.lastIndexOf("<think>");
+                    if (openIdx !== -1 && cleaned.indexOf("</think>", openIdx) === -1) {
+                        cleaned = cleaned.substring(0, openIdx).trim();
+                    }
+                    onChunk(cleaned);
+                }
+            }
+            // Always emit final content
+            let finalContent = fullContent.replace(/<think>[\s\S]*?<\/think>/g, "").trim();
+            if (onChunk) onChunk(finalContent);
+            return finalContent;
+        }
+
         window.webllmChatStream = async (systemPrompt, messagesJson, onChunk) => {
             if (!engine) throw new Error("Model not loaded");
             const messages = JSON.parse(messagesJson);
@@ -170,24 +194,11 @@
                     stream: true,
                     stream_options: { include_usage: true },
                 });
-                let fullContent = "";
-                for await (const chunk of chunks) {
-                    const delta = chunk.choices[0]?.delta?.content || "";
-                    fullContent += delta;
-                    let cleaned = fullContent.replace(/<think>[\s\S]*?<\/think>/g, "").trim();
-                    const openIdx = cleaned.lastIndexOf("<think>");
-                    if (openIdx !== -1 && cleaned.indexOf("</think>", openIdx) === -1) {
-                        cleaned = cleaned.substring(0, openIdx).trim();
-                    }
-                    if (onChunk) onChunk(cleaned);
-                }
-                let finalContent = fullContent.replace(/<think>[\s\S]*?<\/think>/g, "").trim();
-                return finalContent;
+                return await processStream(chunks, onChunk);
             } catch (err) {
                 if (isDisposedError(err)) {
                     console.warn("WebLLM engine disposed, reinitializing...", err);
                     await reinitEngine();
-                    // Retry after reinit
                     const chunks = await engine.chat.completions.create({
                         messages: fullMessages,
                         max_tokens: 1024,
@@ -195,19 +206,7 @@
                         stream: true,
                         stream_options: { include_usage: true },
                     });
-                    let fullContent = "";
-                    for await (const chunk of chunks) {
-                        const delta = chunk.choices[0]?.delta?.content || "";
-                        fullContent += delta;
-                        let cleaned = fullContent.replace(/<think>[\s\S]*?<\/think>/g, "").trim();
-                        const openIdx = cleaned.lastIndexOf("<think>");
-                        if (openIdx !== -1 && cleaned.indexOf("</think>", openIdx) === -1) {
-                            cleaned = cleaned.substring(0, openIdx).trim();
-                        }
-                        if (onChunk) onChunk(cleaned);
-                    }
-                    let finalContent = fullContent.replace(/<think>[\s\S]*?<\/think>/g, "").trim();
-                    return finalContent;
+                    return await processStream(chunks, onChunk);
                 }
                 throw err;
             }

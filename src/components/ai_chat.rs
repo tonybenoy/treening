@@ -1127,14 +1127,14 @@ pub fn ai_chat() -> Html {
                     .collect();
                 let msgs_json = serde_json::to_string(&chat_msgs).unwrap_or_default();
 
-                // Stream response
+                // Stream response — only update in-memory state (no localStorage per chunk)
                 let chunk_cb = {
                     let threads_handle = threads_handle.clone();
                     let scroll_trigger = scroll_trigger.clone();
                     let tid = tid.clone();
                     Closure::wrap(Box::new(move |chunk: JsValue| {
                         if let Some(content) = chunk.as_string() {
-                            let mut ts = load_threads();
+                            let mut ts = (*threads_handle).clone();
                             if let Some(thread) = ts.iter_mut().find(|t| t.id == tid) {
                                 if let Some(last) = thread.messages.last_mut() {
                                     if last.role == "assistant" {
@@ -1142,7 +1142,6 @@ pub fn ai_chat() -> Html {
                                     }
                                 }
                             }
-                            save_threads(&ts);
                             threads_handle.set(ts);
                             scroll_trigger.set(*scroll_trigger + 1);
                         }
