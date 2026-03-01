@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 250" width="300" height="250">
+  <rect width="300" height="250" fill="#1f2937"/>
+  <!-- Floor -->
+  <line x1="30" y1="230" x2="270" y2="230" stroke="#374151" stroke-width="1"/>
+
+  <!-- Ski Erg machine -->
+  <!-- Main upright -->
+  <rect x="145" y="20" width="10" height="210" fill="#6b7280"/>
+  <!-- Top housing -->
+  <rect x="130" y="20" width="40" height="20" rx="4" fill="#6b7280"/>
+  <!-- Fan/flywheel -->
+  <circle cx="150" cy="45" r="12" fill="none" stroke="#4b5563" stroke-width="2"/>
+  <circle cx="150" cy="45" r="3" fill="#6b7280"/>
+  <!-- Console -->
+  <rect x="138" y="65" width="24" height="15" rx="2" fill="#4b5563"/>
+  <!-- Base -->
+  <rect x="110" y="222" width="80" height="8" rx="3" fill="#6b7280"/>
+
+  <!-- Handles (ropes/straps from top) -->
+  <line x1="140" y1="38" x2="100" y2="135" stroke="#4b5563" stroke-width="1.5"/>
+  <line x1="160" y1="38" x2="200" y2="135" stroke="#4b5563" stroke-width="1.5"/>
+
+  <!-- Person standing, pulling down (drive phase) -->
+  <!-- Head -->
+  <circle cx="150" cy="82" r="12" fill="none" stroke="#e5e7eb" stroke-width="2.5"/>
+  <!-- Torso (hinged forward) -->
+  <line x1="150" y1="94" x2="148" y2="100" stroke="#e5e7eb" stroke-width="2.5"/>
+  <path d="M140,100 L138,155 L158,155 L160,100 Z" fill="none" stroke="#e5e7eb" stroke-width="2.5"/>
+
+  <!-- Lats (amber) -->
+  <path d="M137,108 Q130,125 134,148 L140,148 L140,108 Z" fill="#f59e0b" opacity="0.55"/>
+  <path d="M163,108 Q170,125 166,148 L160,148 L160,108 Z" fill="#f59e0b" opacity="0.55"/>
+
+  <!-- Arms pulling down past sides -->
+  <line x1="140" y1="105" x2="100" y2="135" stroke="#e5e7eb" stroke-width="3" stroke-linecap="round"/>
+  <line x1="160" y1="105" x2="200" y2="135" stroke="#e5e7eb" stroke-width="3" stroke-linecap="round"/>
+  <!-- Hands gripping handles -->
+  <circle cx="98" cy="136" r="3" fill="#e5e7eb"/>
+  <circle cx="202" cy="136" r="3" fill="#e5e7eb"/>
+
+  <!-- Core (amber) -->
+  <rect x="142" y="115" width="16" height="25" rx="3" fill="#f59e0b" opacity="0.4"/>
+
+  <!-- Legs -->
+  <line x1="142" y1="158" x2="138" y2="200" stroke="#e5e7eb" stroke-width="3" stroke-linecap="round"/>
+  <line x1="158" y1="158" x2="162" y2="200" stroke="#e5e7eb" stroke-width="3" stroke-linecap="round"/>
+  <line x1="138" y1="200" x2="135" y2="228" stroke="#e5e7eb" stroke-width="3" stroke-linecap="round"/>
+  <line x1="162" y1="200" x2="165" y2="228" stroke="#e5e7eb" stroke-width="3" stroke-linecap="round"/>
+  <line x1="128" y1="228" x2="142" y2="230" stroke="#e5e7eb" stroke-width="2.5"/>
+  <line x1="158" y1="228" x2="172" y2="230" stroke="#e5e7eb" stroke-width="2.5"/>
+
+  <text x="150" y="248" text-anchor="middle" fill="#9ca3af" font-family="Arial,sans-serif" font-size="11" font-weight="bold">SKI ERG</text>
+</svg>

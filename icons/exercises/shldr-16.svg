@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 250" width="300" height="250">
+  <rect width="300" height="250" fill="#1f2937"/>
+
+  <!-- Wall -->
+  <rect x="225" y="10" width="8" height="240" fill="#6b7280"/>
+
+  <!-- Handstand Push-up - inverted against wall, arms bent -->
+  <!-- Hands on ground -->
+  <circle cx="140" cy="228" r="4" fill="#e5e7eb"/>
+  <circle cx="168" cy="228" r="4" fill="#e5e7eb"/>
+
+  <!-- Forearms -->
+  <line x1="140" y1="224" x2="138" y2="195" stroke="#e5e7eb" stroke-width="5" stroke-linecap="round"/>
+  <line x1="168" y1="224" x2="170" y2="195" stroke="#e5e7eb" stroke-width="5" stroke-linecap="round"/>
+
+  <!-- Upper arms -->
+  <line x1="138" y1="195" x2="142" y2="165" stroke="#e5e7eb" stroke-width="5" stroke-linecap="round"/>
+  <line x1="170" y1="195" x2="166" y2="165" stroke="#e5e7eb" stroke-width="5" stroke-linecap="round"/>
+
+  <!-- Front Delts - PRIMARY (red) -->
+  <ellipse cx="138" cy="160" rx="8" ry="10" fill="#ef4444" opacity="0.8"/>
+  <ellipse cx="170" cy="160" rx="8" ry="10" fill="#ef4444" opacity="0.8"/>
+
+  <!-- Side Delts (red, slightly less) -->
+  <ellipse cx="132" cy="162" rx="5" ry="8" fill="#ef4444" opacity="0.6"/>
+  <ellipse cx="176" cy="162" rx="5" ry="8" fill="#ef4444" opacity="0.6"/>
+
+  <!-- Triceps - secondary (amber) -->
+  <ellipse cx="140" cy="185" rx="5" ry="12" fill="#f59e0b" opacity="0.6"/>
+  <ellipse cx="168" cy="185" rx="5" ry="12" fill="#f59e0b" opacity="0.6"/>
+
+  <!-- Head (near ground, between arms) -->
+  <circle cx="154" cy="218" r="12" fill="none" stroke="#e5e7eb" stroke-width="2.5"/>
+
+  <!-- Torso (inverted) -->
+  <path d="M142,155 L142,95 L166,95 L166,155 Z" fill="none" stroke="#e5e7eb" stroke-width="2.5"/>
+
+  <!-- Hips -->
+  <ellipse cx="154" cy="92" rx="14" ry="6" fill="none" stroke="#e5e7eb" stroke-width="2"/>
+
+  <!-- Legs (against wall, straight up) -->
+  <line x1="148" y1="88" x2="148" y2="35" stroke="#e5e7eb" stroke-width="5" stroke-linecap="round"/>
+  <line x1="160" y1="88" x2="160" y2="35" stroke="#e5e7eb" stroke-width="5" stroke-linecap="round"/>
+
+  <!-- Feet touching wall -->
+  <line x1="148" y1="35" x2="148" y2="28" stroke="#e5e7eb" stroke-width="4" stroke-linecap="round"/>
+  <line x1="160" y1="35" x2="160" y2="28" stroke="#e5e7eb" stroke-width="4" stroke-linecap="round"/>
+
+  <!-- Floor -->
+  <line x1="30" y1="232" x2="225" y2="232" stroke="#374151" stroke-width="1"/>
+
+  <!-- Motion arrow -->
+  <path d="M 120 215 L 120 225" stroke="#4b5563" stroke-width="1.5" stroke-linecap="round"/>
+  <path d="M 117 222 L 120 226 L 123 222" stroke="#4b5563" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+</svg>

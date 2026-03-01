@@ -230,6 +230,47 @@ pub fn exercise_muscles(exercise_id: &str) -> Vec<MuscleContribution> {
                 contribution: 0.5,
             },
         ],
+        "chest-15" => vec![
+            // Diamond Push-up
+            MuscleContribution {
+                muscle: "Triceps",
+                contribution: 1.0,
+            },
+            MuscleContribution {
+                muscle: "Chest",
+                contribution: 0.7,
+            },
+            MuscleContribution {
+                muscle: "Front Delts",
+                contribution: 0.3,
+            },
+        ],
+        "chest-16" => vec![
+            // Pike Push-up
+            MuscleContribution {
+                muscle: "Front Delts",
+                contribution: 1.0,
+            },
+            MuscleContribution {
+                muscle: "Triceps",
+                contribution: 0.5,
+            },
+            MuscleContribution {
+                muscle: "Chest",
+                contribution: 0.3,
+            },
+        ],
+        "chest-17" => vec![
+            // Archer Push-up
+            MuscleContribution {
+                muscle: "Chest",
+                contribution: 1.0,
+            },
+            MuscleContribution {
+                muscle: "Triceps",
+                contribution: 0.5,
+            },
+        ],
 
         // === BACK ===
         "back-01" => vec![
@@ -449,6 +490,55 @@ pub fn exercise_muscles(exercise_id: &str) -> Vec<MuscleContribution> {
             MuscleContribution {
                 muscle: "Lats",
                 contribution: 1.0,
+            },
+        ],
+        "back-18" => vec![
+            // Inverted Row
+            MuscleContribution {
+                muscle: "Lats",
+                contribution: 0.7,
+            },
+            MuscleContribution {
+                muscle: "Traps",
+                contribution: 0.5,
+            },
+            MuscleContribution {
+                muscle: "Biceps",
+                contribution: 0.5,
+            },
+            MuscleContribution {
+                muscle: "Rear Delts",
+                contribution: 0.3,
+            },
+        ],
+        "back-19" => vec![
+            // Muscle-up
+            MuscleContribution {
+                muscle: "Lats",
+                contribution: 1.0,
+            },
+            MuscleContribution {
+                muscle: "Biceps",
+                contribution: 0.5,
+            },
+            MuscleContribution {
+                muscle: "Chest",
+                contribution: 0.3,
+            },
+            MuscleContribution {
+                muscle: "Triceps",
+                contribution: 0.3,
+            },
+        ],
+        "back-20" => vec![
+            // Archer Pull-up
+            MuscleContribution {
+                muscle: "Lats",
+                contribution: 1.0,
+            },
+            MuscleContribution {
+                muscle: "Biceps",
+                contribution: 0.5,
             },
         ],
 
@@ -740,6 +830,84 @@ pub fn exercise_muscles(exercise_id: &str) -> Vec<MuscleContribution> {
                 contribution: 0.25,
             },
         ],
+        "legs-27" => vec![
+            // Pistol Squat
+            MuscleContribution {
+                muscle: "Quads",
+                contribution: 1.0,
+            },
+            MuscleContribution {
+                muscle: "Glutes",
+                contribution: 0.5,
+            },
+            MuscleContribution {
+                muscle: "Abs",
+                contribution: 0.25,
+            },
+        ],
+        "legs-28" => vec![
+            // Glute Bridge
+            MuscleContribution {
+                muscle: "Glutes",
+                contribution: 1.0,
+            },
+            MuscleContribution {
+                muscle: "Hamstrings",
+                contribution: 0.3,
+            },
+        ],
+        "legs-29" => vec![
+            // Wall Sit
+            MuscleContribution {
+                muscle: "Quads",
+                contribution: 1.0,
+            },
+        ],
+        "legs-30" => vec![
+            // Box Jump
+            MuscleContribution {
+                muscle: "Quads",
+                contribution: 0.7,
+            },
+            MuscleContribution {
+                muscle: "Glutes",
+                contribution: 0.5,
+            },
+            MuscleContribution {
+                muscle: "Calves",
+                contribution: 0.3,
+            },
+        ],
+        "legs-31" => vec![
+            // Jump Squat
+            MuscleContribution {
+                muscle: "Quads",
+                contribution: 0.7,
+            },
+            MuscleContribution {
+                muscle: "Glutes",
+                contribution: 0.5,
+            },
+            MuscleContribution {
+                muscle: "Calves",
+                contribution: 0.3,
+            },
+        ],
+        "legs-32" => vec![
+            // Cossack Squat
+            MuscleContribution {
+                muscle: "Quads",
+                contribution: 1.0,
+            },
+            MuscleContribution {
+                muscle: "Glutes",
+                contribution: 0.5,
+            },
+            MuscleContribution {
+                muscle: "Hamstrings",
+                contribution: 0.3,
+            },
+        ],
 
         // === SHOULDERS ===
         "shldr-01" => vec![
@@ -893,6 +1061,21 @@ pub fn exercise_muscles(exercise_id: &str) -> Vec<MuscleContribution> {
             MuscleContribution {
                 muscle: "Triceps",
                 contribution: 0.3,
+            },
+        ],
+        "shldr-16" => vec![
+            // Handstand Push-up
+            MuscleContribution {
+                muscle: "Front Delts",
+                contribution: 1.0,
+            },
+            MuscleContribution {
+                muscle: "Side Delts",
+                contribution: 0.5,
+            },
+            MuscleContribution {
+                muscle: "Triceps",
+                contribution: 0.5,
             },
         ],
 
@@ -1191,6 +1374,53 @@ pub fn exercise_muscles(exercise_id: &str) -> Vec<MuscleContribution> {
             MuscleContribution {
                 muscle: "Abs",
                 contribution: 0.3,
+            },
+        ],
+        "core-19" => vec![
+            // L-Sit
+            MuscleContribution {
+                muscle: "Abs",
+                contribution: 1.0,
+            },
+            MuscleContribution {
+                muscle: "Quads",
+                contribution: 0.3,
+            },
+        ],
+        "core-20" => vec![
+            // Dragon Flag
+            MuscleContribution {
+                muscle: "Abs",
+                contribution: 1.0,
+            },
+        ],
+        "core-21" => vec![
+            // Hollow Body Hold
+            MuscleContribution {
+                muscle: "Abs",
+                contribution: 1.0,
+            },
+        ],
+        "core-22" => vec![
+            // Superman Hold
+            MuscleContribution {
+                muscle: "Glutes",
+                contribution: 0.5,
+            },
+        ],
+        "core-23" => vec![
+            // Tuck Planche
+            MuscleContribution {
+                muscle: "Front Delts",
+                contribution: 0.7,
+            },
+            MuscleContribution {
+                muscle: "Chest",
+                contribution: 0.5,
+            },
+            MuscleContribution {
+                muscle: "Abs",
+                contribution: 0.5,
             },
         ],
 

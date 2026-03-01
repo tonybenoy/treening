@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 250" width="300" height="250">
+  <rect width="300" height="250" fill="#1f2937"/>
+  <!-- Floor -->
+  <line x1="30" y1="230" x2="270" y2="230" stroke="#374151" stroke-width="1"/>
+
+  <!-- Box -->
+  <rect x="140" y="175" width="70" height="55" rx="3" fill="#6b7280" stroke="#4b5563" stroke-width="1"/>
+
+  <!-- Box Jump - mid-air, jumping onto box -->
+  <!-- Head -->
+  <circle cx="120" cy="95" r="12" fill="none" stroke="#e5e7eb" stroke-width="2.5"/>
+  <!-- Torso -->
+  <line x1="120" y1="107" x2="118" y2="145" stroke="#e5e7eb" stroke-width="2.5" stroke-linecap="round"/>
+
+  <!-- Arms swinging up -->
+  <line x1="120" y1="115" x2="105" y2="95" stroke="#e5e7eb" stroke-width="2.5" stroke-linecap="round"/>
+  <line x1="120" y1="115" x2="135" y2="95" stroke="#e5e7eb" stroke-width="2.5" stroke-linecap="round"/>
+
+  <!-- Hips -->
+  <ellipse cx="118" cy="147" rx="10" ry="6" fill="none" stroke="#e5e7eb" stroke-width="2"/>
+
+  <!-- Upper legs (tucked for jump) -->
+  <line x1="115" y1="150" x2="130" y2="165" stroke="#e5e7eb" stroke-width="3" stroke-linecap="round"/>
+  <line x1="122" y1="150" x2="138" y2="162" stroke="#e5e7eb" stroke-width="3" stroke-linecap="round"/>
+
+  <!-- Primary: Quads (red) -->
+  <polygon points="116,148 128,163 136,158 124,145" fill="#ef4444" opacity="0.7"/>
+
+  <!-- Secondary: Glutes (amber) -->
+  <ellipse cx="118" cy="148" rx="12" ry="7" fill="#f59e0b" opacity="0.55"/>
+
+  <!-- Lower legs -->
+  <line x1="130" y1="165" x2="135" y2="175" stroke="#e5e7eb" stroke-width="3" stroke-linecap="round"/>
+  <line x1="138" y1="162" x2="142" y2="172" stroke="#e5e7eb" stroke-width="3" stroke-linecap="round"/>
+
+  <!-- Tertiary: Calves -->
+  <ellipse cx="136" cy="170" rx="4" ry="6" fill="#f59e0b" opacity="0.4"/>
+
+  <!-- Motion arrows (upward) -->
+  <path d="M 100 175 L 100 155" stroke="#4b5563" stroke-width="1.5" stroke-linecap="round"/>
+  <path d="M 97 160 L 100 155 L 103 160" stroke="#4b5563" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+
+  <text x="150" y="18" text-anchor="middle" fill="#9ca3af" font-family="Arial,sans-serif" font-size="11" font-weight="bold">BOX JUMP</text>
+</svg>

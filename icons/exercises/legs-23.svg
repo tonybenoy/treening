@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 250" width="300" height="250">
+  <rect width="300" height="250" fill="#1f2937"/>
+  <!-- Floor / pad -->
+  <rect x="40" y="192" width="220" height="4" rx="2" fill="#6b7280"/>
+  <line x1="30" y1="198" x2="270" y2="198" stroke="#374151" stroke-width="1"/>
+  <!-- Ankle hold bar -->
+  <rect x="50" y="175" width="30" height="6" rx="2" fill="#6b7280"/>
+  <rect x="55" y="165" width="6" height="16" fill="#6b7280"/>
+  <rect x="73" y="165" width="6" height="16" fill="#6b7280"/>
+
+  <!-- Nordic Hamstring Curl - kneeling, lowering torso forward -->
+  <!-- Knees on pad -->
+  <circle cx="75" cy="188" r="4" fill="none" stroke="#e5e7eb" stroke-width="2"/>
+
+  <!-- Lower legs secured -->
+  <line x1="75" y1="185" x2="58" y2="175" stroke="#e5e7eb" stroke-width="3" stroke-linecap="round"/>
+  <!-- Feet under bar -->
+  <line x1="58" y1="175" x2="55" y2="170" stroke="#e5e7eb" stroke-width="2.5" stroke-linecap="round"/>
+
+  <!-- Upper leg (thigh vertical) -->
+  <line x1="75" y1="185" x2="85" y2="145" stroke="#e5e7eb" stroke-width="3" stroke-linecap="round"/>
+
+  <!-- Hamstrings - PRIMARY (red) -->
+  <polygon points="73,182 83,148 90,152 78,184" fill="#ef4444" opacity="0.8"/>
+
+  <!-- Torso (leaning forward, lowering) -->
+  <line x1="85" y1="145" x2="180" y2="120" stroke="#e5e7eb" stroke-width="2.5" stroke-linecap="round"/>
+
+  <!-- Head -->
+  <circle cx="192" cy="115" r="12" fill="none" stroke="#e5e7eb" stroke-width="2.5"/>
+
+  <!-- Arms extended forward to catch -->
+  <line x1="170" y1="122" x2="210" y2="135" stroke="#e5e7eb" stroke-width="2.5" stroke-linecap="round"/>
+  <line x1="175" y1="120" x2="215" y2="130" stroke="#e5e7eb" stroke-width="2" stroke-linecap="round"/>
+
+  <!-- Motion arrow (lowering) -->
+  <path d="M 200 100 L 210 108" stroke="#4b5563" stroke-width="1.5" stroke-linecap="round"/>
+  <path d="M 206 104 L 211 109 L 212 103" stroke="#4b5563" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+
+  <text x="150" y="230" text-anchor="middle" fill="#9ca3af" font-family="Arial,sans-serif" font-size="10">NORDIC HAMSTRING CURL</text>
+</svg>

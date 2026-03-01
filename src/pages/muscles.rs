@@ -6,8 +6,8 @@ use yew::prelude::*;
 use crate::data::default_exercises;
 use crate::models::{Exercise, Workout};
 use crate::muscle_data::{
-    self, effective_sets_for_exercise, CORE_MUSCLES, LEG_MUSCLES, PULL_MUSCLES, PUSH_MUSCLES,
-    TRACKED_MUSCLES,
+    self, effective_sets_for_exercise, exercise_muscles, CORE_MUSCLES, LEG_MUSCLES, PULL_MUSCLES,
+    PUSH_MUSCLES, TRACKED_MUSCLES,
 };
 use crate::storage;
 
@@ -165,6 +165,7 @@ pub fn muscles_page() -> Html {
             <h1 class="text-2xl font-bold text-gray-900 dark:text-gray-100">{"Training Intelligence"}</h1>
 
             <SectionMuscleBalance workouts={(*workouts).clone()} exercises={(*exercises).clone()} show_modal={show_thresholds.clone()} />
+            <SectionRecommendations workouts={(*workouts).clone()} exercises={(*exercises).clone()} />
             <SectionFrequency workouts={(*workouts).clone()} exercises={(*exercises).clone()} />
             <SectionOverload workouts={(*workouts).clone()} exercises={(*exercises).clone()} />
             <SectionRepRange workouts={(*workouts).clone()} />
@@ -269,6 +270,99 @@ fn section_muscle_balance(props: &MuscleBalanceProps) -> Html {
             {render_group("Pull", PULL_MUSCLES)}
             {render_group("Legs", LEG_MUSCLES)}
             {render_group("Core", CORE_MUSCLES)}
+        </div>
+    }
+}
+
+// ── Section: Exercise Recommendations ────────────────────────────────────────
+
+#[derive(Properties, PartialEq)]
+struct RecommendationsProps {
+    workouts: Vec<Workout>,
+    exercises: Vec<Exercise>,
+}
+
+#[function_component(SectionRecommendations)]
+fn section_recommendations(props: &RecommendationsProps) -> Html {
+    let t = today();
+    let from = t - chrono::Duration::days(7);
+    let sets = compute_muscle_sets(&props.workouts, &props.exercises, from, t);
+    let thresholds = get_thresholds();
+
+    // Find undertrained muscles (MEV > 0 and current < MEV)
+    let undertrained: Vec<&str> = TRACKED_MUSCLES
+        .iter()
+        .copied()
+        .filter(|&muscle| {
+            let s = sets.get(muscle).copied().unwrap_or(0.0);
+            let (mev, _) = thresholds.get(muscle).copied().unwrap_or((0.0, 20.0));
+            mev > 0.0 && s < mev
+        })
+        .collect();
+
+    if undertrained.is_empty() {
+        return html! {};
+    }
+
+    // Collect all exercise IDs the user has ever completed
+    let mut user_exercise_ids: std::collections::HashSet<String> = std::collections::HashSet::new();
+    for w in &props.workouts {
+        for we in &w.exercises {
+            if we.sets.iter().any(|s| s.completed) {
+                user_exercise_ids.insert(we.exercise_id.clone());
+            }
+        }
+    }
+
+    // For each undertrained muscle, find exercises from user's history with contribution >= 0.5
+    let mut recommendations: Vec<(&str, Vec<&Exercise>)> = Vec::new();
+    for &muscle in &undertrained {
+        let mut muscle_exercises: Vec<&Exercise> = Vec::new();
+        for eid in &user_exercise_ids {
+            let contributions = exercise_muscles(eid);
+            let has_significant = contributions
+                .iter()
+                .any(|mc| mc.muscle == muscle && mc.contribution >= 0.5);
+            if has_significant {
+                if let Some(ex) = props.exercises.iter().find(|e| e.id == *eid) {
+                    muscle_exercises.push(ex);
+                }
+            }
+        }
+        muscle_exercises.sort_by(|a, b| a.name.cmp(&b.name));
+        muscle_exercises.truncate(3);
+        if !muscle_exercises.is_empty() {
+            recommendations.push((muscle, muscle_exercises));
+        }
+    }
+
+    if recommendations.is_empty() {
+        return html! {};
+    }
+
+    html! {
+        <div class="bg-gray-100 dark:bg-gray-800 rounded-xl p-4 neu-flat transition-colors space-y-3">
+            <h3 class="text-sm font-bold text-gray-900 dark:text-gray-100 uppercase tracking-wider">{"Recommended Exercises"}</h3>
+            <p class="text-xs text-gray-500">{"Based on your history — exercises you've done that target undertrained muscles."}</p>
+            <div class="space-y-3">
+                { for recommendations.iter().map(|(muscle, exercises)| {
+                    html! {
+                        <div>
+                            <h4 class="text-xs font-bold text-yellow-500 mb-1">{muscle}</h4>
+                            <div class="space-y-1">
+                                { for exercises.iter().map(|ex| {
+                                    html! {
+                                        <div class="text-xs text-gray-700 dark:text-gray-300 bg-gray-200 dark:bg-gray-700 rounded-lg px-3 py-1.5">
+                                            {&ex.name}
+                                            <span class="text-gray-400 ml-1">{format!("· {}", ex.equipment)}</span>
+                                        </div>
+                                    }
+                                })}
+                            </div>
+                        </div>
+                    }
+                })}
+            </div>
         </div>
     }
 }

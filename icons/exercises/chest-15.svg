@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 250" width="300" height="250">
+  <rect width="300" height="250" fill="#1f2937"/>
+  <!-- Floor -->
+  <line x1="25" y1="195" x2="275" y2="195" stroke="#374151" stroke-width="1"/>
+
+  <!-- Diamond Push-up - side view, hands together -->
+  <!-- Head -->
+  <circle cx="215" cy="100" r="12" fill="none" stroke="#e5e7eb" stroke-width="2.5"/>
+  <!-- Torso -->
+  <line x1="205" y1="108" x2="105" y2="130" stroke="#e5e7eb" stroke-width="2.5" stroke-linecap="round"/>
+
+  <!-- Triceps - PRIMARY (red) -->
+  <ellipse cx="203" cy="130" rx="4" ry="12" fill="#ef4444" opacity="0.8"/>
+
+  <!-- Chest - secondary (amber) -->
+  <ellipse cx="185" cy="114" rx="16" ry="8" fill="#f59e0b" opacity="0.55" transform="rotate(5 185 114)"/>
+
+  <!-- Hips to legs -->
+  <line x1="105" y1="130" x2="55" y2="128" stroke="#e5e7eb" stroke-width="2.5" stroke-linecap="round"/>
+  <line x1="55" y1="128" x2="35" y2="130" stroke="#e5e7eb" stroke-width="2.5" stroke-linecap="round"/>
+  <!-- Feet -->
+  <line x1="35" y1="130" x2="35" y2="150" stroke="#e5e7eb" stroke-width="2.5" stroke-linecap="round"/>
+  <line x1="35" y1="150" x2="40" y2="155" stroke="#e5e7eb" stroke-width="2.5" stroke-linecap="round"/>
+
+  <!-- Arms bent, hands together (diamond shape) -->
+  <line x1="200" y1="112" x2="200" y2="140" stroke="#e5e7eb" stroke-width="2.5" stroke-linecap="round"/>
+  <line x1="200" y1="140" x2="195" y2="155" stroke="#e5e7eb" stroke-width="2.5" stroke-linecap="round"/>
+  <!-- Second arm -->
+  <line x1="190" y1="114" x2="190" y2="142" stroke="#d1d5db" stroke-width="1.8" stroke-linecap="round"/>
+  <line x1="190" y1="142" x2="195" y2="155" stroke="#d1d5db" stroke-width="1.8" stroke-linecap="round"/>
+
+  <!-- Diamond hand shape -->
+  <path d="M190,155 L195,150 L200,155 L195,160 Z" fill="none" stroke="#e5e7eb" stroke-width="1.5"/>
+
+  <!-- Front delts - tertiary (amber) -->
+  <ellipse cx="198" cy="112" rx="5" ry="4" fill="#f59e0b" opacity="0.4"/>
+
+  <!-- Floor base -->
+  <line x1="25" y1="195" x2="275" y2="195" stroke="#374151" stroke-width="1"/>
+
+  <text x="150" y="185" text-anchor="middle" fill="#9ca3af" font-family="Arial,sans-serif" font-size="11">Diamond Push-up</text>
+</svg>

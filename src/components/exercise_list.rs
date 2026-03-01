@@ -1,4 +1,5 @@
 use crate::models::{Category, Exercise};
+use crate::muscle_data::{exercise_muscles, TRACKED_MUSCLES};
 use yew::prelude::*;
 
 #[derive(Properties, PartialEq)]
@@ -123,6 +124,7 @@ fn exercise_score(e: &Exercise, query: &str) -> Option<u32> {
 pub fn exercise_list(props: &Props) -> Html {
     let search = use_state(String::new);
     let category_filter = use_state(|| None::<Category>);
+    let muscle_filter = use_state(|| None::<String>);
 
     let mut scored: Vec<(&Exercise, u32)> = props
         .exercises
@@ -134,6 +136,21 @@ pub fn exercise_list(props: &Props) -> Html {
             };
             if !cat_match {
                 return None;
+            }
+            // Muscle filter
+            if let Some(ref muscle) = *muscle_filter {
+                let contributions = exercise_muscles(&e.id);
+                let has_muscle = if contributions.is_empty() {
+                    // Custom exercise or unmapped: fall back to muscle_groups string match
+                    e.muscle_groups
+                        .iter()
+                        .any(|mg| mg.eq_ignore_ascii_case(muscle))
+                } else {
+                    contributions.iter().any(|mc| mc.muscle == muscle.as_str())
+                };
+                if !has_muscle {
+                    return None;
+                }
             }
             if search.is_empty() {
                 return Some((e, 0));
@@ -194,6 +211,38 @@ pub fn exercise_list(props: &Props) -> Html {
                             }}
                             onclick={Callback::from(move |_| cf.set(Some(cat_clone.clone())))}
                         >{label}</button>
+                    }
+                })}
+            </div>
+            <div class="px-4 pb-2 flex gap-2 overflow-x-auto scrollbar-hide">
+                {
+                    {
+                        let mf = muscle_filter.clone();
+                        html! {
+                            <button
+                                class={if mf.is_none() {
+                                    "px-3 py-1 rounded-full text-sm bg-violet-600 text-white font-medium neu-chip-active transition-colors"
+                                } else {
+                                    "px-3 py-1 rounded-full text-sm bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 neu-chip hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
+                                }}
+                                onclick={let mf = mf.clone(); Callback::from(move |_| mf.set(None))}
+                            >{"All Muscles"}</button>
+                        }
+                    }
+                }
+                { for TRACKED_MUSCLES.iter().map(|&muscle| {
+                    let mf = muscle_filter.clone();
+                    let active = *mf == Some(muscle.to_string());
+                    let muscle_owned = muscle.to_string();
+                    html! {
+                        <button
+                            class={if active {
+                                "px-3 py-1 rounded-full text-sm bg-violet-600 text-white whitespace-nowrap font-medium neu-chip-active transition-colors"
+                            } else {
+                                "px-3 py-1 rounded-full text-sm bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 whitespace-nowrap neu-chip hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
+                            }}
+                            onclick={Callback::from(move |_| mf.set(Some(muscle_owned.clone())))}
+                        >{muscle}</button>
                     }
                 })}
             </div>

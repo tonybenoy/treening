@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 250" width="300" height="250">
+  <rect width="300" height="250" fill="#1f2937"/>
+  <!-- Machine frame (top-down feel, showing rotation) -->
+  <rect x="140" y="25" width="20" height="10" rx="3" fill="#6b7280"/>
+  <rect x="145" y="25" width="10" height="200" fill="#6b7280"/>
+  <!-- Weight stack -->
+  <rect x="160" y="40" width="20" height="50" rx="1" fill="#4b5563"/>
+  <!-- Seat -->
+  <rect x="80" y="155" width="60" height="6" rx="2" fill="#6b7280"/>
+  <!-- Chest pad -->
+  <rect x="95" y="110" width="8" height="25" rx="3" fill="#6b7280"/>
+  <!-- Floor -->
+  <line x1="30" y1="230" x2="270" y2="230" stroke="#374151" stroke-width="1"/>
+
+  <!-- Person seated, rotating torso -->
+  <!-- Head -->
+  <circle cx="100" cy="85" r="11" fill="none" stroke="#e5e7eb" stroke-width="2.5"/>
+  <!-- Torso (rotated) -->
+  <line x1="100" y1="96" x2="95" y2="155" stroke="#e5e7eb" stroke-width="2.5" stroke-linecap="round"/>
+
+  <!-- Obliques - PRIMARY (red) -->
+  <ellipse cx="88" cy="125" rx="7" ry="18" fill="#ef4444" opacity="0.7" transform="rotate(-5,88,125)"/>
+  <ellipse cx="106" cy="125" rx="7" ry="18" fill="#ef4444" opacity="0.6" transform="rotate(5,106,125)"/>
+
+  <!-- Arms gripping handles (rotated position) -->
+  <line x1="98" y1="105" x2="75" y2="110" stroke="#e5e7eb" stroke-width="2.5" stroke-linecap="round"/>
+  <line x1="98" y1="108" x2="78" y2="112" stroke="#e5e7eb" stroke-width="2" stroke-linecap="round"/>
+  <!-- Handle -->
+  <circle cx="73" cy="110" r="3" fill="#e5e7eb"/>
+
+  <!-- Rotation arrow -->
+  <path d="M 120 100 Q 130 110 120 125" stroke="#4b5563" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+  <path d="M 118 120 L 120 126 L 124 122" stroke="#4b5563" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+
+  <!-- Legs (fixed, hips forward) -->
+  <line x1="92" y1="158" x2="85" y2="198" stroke="#e5e7eb" stroke-width="3" stroke-linecap="round"/>
+  <line x1="100" y1="158" x2="108" y2="198" stroke="#e5e7eb" stroke-width="3" stroke-linecap="round"/>
+  <line x1="85" y1="198" x2="82" y2="228" stroke="#e5e7eb" stroke-width="3" stroke-linecap="round"/>
+  <line x1="108" y1="198" x2="112" y2="228" stroke="#e5e7eb" stroke-width="3" stroke-linecap="round"/>
+
+  <text x="120" y="248" text-anchor="middle" fill="#9ca3af" font-family="Arial,sans-serif" font-size="10">ROTARY TORSO MACHINE</text>
+</svg>

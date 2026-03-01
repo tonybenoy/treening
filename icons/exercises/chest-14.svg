@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 250" width="300" height="250">
+  <rect width="300" height="250" fill="#1f2937"/>
+  <!-- Decline bench -->
+  <rect x="70" y="120" width="160" height="8" rx="3" fill="#6b7280" transform="rotate(15 150 124)"/>
+  <rect x="80" y="140" width="6" height="65" fill="#6b7280"/>
+  <rect x="214" y="110" width="6" height="65" fill="#6b7280"/>
+  <!-- Floor -->
+  <line x1="30" y1="210" x2="270" y2="210" stroke="#374151" stroke-width="1"/>
+
+  <!-- Person on decline bench -->
+  <!-- Head (lower end) -->
+  <circle cx="210" cy="128" r="11" fill="none" stroke="#e5e7eb" stroke-width="2.5"/>
+  <!-- Torso -->
+  <line x1="200" y1="130" x2="120" y2="115" stroke="#e5e7eb" stroke-width="2.5" stroke-linecap="round"/>
+
+  <!-- Chest - PRIMARY (red) - lower chest emphasis -->
+  <ellipse cx="155" cy="118" rx="22" ry="10" fill="#ef4444" opacity="0.7" transform="rotate(-5 155 118)"/>
+
+  <!-- Arms holding dumbbells up -->
+  <line x1="135" y1="118" x2="130" y2="80" stroke="#e5e7eb" stroke-width="2.5" stroke-linecap="round"/>
+  <line x1="170" y1="122" x2="168" y2="85" stroke="#e5e7eb" stroke-width="2.5" stroke-linecap="round"/>
+
+  <!-- Triceps (amber) -->
+  <ellipse cx="132" cy="95" rx="4" ry="10" fill="#f59e0b" opacity="0.6"/>
+  <ellipse cx="169" cy="100" rx="4" ry="10" fill="#f59e0b" opacity="0.6"/>
+
+  <!-- Dumbbells -->
+  <rect x="122" y="74" width="16" height="6" rx="2" fill="#6b7280"/>
+  <rect x="160" y="79" width="16" height="6" rx="2" fill="#6b7280"/>
+
+  <!-- Legs hooked at top end -->
+  <line x1="115" y1="115" x2="90" y2="140" stroke="#e5e7eb" stroke-width="2.5" stroke-linecap="round"/>
+  <line x1="90" y1="140" x2="85" y2="120" stroke="#e5e7eb" stroke-width="2.5" stroke-linecap="round"/>
+
+  <text x="150" y="240" text-anchor="middle" fill="#9ca3af" font-family="Arial,sans-serif" font-size="10">DECLINE DUMBBELL PRESS</text>
+</svg>

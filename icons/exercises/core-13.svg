@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 250" width="300" height="250">
+  <rect width="300" height="250" fill="#1f2937"/>
+  <!-- Machine frame -->
+  <rect x="135" y="25" width="30" height="10" rx="3" fill="#6b7280"/>
+  <rect x="145" y="25" width="10" height="200" fill="#6b7280"/>
+  <!-- Weight stack -->
+  <rect x="160" y="40" width="20" height="50" rx="1" fill="#4b5563"/>
+  <!-- Seat -->
+  <rect x="80" y="155" width="60" height="6" rx="2" fill="#6b7280"/>
+  <!-- Floor -->
+  <line x1="30" y1="230" x2="270" y2="230" stroke="#374151" stroke-width="1"/>
+
+  <!-- Person seated, crunching upper and lower simultaneously -->
+  <!-- Head -->
+  <circle cx="105" cy="85" r="11" fill="none" stroke="#e5e7eb" stroke-width="2.5"/>
+  <!-- Torso (curved/crunched) -->
+  <path d="M105,96 Q100,120 105,155" fill="none" stroke="#e5e7eb" stroke-width="2.5" stroke-linecap="round"/>
+
+  <!-- Abs - PRIMARY (red) - full range -->
+  <rect x="96" y="105" width="14" height="40" rx="3" fill="#ef4444" opacity="0.7"/>
+
+  <!-- Arms gripping upper handles -->
+  <line x1="102" y1="100" x2="88" y2="95" stroke="#e5e7eb" stroke-width="2.5" stroke-linecap="round"/>
+  <line x1="102" y1="103" x2="90" y2="98" stroke="#e5e7eb" stroke-width="2" stroke-linecap="round"/>
+  <!-- Upper handles -->
+  <rect x="82" y="90" width="10" height="8" rx="2" fill="#6b7280"/>
+
+  <!-- Legs (knees coming up) -->
+  <line x1="105" y1="155" x2="95" y2="170" stroke="#e5e7eb" stroke-width="3" stroke-linecap="round"/>
+  <!-- Shins behind lower pads -->
+  <line x1="95" y1="170" x2="100" y2="195" stroke="#e5e7eb" stroke-width="3" stroke-linecap="round"/>
+  <!-- Lower pads -->
+  <rect x="88" y="175" width="20" height="6" rx="2" fill="#6b7280"/>
+
+  <!-- Cable connections -->
+  <line x1="88" y1="94" x2="145" y2="55" stroke="#4b5563" stroke-width="1.5"/>
+  <line x1="100" y1="178" x2="145" y2="150" stroke="#4b5563" stroke-width="1.5"/>
+
+  <!-- Lower abs highlight -->
+  <ellipse cx="103" cy="148" rx="6" ry="8" fill="#ef4444" opacity="0.5"/>
+
+  <!-- Motion arrows (both directions) -->
+  <path d="M 115 88 Q 120 98 115 108" stroke="#4b5563" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+  <path d="M 85 165 L 88 172" stroke="#4b5563" stroke-width="1.5" stroke-linecap="round"/>
+
+  <text x="120" y="248" text-anchor="middle" fill="#9ca3af" font-family="Arial,sans-serif" font-size="9">TOTAL ABDOMINAL MACHINE</text>
+</svg>

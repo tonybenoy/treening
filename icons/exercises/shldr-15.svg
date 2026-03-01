@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 250" width="300" height="250">
+  <rect width="300" height="250" fill="#1f2937"/>
+  <!-- Floor -->
+  <line x1="30" y1="230" x2="270" y2="230" stroke="#374151" stroke-width="1"/>
+  <!-- Landmine anchor (corner/attachment) -->
+  <circle cx="60" cy="228" r="8" fill="#6b7280"/>
+
+  <!-- Barbell (angled from floor to press position) -->
+  <line x1="62" y1="225" x2="180" y2="70" stroke="#6b7280" stroke-width="3"/>
+  <!-- Plate at anchor end -->
+  <rect x="68" y="215" width="8" height="16" rx="2" fill="#6b7280"/>
+
+  <!-- Person standing, pressing bar up at angle -->
+  <!-- Head -->
+  <circle cx="160" cy="55" r="12" fill="none" stroke="#e5e7eb" stroke-width="2.5"/>
+  <!-- Torso -->
+  <line x1="160" y1="67" x2="160" y2="75" stroke="#e5e7eb" stroke-width="2.5"/>
+  <path d="M152,75 L152,148 L168,148 L168,75 Z" fill="none" stroke="#e5e7eb" stroke-width="2.5"/>
+
+  <!-- Front Delts - PRIMARY (red) -->
+  <ellipse cx="153" cy="82" rx="7" ry="10" fill="#ef4444" opacity="0.8"/>
+
+  <!-- Pressing arm (one hand on bar end) -->
+  <line x1="155" y1="82" x2="175" y2="72" stroke="#e5e7eb" stroke-width="4" stroke-linecap="round"/>
+  <!-- Hand at bar end -->
+  <circle cx="178" cy="70" r="4" fill="#e5e7eb"/>
+
+  <!-- Other arm at side -->
+  <line x1="165" y1="82" x2="175" y2="125" stroke="#e5e7eb" stroke-width="2.5" stroke-linecap="round"/>
+
+  <!-- Chest (amber) -->
+  <ellipse cx="158" cy="92" rx="8" ry="6" fill="#f59e0b" opacity="0.5"/>
+
+  <!-- Triceps (amber) -->
+  <ellipse cx="168" cy="78" rx="3" ry="7" fill="#f59e0b" opacity="0.5"/>
+
+  <!-- Legs -->
+  <line x1="155" y1="152" x2="148" y2="195" stroke="#e5e7eb" stroke-width="3" stroke-linecap="round"/>
+  <line x1="165" y1="152" x2="172" y2="195" stroke="#e5e7eb" stroke-width="3" stroke-linecap="round"/>
+  <line x1="148" y1="195" x2="145" y2="228" stroke="#e5e7eb" stroke-width="3" stroke-linecap="round"/>
+  <line x1="172" y1="195" x2="175" y2="228" stroke="#e5e7eb" stroke-width="3" stroke-linecap="round"/>
+  <line x1="138" y1="228" x2="152" y2="230" stroke="#e5e7eb" stroke-width="2.5"/>
+  <line x1="168" y1="228" x2="182" y2="230" stroke="#e5e7eb" stroke-width="2.5"/>
+
+  <text x="150" y="18" text-anchor="middle" fill="#9ca3af" font-family="Arial,sans-serif" font-size="11" font-weight="bold">LANDMINE PRESS</text>
+</svg>

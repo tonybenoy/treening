@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 250" width="300" height="250">
+  <rect width="300" height="250" fill="#1f2937"/>
+
+  <!-- Pull-up bar structure -->
+  <rect x="40" y="18" width="8" height="230" fill="#6b7280"/>
+  <rect x="252" y="18" width="8" height="230" fill="#6b7280"/>
+  <rect x="40" y="18" width="220" height="8" rx="3" fill="#6b7280"/>
+  <!-- Base -->
+  <rect x="28" y="238" width="35" height="6" rx="2" fill="#6b7280"/>
+  <rect x="240" y="238" width="35" height="6" rx="2" fill="#6b7280"/>
+
+  <!-- Archer Pull-up - one arm bent, other extended along bar -->
+  <!-- Head (pulled up to one side) -->
+  <circle cx="120" cy="38" r="13" fill="none" stroke="#e5e7eb" stroke-width="2.5"/>
+  <!-- Neck -->
+  <line x1="120" y1="51" x2="120" y2="58" stroke="#e5e7eb" stroke-width="3"/>
+  <!-- Torso -->
+  <path d="M108,58 L108,140 L132,140 L132,58 Z" fill="none" stroke="#e5e7eb" stroke-width="2.5"/>
+
+  <!-- Lats - primary (red) -->
+  <path d="M105,65 Q95,90 98,130 L108,130 L108,65 Z" fill="#ef4444" opacity="0.7"/>
+  <path d="M135,65 Q145,90 142,130 L132,130 L132,65 Z" fill="#ef4444" opacity="0.7"/>
+
+  <!-- Pulling arm (bent, pulling up) -->
+  <line x1="108" y1="64" x2="90" y2="30" stroke="#e5e7eb" stroke-width="5" stroke-linecap="round"/>
+  <line x1="90" y1="30" x2="85" y2="24" stroke="#e5e7eb" stroke-width="4" stroke-linecap="round"/>
+
+  <!-- Biceps on pulling arm (amber) -->
+  <ellipse cx="97" cy="44" rx="5" ry="12" fill="#f59e0b" opacity="0.6" transform="rotate(-20,97,44)"/>
+
+  <!-- Extended arm (straight along bar) -->
+  <line x1="132" y1="64" x2="200" y2="24" stroke="#e5e7eb" stroke-width="4" stroke-linecap="round"/>
+
+  <!-- Hands gripping bar -->
+  <circle cx="85" cy="22" r="4" fill="#e5e7eb"/>
+  <circle cx="200" cy="22" r="4" fill="#e5e7eb"/>
+
+  <!-- Hips -->
+  <ellipse cx="120" cy="144" rx="14" ry="6" fill="none" stroke="#e5e7eb" stroke-width="2"/>
+  <!-- Legs hanging -->
+  <line x1="114" y1="148" x2="112" y2="200" stroke="#e5e7eb" stroke-width="5" stroke-linecap="round"/>
+  <line x1="126" y1="148" x2="128" y2="200" stroke="#e5e7eb" stroke-width="5" stroke-linecap="round"/>
+  <!-- Lower legs -->
+  <line x1="112" y1="200" x2="114" y2="232" stroke="#e5e7eb" stroke-width="4" stroke-linecap="round"/>
+  <line x1="128" y1="200" x2="126" y2="232" stroke="#e5e7eb" stroke-width="4" stroke-linecap="round"/>
+  <!-- Feet -->
+  <line x1="114" y1="232" x2="120" y2="236" stroke="#e5e7eb" stroke-width="3" stroke-linecap="round"/>
+  <line x1="126" y1="232" x2="120" y2="236" stroke="#e5e7eb" stroke-width="3" stroke-linecap="round"/>
+
+  <text x="150" y="248" text-anchor="middle" fill="#9ca3af" font-family="Arial,sans-serif" font-size="10">ARCHER PULL-UP</text>
+</svg>
