@@ -1,7 +1,14 @@
 use crate::models::{Category, Equipment, Exercise, ExerciseTrackingType};
+use crate::muscle_data::TRACKED_MUSCLES;
 use gloo::file::callbacks::{self, FileReader};
 use web_sys::HtmlInputElement;
 use yew::prelude::*;
+
+#[derive(Clone, PartialEq)]
+struct MuscleEntry {
+    name: String,
+    role: String, // "primary", "secondary", "tertiary"
+}
 
 #[derive(Properties, PartialEq)]
 pub struct Props {
@@ -15,7 +22,10 @@ pub fn custom_exercise_form(props: &Props) -> Html {
     let category = use_state(|| Category::Chest);
     let equipment = use_state(|| Equipment::Barbell);
     let tracking_type = use_state(|| ExerciseTrackingType::Strength);
-    let muscles = use_state(String::new);
+    let muscle_entries = use_state(Vec::<MuscleEntry>::new);
+    let selected_muscle = use_state(String::new);
+    let selected_role = use_state(|| "primary".to_string());
+    let custom_muscle_name = use_state(String::new);
     let description = use_state(String::new);
     let image = use_state(|| None::<String>);
     let reader = use_state(|| None::<FileReader>);
@@ -40,27 +50,65 @@ pub fn custom_exercise_form(props: &Props) -> Html {
         })
     };
 
+    let on_add_muscle = {
+        let muscle_entries = muscle_entries.clone();
+        let selected_muscle = selected_muscle.clone();
+        let selected_role = selected_role.clone();
+        let custom_muscle_name = custom_muscle_name.clone();
+        Callback::from(move |_: MouseEvent| {
+            let muscle_name = if *selected_muscle == "__custom__" {
+                let n = (*custom_muscle_name).trim().to_string();
+                if n.is_empty() {
+                    return;
+                }
+                n
+            } else if selected_muscle.is_empty() {
+                return;
+            } else {
+                (*selected_muscle).clone()
+            };
+
+            let mut entries = (*muscle_entries).clone();
+            // Don't add duplicates
+            if entries.iter().any(|e| e.name == muscle_name) {
+                return;
+            }
+            entries.push(MuscleEntry {
+                name: muscle_name,
+                role: (*selected_role).clone(),
+            });
+            muscle_entries.set(entries);
+            custom_muscle_name.set(String::new());
+        })
+    };
+
     let on_save = {
         let name = name.clone();
         let category = category.clone();
         let equipment = equipment.clone();
         let tracking_type = tracking_type.clone();
-        let muscles = muscles.clone();
+        let muscle_entries = muscle_entries.clone();
         let description = description.clone();
         let image = image.clone();
         let cb = props.on_save.clone();
         Callback::from(move |_| {
             if !name.is_empty() {
+                let muscle_groups: Vec<String> = muscle_entries
+                    .iter()
+                    .map(|e| {
+                        if e.role == "primary" {
+                            e.name.clone()
+                        } else {
+                            format!("{}:{}", e.name, e.role)
+                        }
+                    })
+                    .collect();
                 cb.emit(Exercise {
                     id: format!("custom-{}", uuid::Uuid::new_v4()),
                     name: (*name).clone(),
                     category: (*category).clone(),
                     equipment: (*equipment).clone(),
-                    muscle_groups: muscles
-                        .split(',')
-                        .map(|s| s.trim().to_string())
-                        .filter(|s| !s.is_empty())
-                        .collect(),
+                    muscle_groups,
                     description: (*description).clone(),
                     is_custom: true,
                     image: (*image).clone(),
@@ -68,6 +116,15 @@ pub fn custom_exercise_form(props: &Props) -> Html {
                 });
             }
         })
+    };
+
+    let role_color = |role: &str| -> &'static str {
+        match role {
+            "primary" => "bg-blue-500 text-white",
+            "secondary" => "bg-yellow-500 text-white",
+            "tertiary" => "bg-gray-400 text-white",
+            _ => "bg-gray-300 text-gray-700",
+        }
     };
 
     html! {
@@ -164,17 +221,87 @@ pub fn custom_exercise_form(props: &Props) -> Html {
                     </select>
                 </div>
                 <div>
-                    <label class="block text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-gray-500 mb-1">{"Muscle Groups (comma-separated)"}</label>
-                    <input
-                        type="text"
-                        placeholder="e.g. Chest, Triceps"
-                        class="w-full px-3 py-2 bg-white dark:bg-gray-700 rounded text-gray-900 dark:text-gray-100 outline-none neu-pressed transition-colors"
-                        value={(*muscles).clone()}
-                        oninput={let m = muscles.clone(); Callback::from(move |e: InputEvent| {
-                            let input: web_sys::HtmlInputElement = e.target_unchecked_into();
-                            m.set(input.value());
-                        })}
-                    />
+                    <label class="block text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-gray-500 mb-1">{"Muscle Groups"}</label>
+                    // Current muscle tags
+                    { if !muscle_entries.is_empty() {
+                        html! {
+                            <div class="flex flex-wrap gap-1.5 mb-2">
+                                { for muscle_entries.iter().enumerate().map(|(i, entry)| {
+                                    let muscle_entries = muscle_entries.clone();
+                                    let color = role_color(&entry.role);
+                                    let role_label = match entry.role.as_str() {
+                                        "primary" => "P",
+                                        "secondary" => "S",
+                                        "tertiary" => "T",
+                                        _ => "?",
+                                    };
+                                    html! {
+                                        <span class={classes!("inline-flex", "items-center", "gap-1", "px-2", "py-0.5", "rounded-full", "text-xs", "font-medium", color)}>
+                                            <span class="opacity-70 text-[10px]">{role_label}</span>
+                                            {&entry.name}
+                                            <button
+                                                class="ml-0.5 hover:opacity-70 text-xs leading-none"
+                                                onclick={Callback::from(move |_: MouseEvent| {
+                                                    let mut entries = (*muscle_entries).clone();
+                                                    entries.remove(i);
+                                                    muscle_entries.set(entries);
+                                                })}
+                                            >{"\u{2715}"}</button>
+                                        </span>
+                                    }
+                                })}
+                            </div>
+                        }
+                    } else {
+                        html! {}
+                    }}
+                    // Add muscle row
+                    <div class="flex gap-2">
+                        <select
+                            class="flex-1 px-2 py-1.5 bg-white dark:bg-gray-700 rounded text-sm text-gray-900 dark:text-gray-100 outline-none neu-pressed transition-colors"
+                            onchange={let sm = selected_muscle.clone(); Callback::from(move |e: Event| {
+                                let input: web_sys::HtmlInputElement = e.target_unchecked_into();
+                                sm.set(input.value());
+                            })}
+                        >
+                            <option value="" selected={selected_muscle.is_empty()}>{"Select muscle..."}</option>
+                            { for TRACKED_MUSCLES.iter().map(|&m| {
+                                html! { <option value={m} selected={*selected_muscle == m}>{m}</option> }
+                            })}
+                            <option value="__custom__">{"Custom..."}</option>
+                        </select>
+                        <select
+                            class="w-24 px-2 py-1.5 bg-white dark:bg-gray-700 rounded text-sm text-gray-900 dark:text-gray-100 outline-none neu-pressed transition-colors"
+                            onchange={let sr = selected_role.clone(); Callback::from(move |e: Event| {
+                                let input: web_sys::HtmlInputElement = e.target_unchecked_into();
+                                sr.set(input.value());
+                            })}
+                        >
+                            <option value="primary" selected={*selected_role == "primary"}>{"Primary"}</option>
+                            <option value="secondary" selected={*selected_role == "secondary"}>{"Secondary"}</option>
+                            <option value="tertiary" selected={*selected_role == "tertiary"}>{"Tertiary"}</option>
+                        </select>
+                        <button
+                            class="px-3 py-1.5 bg-blue-600 text-white rounded text-sm font-bold hover:bg-blue-700 transition-colors"
+                            onclick={on_add_muscle}
+                        >{"+"}</button>
+                    </div>
+                    { if *selected_muscle == "__custom__" {
+                        html! {
+                            <input
+                                type="text"
+                                placeholder="Custom muscle name"
+                                class="w-full mt-2 px-3 py-1.5 bg-white dark:bg-gray-700 rounded text-sm text-gray-900 dark:text-gray-100 outline-none neu-pressed transition-colors"
+                                value={(*custom_muscle_name).clone()}
+                                oninput={let cm = custom_muscle_name.clone(); Callback::from(move |e: InputEvent| {
+                                    let input: web_sys::HtmlInputElement = e.target_unchecked_into();
+                                    cm.set(input.value());
+                                })}
+                            />
+                        }
+                    } else {
+                        html! {}
+                    }}
                 </div>
                 <div>
                     <label class="block text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-gray-500 mb-1">{"Description"}</label>

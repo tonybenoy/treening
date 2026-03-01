@@ -93,6 +93,7 @@ pub fn load_user_config() -> UserConfig {
             unit_system: crate::models::UnitSystem::Metric,
             ai_enabled: false,
             ai_model: crate::models::AiModel::default(),
+            muscle_thresholds: None,
         };
         let _ = LocalStorage::set(USER_CONFIG_KEY, &config);
         config

@@ -4,6 +4,7 @@ pub mod exercises;
 pub mod faq;
 pub mod history;
 pub mod home;
+pub mod muscles;
 pub mod plate_calculator;
 pub mod routines;
 pub mod settings;

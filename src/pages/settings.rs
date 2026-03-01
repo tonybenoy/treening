@@ -444,10 +444,22 @@ pub fn settings_page() -> Html {
                     <span>{"→"}</span>
                 </Link<Route>>
                 <div class="pt-2 border-t border-gray-200 dark:border-gray-700 mt-2 space-y-1">
-                    <span class="text-xs text-gray-500 dark:text-gray-400">{"Version: "}{(*app_version).clone()}</span>
-                    { if !build_date.is_empty() {
-                        html! { <span class="text-xs text-gray-500 dark:text-gray-400">{" · "}{(*build_date).clone()}</span> }
-                    } else { html! {} }}
+                    <div class="flex items-center gap-1">
+                        <span class="text-xs text-gray-500 dark:text-gray-400">{"Version: "}</span>
+                        <a href={format!("https://github.com/tonybenoy/treening/commit/{}", *app_version)}
+                           target="_blank" rel="noopener noreferrer"
+                           class="text-xs text-blue-600 dark:text-blue-400 hover:underline font-mono">
+                            {(*app_version).clone()}
+                        </a>
+                        { if !build_date.is_empty() {
+                            html! { <span class="text-xs text-gray-500 dark:text-gray-400">{" · "}{(*build_date).clone()}</span> }
+                        } else { html! {} }}
+                    </div>
+                    <a href="https://github.com/tonybenoy/treening/releases"
+                       target="_blank" rel="noopener noreferrer"
+                       class="text-xs text-blue-600 dark:text-blue-400 hover:underline block">
+                        {"View Release Notes →"}
+                    </a>
                 </div>
             </div>
 

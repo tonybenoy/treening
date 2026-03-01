@@ -1,6 +1,7 @@
 use crate::components::achievements::AchievementBadges;
 use crate::components::ai_chat;
 use crate::models::{self, Exercise, Workout};
+use crate::pages::muscles::muscle_balance_summary;
 use crate::storage;
 use crate::Route;
 use chrono::Datelike;
@@ -325,6 +326,57 @@ fn weekly_summary() -> Html {
     }
 }
 
+#[function_component(MuscleBalanceCard)]
+fn muscle_balance_card() -> Html {
+    let workouts = storage::load_workouts();
+    if workouts.is_empty() {
+        return html! {};
+    }
+
+    let all_exercises: Vec<Exercise> = {
+        let mut exs = crate::data::default_exercises();
+        exs.extend(storage::load_custom_exercises());
+        exs
+    };
+
+    let (undertrained, overtrained) = muscle_balance_summary(&workouts, &all_exercises);
+
+    let (summary, color) = if undertrained == 0 && overtrained == 0 {
+        ("All muscles balanced".to_string(), "text-green-500")
+    } else {
+        let mut parts = Vec::new();
+        if undertrained > 0 {
+            parts.push(format!("{} undertrained", undertrained));
+        }
+        if overtrained > 0 {
+            parts.push(format!("{} overtrained", overtrained));
+        }
+        (
+            parts.join(", "),
+            if overtrained > 0 {
+                "text-red-500"
+            } else {
+                "text-yellow-500"
+            },
+        )
+    };
+
+    html! {
+        <Link<Route> to={Route::Muscles} classes="block bg-gray-100 dark:bg-gray-800/50 rounded-xl p-4 hover:bg-gray-200 dark:hover:bg-gray-800 transition neu-flat group">
+            <div class="flex justify-between items-center">
+                <div class="flex items-center gap-3">
+                    <span class="text-2xl group-hover:scale-110 transition-transform">{"🧠"}</span>
+                    <div>
+                        <div class="font-medium text-gray-800 dark:text-gray-200">{"Training Intelligence"}</div>
+                        <div class={classes!("text-xs", "font-medium", color)}>{summary}</div>
+                    </div>
+                </div>
+                <span class="text-gray-400 dark:text-gray-600 group-hover:text-blue-600 dark:group-hover:text-blue-400 group-hover:translate-x-1 transition-all">{"→"}</span>
+            </div>
+        </Link<Route>>
+    }
+}
+
 #[function_component(HomePage)]
 pub fn home_page() -> Html {
     let workouts = use_state(storage::load_workouts);
@@ -416,6 +468,8 @@ pub fn home_page() -> Html {
                     html! {}
                 }}
             </div>
+
+            <MuscleBalanceCard />
 
             <SummaryStats />
 

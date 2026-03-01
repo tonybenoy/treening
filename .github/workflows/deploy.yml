@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
   pages: write
   id-token: write
 
@@ -63,3 +63,52 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
+
+  release:
+    needs: deploy
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Create release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          SHORT_SHA=$(git rev-parse --short HEAD)
+          BUILD_DATE=$(date -u '+%Y-%m-%d %H:%M UTC')
+          TAG="v${SHORT_SHA}"
+
+          # Skip if this tag already exists
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            echo "Release $TAG already exists, skipping."
+            exit 0
+          fi
+
+          # Get commit messages since last tag (or last 20 commits if no tags)
+          LAST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
+          if [ -n "$LAST_TAG" ]; then
+            CHANGES=$(git log "${LAST_TAG}..HEAD" --pretty=format:"- %s" --no-merges)
+          else
+            CHANGES=$(git log -20 --pretty=format:"- %s" --no-merges)
+          fi
+
+          COMPARE_BASE="${LAST_TAG:-$(git rev-list --max-parents=0 HEAD | head -1 | cut -c1-7)}"
+          FULL_SHA=$(git rev-parse HEAD)
+          REPO="${{ github.repository }}"
+
+          {
+            echo "## What's Changed"
+            echo ""
+            echo "$CHANGES"
+            echo ""
+            echo "**Full Changelog**: https://github.com/${REPO}/compare/${COMPARE_BASE}...${TAG}"
+            echo ""
+            echo "---"
+            echo "Deployed to [treen.ing](https://treen.ing/) · Built from [\`${SHORT_SHA}\`](https://github.com/${REPO}/commit/${FULL_SHA})"
+          } > /tmp/release_notes.md
+
+          gh release create "$TAG" \
+            --title "Treening ${TAG} (${BUILD_DATE})" \
+            --notes-file /tmp/release_notes.md

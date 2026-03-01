@@ -1,4 +1,5 @@
 use serde::{Deserialize, Serialize};
+use std::collections::HashMap;
 use std::fmt;
 
 #[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
@@ -311,6 +312,8 @@ pub struct UserConfig {
     pub ai_enabled: bool,
     #[serde(default)]
     pub ai_model: AiModel,
+    #[serde(default)]
+    pub muscle_thresholds: Option<HashMap<String, (f64, f64)>>,
 }
 
 #[derive(Clone, Debug, Default, Serialize, Deserialize, PartialEq)]

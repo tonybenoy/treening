@@ -2,6 +2,7 @@ mod backup;
 mod components;
 mod data;
 mod models;
+mod muscle_data;
 mod pages;
 mod sharing;
 mod storage;
@@ -18,6 +19,7 @@ use pages::exercises::ExercisesPage;
 use pages::faq::FaqPage;
 use pages::history::HistoryPage;
 use pages::home::HomePage;
+use pages::muscles::MusclesPage;
 use pages::plate_calculator::PlateCalculatorPage;
 use pages::routines::RoutinesPage;
 use pages::settings::SettingsPage;
@@ -92,6 +94,8 @@ pub enum Route {
     PlateCalc,
     #[at("/ai")]
     AiChat,
+    #[at("/muscles")]
+    Muscles,
     #[not_found]
     #[at("/404")]
     NotFound,
@@ -111,6 +115,7 @@ fn switch(routes: Route) -> Html {
         Route::Shared => ("shared", html! { <SharedPage /> }),
         Route::PlateCalc => ("plate-calc", html! { <PlateCalculatorPage /> }),
         Route::AiChat => ("ai-chat", html! { <AiChatPage /> }),
+        Route::Muscles => ("muscles", html! { <MusclesPage /> }),
         Route::NotFound => ("home", html! { <HomePage /> }),
     };
     html! { <div key={key} class="page-enter">{page}</div> }

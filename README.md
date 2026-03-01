@@ -35,6 +35,7 @@ Treening is a modern, offline-capable gym workout tracker built with Rust and We
 - **Body Progress:** Log your weight and body fat % over time with built-in progress charts.
 - **Adaptive UI:** Full support for **Light and Dark modes** based on your system preference or manual toggle.
 - **Routine Management:** Create and save your favorite workout routines for quick access.
+- **Training Intelligence:** Comprehensive training analysis page with muscle balance tracking (rolling 7-day effective sets per muscle group with MEV/MRV color coding), training frequency analysis, progressive overload detection, rep range distribution, deload recommendations, push/pull balance ratio, per-session volume warnings, and recovery status tracking. Based on RP Volume Landmarks (Israetel) with customizable thresholds.
 - **Advanced Analytics:** Detailed charts for exercise progress, muscle group distribution, and body metrics.
 - **Relative Ranking:** Compare intensity with friends using **Relative Volume** (Volume per kg of body weight) for a fairer competition.
 - **Trusted Device Sync:** Pair your devices once, then data syncs automatically whenever both are open. Share a pairing link or enter a Device ID to connect.
@@ -98,12 +99,13 @@ The output will be in the `dist/` directory.
 
 ## Project Structure
 
-- `src/components/`: Reusable UI components (Nav, Workout Log, etc.).
-- `src/pages/`: Main application views (Home, Exercises, Routines, Analytics).
+- `src/components/`: Reusable UI components (Nav, Workout Log, Charts, etc.).
+- `src/pages/`: Main application views (Home, Exercises, Routines, Analytics, Training Intelligence).
 - `src/models.rs`: Data structures for workouts, exercises, and routines.
 - `src/storage.rs`: Logic for persisting data to the browser.
 - `src/backup.rs`: IndexedDB auto-backup and persistent storage request.
 - `src/data.rs`: Seed data and exercise definitions.
+- `src/muscle_data.rs`: Weighted muscle contribution mappings for all exercises and volume thresholds (MEV/MRV).
 - `icons/`: SVG icons for the app and exercise categories.
 
 ## License
