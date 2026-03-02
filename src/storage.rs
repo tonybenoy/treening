@@ -91,6 +91,7 @@ pub fn load_user_config() -> UserConfig {
             rest_seconds: 90,
             bar_weight: 20.0,
             unit_system: crate::models::UnitSystem::Metric,
+            video_demos_enabled: false,
             ai_enabled: false,
             ai_model: crate::models::AiModel::default(),
             muscle_thresholds: None,

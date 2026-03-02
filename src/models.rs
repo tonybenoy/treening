@@ -89,6 +89,15 @@ pub struct Exercise {
     pub image: Option<String>,
     #[serde(default)]
     pub tracking_type: ExerciseTrackingType,
+    #[serde(default)]
+    pub video_id: Option<String>,
+}
+
+impl Exercise {
+    pub fn with_video(mut self, id: &str) -> Self {
+        self.video_id = Some(id.to_string());
+        self
+    }
 }
 
 #[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
@@ -308,6 +317,8 @@ pub struct UserConfig {
     pub rest_seconds: u32,
     #[serde(default = "default_bar_weight")]
     pub bar_weight: f64,
+    #[serde(default)]
+    pub video_demos_enabled: bool,
     #[serde(default)]
     pub ai_enabled: bool,
     #[serde(default)]

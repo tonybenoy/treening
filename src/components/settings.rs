@@ -44,6 +44,16 @@ pub fn settings_panel(props: &Props) -> Html {
         })
     };
 
+    let on_toggle_video_demos = {
+        let config = config.clone();
+        Callback::from(move |_| {
+            let mut new_config = (*config).clone();
+            new_config.video_demos_enabled = !new_config.video_demos_enabled;
+            storage::save_user_config(&new_config);
+            config.set(new_config);
+        })
+    };
+
     let on_change_theme = {
         let config = config.clone();
         Callback::from(move |e: Event| {
@@ -221,6 +231,27 @@ pub fn settings_panel(props: &Props) -> Html {
                         </select>
                     </div>
                 }
+
+                <div class="pt-4 mt-4 border-t border-gray-200 dark:border-gray-700/50 flex items-center justify-between">
+                    <div>
+                        <div class="font-medium text-gray-800 dark:text-gray-200">{"Video Demos"}</div>
+                        <div class="text-sm text-gray-500 dark:text-gray-400">{"Show YouTube video demos on exercises (requires internet)"}</div>
+                    </div>
+                    <button
+                        onclick={on_toggle_video_demos}
+                        class={classes!(
+                            "relative", "inline-flex", "h-6", "w-11", "items-center", "rounded-full", "transition-colors", "focus:outline-none",
+                            if config.video_demos_enabled { "bg-blue-600" } else { "bg-gray-300 dark:bg-gray-700" }
+                        )}
+                    >
+                        <span
+                            class={classes!(
+                                "inline-block", "h-4", "w-4", "transform", "rounded-full", "bg-white", "transition-transform",
+                                if config.video_demos_enabled { "translate-x-6" } else { "translate-x-1" }
+                            )}
+                        />
+                    </button>
+                </div>
 
                 <div class="pt-4 mt-4 border-t border-gray-200 dark:border-gray-700/50 flex items-center justify-between">
                     <div>

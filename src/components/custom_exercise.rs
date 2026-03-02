@@ -4,6 +4,51 @@ use gloo::file::callbacks::{self, FileReader};
 use web_sys::HtmlInputElement;
 use yew::prelude::*;
 
+fn parse_youtube_video_id(input: &str) -> Option<String> {
+    let input = input.trim();
+    if input.is_empty() {
+        return None;
+    }
+    // Try to extract from various URL formats
+    // https://www.youtube.com/watch?v=VIDEO_ID
+    // https://youtu.be/VIDEO_ID
+    // https://www.youtube.com/embed/VIDEO_ID
+    // https://youtube.com/shorts/VIDEO_ID
+    // or bare VIDEO_ID (11 chars, alphanumeric + - _)
+    if let Some(pos) = input.find("v=") {
+        let rest = &input[pos + 2..];
+        let id: String = rest
+            .chars()
+            .take_while(|c| *c != '&' && *c != '#')
+            .collect();
+        if !id.is_empty() {
+            return Some(id);
+        }
+    }
+    for prefix in &["/embed/", "/shorts/", "youtu.be/"] {
+        if let Some(pos) = input.find(prefix) {
+            let rest = &input[pos + prefix.len()..];
+            let id: String = rest
+                .chars()
+                .take_while(|c| *c != '?' && *c != '&' && *c != '#' && *c != '/')
+                .collect();
+            if !id.is_empty() {
+                return Some(id);
+            }
+        }
+    }
+    // Bare video ID: 11 chars, [a-zA-Z0-9_-]
+    if input.len() == 11
+        && input
+            .chars()
+            .all(|c| c.is_ascii_alphanumeric() || c == '-' || c == '_')
+    {
+        return Some(input.to_string());
+    }
+    // If nothing matched but non-empty, treat as-is
+    Some(input.to_string())
+}
+
 #[derive(Clone, PartialEq)]
 struct MuscleEntry {
     name: String,
@@ -27,6 +72,7 @@ pub fn custom_exercise_form(props: &Props) -> Html {
     let selected_role = use_state(|| "primary".to_string());
     let custom_muscle_name = use_state(String::new);
     let description = use_state(String::new);
+    let video_url = use_state(String::new);
     let image = use_state(|| None::<String>);
     let reader = use_state(|| None::<FileReader>);
 
@@ -89,6 +135,7 @@ pub fn custom_exercise_form(props: &Props) -> Html {
         let tracking_type = tracking_type.clone();
         let muscle_entries = muscle_entries.clone();
         let description = description.clone();
+        let video_url = video_url.clone();
         let image = image.clone();
         let cb = props.on_save.clone();
         Callback::from(move |_| {
@@ -103,6 +150,7 @@ pub fn custom_exercise_form(props: &Props) -> Html {
                         }
                     })
                     .collect();
+                let video_id = parse_youtube_video_id(&video_url);
                 cb.emit(Exercise {
                     id: format!("custom-{}", uuid::Uuid::new_v4()),
                     name: (*name).clone(),
@@ -113,6 +161,7 @@ pub fn custom_exercise_form(props: &Props) -> Html {
                     is_custom: true,
                     image: (*image).clone(),
                     tracking_type: (*tracking_type).clone(),
+                    video_id,
                 });
             }
         })
@@ -314,6 +363,19 @@ pub fn custom_exercise_form(props: &Props) -> Html {
                             d.set(input.value());
                         })}
                     ></textarea>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-gray-500 mb-1">{"YouTube Video URL (optional)"}</label>
+                    <input
+                        type="text"
+                        placeholder="e.g. https://youtube.com/watch?v=... or video ID"
+                        class="w-full px-3 py-2 bg-white dark:bg-gray-700 rounded text-gray-900 dark:text-gray-100 outline-none neu-pressed transition-colors"
+                        value={(*video_url).clone()}
+                        oninput={let v = video_url.clone(); Callback::from(move |e: InputEvent| {
+                            let input: web_sys::HtmlInputElement = e.target_unchecked_into();
+                            v.set(input.value());
+                        })}
+                    />
                 </div>
                 <div>
                     <label class="block text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-gray-500 mb-1">{"Image"}</label>
