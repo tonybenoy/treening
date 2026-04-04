@@ -126,7 +126,7 @@ extern "C" {
     fn webllm_is_supported() -> bool;
 
     #[wasm_bindgen(js_name = webllmInit)]
-    fn webllm_init(model_id: &str, cb: &JsValue) -> js_sys::Promise;
+    fn webllm_init(model_id: &str, dtype: &str, cb: &JsValue) -> js_sys::Promise;
 
     #[wasm_bindgen(js_name = webllmChat)]
     pub fn webllm_chat(sys: &str, msgs: &str) -> js_sys::Promise;
@@ -1002,6 +1002,7 @@ pub fn ai_chat() -> Html {
             let model_state = model_state.clone();
             let config = storage::load_user_config();
             let model_id = config.ai_model.model_id().to_string();
+            let dtype = config.ai_model.dtype().to_string();
             model_state.set(ModelState::Downloading {
                 progress: 0.0,
                 text: "Initializing...".to_string(),
@@ -1025,9 +1026,12 @@ pub fn ai_chat() -> Html {
                         }
                     }) as Box<dyn FnMut(JsValue)>)
                 };
-                let result =
-                    JsFuture::from(webllm_init(&model_id, progress_cb.as_ref().unchecked_ref()))
-                        .await;
+                let result = JsFuture::from(webllm_init(
+                    &model_id,
+                    &dtype,
+                    progress_cb.as_ref().unchecked_ref(),
+                ))
+                .await;
                 progress_cb.forget();
                 match result {
                     Ok(_) => ms.set(ModelState::Ready),

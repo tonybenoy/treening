@@ -67,217 +67,157 @@
 
     <script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script>
 
-    <!-- WebLLM for local AI chat (runs in Web Worker to avoid blocking UI) -->
-    <link data-trunk rel="copy-file" href="webllm-worker.js" />
+    <!-- Transformers.js local AI chat (main thread, lazy-loaded) -->
     <script type="module">
-        import { CreateWebWorkerMLCEngine } from "https://esm.run/@mlc-ai/web-llm";
-
-        let engine = null;
+        const TFJS_URL = "https://esm.run/@huggingface/transformers@4";
+        let T = null;
+        let tokenizer = null;
+        let model = null;
         let loadedModelId = null;
-        let currentWorker = null;
 
-        window.webllmIsSupported = () => !!navigator.gpu;
-
-        // Detect disposed/GC'd WASM object errors (common on iOS Safari)
-        function isDisposedError(err) {
-            const msg = String(err?.message || err || "");
-            return msg.includes("disposed") || msg.includes("BindingError") || msg.includes("Tokenizer");
-        }
-
-        function createWorker() {
-            if (currentWorker) {
-                try { currentWorker.terminate(); } catch (_) {}
+        async function getTfjs() {
+            if (!T) {
+                T = await import(TFJS_URL);
+                T.env.allowLocalModels = false;
+                T.env.useBrowserCache = true;
             }
-            currentWorker = new Worker(
-                new URL("webllm-worker.js", window.location.href),
-                { type: "module" }
-            );
-            return currentWorker;
+            return T;
         }
 
-        // Force re-create the engine (model is cached so this is fast)
-        async function reinitEngine() {
-            const modelId = loadedModelId;
-            engine = null;
-            loadedModelId = null;
-            if (!modelId) throw new Error("No model to reinitialize");
-            const worker = createWorker();
-            engine = await CreateWebWorkerMLCEngine(worker, modelId, {});
-            loadedModelId = modelId;
-        }
+        window.webllmIsSupported = () => typeof WebAssembly !== "undefined";
 
-        // Validate engine is still alive by attempting a trivial operation
-        async function ensureEngine() {
-            if (!engine) return;
-            try {
-                await engine.getGPUVendor?.();
-            } catch (err) {
-                if (isDisposedError(err)) {
-                    console.warn("WebLLM engine stale, reinitializing...", err);
-                    await reinitEngine();
-                }
-            }
-        }
+        window.webllmInit = async (modelId, dtype, progressCallback) => {
+            if (model && loadedModelId === modelId) return;
 
-        window.webllmInit = async (modelId, progressCallback) => {
-            // If already loaded with same model, verify engine is alive
-            if (engine && loadedModelId === modelId) {
-                try {
-                    await ensureEngine();
-                    return;
-                } catch (_) {
-                    // Engine is dead, fall through to re-create
-                    engine = null;
-                    loadedModelId = null;
-                }
-            }
-            // If switching models, reset first
-            if (engine && loadedModelId !== modelId) {
-                engine = null;
+            // Dispose previous model
+            if (model) {
+                try { await model.dispose?.(); } catch (_) {}
+                model = null;
+                tokenizer = null;
                 loadedModelId = null;
             }
-            const worker = createWorker();
+
+            function emitProgress(progress, text) {
+                if (progressCallback) {
+                    progressCallback(JSON.stringify({ progress, text }));
+                }
+            }
+
             try {
-                engine = await CreateWebWorkerMLCEngine(worker, modelId, {
-                    initProgressCallback: (progress) => {
-                        if (progressCallback) {
-                            progressCallback(JSON.stringify({
-                                progress: progress.progress || 0,
-                                text: progress.text || ""
-                            }));
-                        }
+                emitProgress(0, "Loading AI engine...");
+                const lib = await getTfjs();
+
+                const onProgress = (p) => {
+                    if (p.status === "progress") {
+                        emitProgress(
+                            (p.progress || 0) / 100,
+                            p.file ? `Downloading ${p.file} (${Math.round(p.progress || 0)}%)` : "Downloading..."
+                        );
+                    } else if (p.status === "initiate") {
+                        emitProgress(0, p.file ? `Starting: ${p.file}` : "Initializing...");
+                    } else if (p.status === "done" && p.file) {
+                        emitProgress(1, `Loaded ${p.file}`);
                     }
+                };
+
+                const device = navigator.gpu ? "webgpu" : "wasm";
+
+                emitProgress(0, "Loading tokenizer...");
+                tokenizer = await lib.AutoTokenizer.from_pretrained(modelId, {
+                    progress_callback: onProgress,
                 });
+
+                emitProgress(0.05, "Loading model weights...");
+                model = await lib.AutoModelForCausalLM.from_pretrained(modelId, {
+                    dtype: dtype || "q4f16",
+                    device,
+                    progress_callback: onProgress,
+                });
+
                 loadedModelId = modelId;
             } catch (err) {
-                engine = null;
+                model = null;
+                tokenizer = null;
                 loadedModelId = null;
                 const msg = String(err?.message || err || "");
-                if (msg.includes("Cannot fetch") || msg.includes("fetch") || msg.includes("network") || msg.includes("Failed to fetch")) {
+                if (msg.includes("fetch") || msg.includes("network") || msg.includes("Failed to fetch")) {
                     throw new Error("Network error: could not download the AI model. Check your internet connection and try again.");
                 }
                 throw err;
             }
         };
 
-        window.webllmChat = async (systemPrompt, messagesJson) => {
-            if (!engine) throw new Error("Model not loaded");
+        function buildMessages(systemPrompt, messagesJson) {
             const messages = JSON.parse(messagesJson);
             const fullMessages = [
                 { role: "system", content: systemPrompt },
-                ...messages
+                ...messages,
             ];
-            try {
-                const reply = await engine.chat.completions.create({
-                    messages: fullMessages,
-                    max_tokens: 1024,
-                    temperature: 0.7,
-                });
-                let content = reply.choices[0].message.content || "";
-                content = content.replace(/<think>[\s\S]*?<\/think>/g, "").trim();
-                return content;
-            } catch (err) {
-                if (isDisposedError(err)) {
-                    console.warn("WebLLM engine disposed, reinitializing...", err);
-                    try {
-                        await reinitEngine();
-                        const reply = await engine.chat.completions.create({
-                            messages: fullMessages,
-                            max_tokens: 1024,
-                            temperature: 0.7,
-                        });
-                        let content = reply.choices[0].message.content || "";
-                        content = content.replace(/<think>[\s\S]*?<\/think>/g, "").trim();
-                        return content;
-                    } catch (retryErr) {
-                        throw new Error("AI engine restarted but failed. Please try again.");
-                    }
-                }
-                throw err;
-            }
-        };
-
-        // Process a stream with throttled chunk callbacks (~150ms)
-        async function processStream(chunks, onChunk) {
-            let fullContent = "";
-            let lastEmit = 0;
-            for await (const chunk of chunks) {
-                const delta = chunk.choices[0]?.delta?.content || "";
-                fullContent += delta;
-                const now = performance.now();
-                if (onChunk && now - lastEmit >= 150) {
-                    lastEmit = now;
-                    let cleaned = fullContent.replace(/<think>[\s\S]*?<\/think>/g, "").trim();
-                    const openIdx = cleaned.lastIndexOf("<think>");
-                    if (openIdx !== -1 && cleaned.indexOf("</think>", openIdx) === -1) {
-                        cleaned = cleaned.substring(0, openIdx).trim();
-                    }
-                    onChunk(cleaned);
-                }
-            }
-            // Always emit final content
-            let finalContent = fullContent.replace(/<think>[\s\S]*?<\/think>/g, "").trim();
-            if (onChunk) onChunk(finalContent);
-            return finalContent;
+            // Some models don't support system role — merge into first user msg
+            const text = tokenizer.apply_chat_template(fullMessages, {
+                add_generation_prompt: true,
+                tokenize: false,
+            });
+            return tokenizer(text, { return_tensors: "onnx" });
         }
 
+        window.webllmChat = async (systemPrompt, messagesJson) => {
+            if (!model) throw new Error("Model not loaded");
+            const inputs = buildMessages(systemPrompt, messagesJson);
+            const outputs = await model.generate({
+                ...inputs,
+                max_new_tokens: 1024,
+                temperature: 0.7,
+                do_sample: true,
+            });
+            const promptLen = inputs.input_ids.dims[1];
+            const newTokens = outputs.slice(null, [promptLen, null]);
+            let content = tokenizer.decode(newTokens.data, { skip_special_tokens: true });
+            content = content.replace(/<think>[\s\S]*?<\/think>/g, "").trim();
+            return content;
+        };
+
         window.webllmChatStream = async (systemPrompt, messagesJson, onChunk) => {
-            if (!engine) throw new Error("Model not loaded");
-            const messages = JSON.parse(messagesJson);
-            const fullMessages = [
-                { role: "system", content: systemPrompt },
-                ...messages
-            ];
-            try {
-                const chunks = await engine.chat.completions.create({
-                    messages: fullMessages,
-                    max_tokens: 1024,
-                    temperature: 0.7,
-                    stream: true,
-                    stream_options: { include_usage: true },
-                });
-                return await processStream(chunks, onChunk);
-            } catch (err) {
-                if (isDisposedError(err)) {
-                    console.warn("WebLLM engine disposed, reinitializing...", err);
-                    try {
-                        await reinitEngine();
-                        const chunks = await engine.chat.completions.create({
-                            messages: fullMessages,
-                            max_tokens: 1024,
-                            temperature: 0.7,
-                            stream: true,
-                            stream_options: { include_usage: true },
-                        });
-                        return await processStream(chunks, onChunk);
-                    } catch (retryErr) {
-                        throw new Error("AI engine restarted but failed. Please try again.");
-                    }
-                }
-                throw err;
-            }
-        };
+            if (!model) throw new Error("Model not loaded");
+            const lib = await getTfjs();
+            const inputs = buildMessages(systemPrompt, messagesJson);
 
-        window.webllmIsLoaded = () => !!engine;
-
-        window.webllmReset = async () => {
-            if (engine) {
-                try {
-                    await engine.resetChat();
-                } catch (err) {
-                    if (isDisposedError(err)) {
-                        console.warn("WebLLM engine disposed during reset, reinitializing...");
-                        try {
-                            await reinitEngine();
-                        } catch (_) {
-                            // Reinit failed during reset — non-critical, next chat will retry
+            let fullText = "";
+            let lastEmit = 0;
+            const streamer = new lib.TextStreamer(tokenizer, {
+                skip_prompt: true,
+                skip_special_tokens: true,
+                callback_function: (text) => {
+                    fullText = text;
+                    const now = performance.now();
+                    if (onChunk && now - lastEmit >= 150) {
+                        lastEmit = now;
+                        let cleaned = fullText.replace(/<think>[\s\S]*?<\/think>/g, "").trim();
+                        const openIdx = cleaned.lastIndexOf("<think>");
+                        if (openIdx !== -1 && cleaned.indexOf("</think>", openIdx) === -1) {
+                            cleaned = cleaned.substring(0, openIdx).trim();
                         }
-                    } else {
-                        throw err;
+                        onChunk(cleaned);
                     }
-                }
-            }
+                },
+            });
+
+            await model.generate({
+                ...inputs,
+                max_new_tokens: 1024,
+                temperature: 0.7,
+                do_sample: true,
+                streamer,
+            });
+
+            let finalContent = fullText.replace(/<think>[\s\S]*?<\/think>/g, "").trim();
+            if (onChunk) onChunk(finalContent);
+            return finalContent;
         };
+
+        window.webllmIsLoaded = () => !!loadedModelId;
+
+        window.webllmReset = async () => { /* stateless generation — no-op */ };
     </script>
 
     <!-- Speech Recognition & Synthesis -->

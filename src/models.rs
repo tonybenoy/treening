@@ -334,6 +334,7 @@ pub enum AiModel {
     Qwen3_0_6B,
     Qwen2_5_0_5B,
     Llama3_2_1B,
+    Gemma4E2b,
     // Keep old variants so existing configs deserialize without crashing
     #[serde(other)]
     Unknown,
@@ -342,10 +343,11 @@ pub enum AiModel {
 impl AiModel {
     pub fn model_id(&self) -> &'static str {
         match self {
-            AiModel::SmolLM2_360M => "SmolLM2-360M-Instruct-q4f16_1-MLC",
-            AiModel::Qwen2_5_0_5B => "Qwen2.5-0.5B-Instruct-q4f16_1-MLC",
-            AiModel::Llama3_2_1B => "Llama-3.2-1B-Instruct-q4f16_1-MLC",
-            AiModel::Qwen3_0_6B | AiModel::Unknown => "Qwen3-0.6B-q4f16_1-MLC",
+            AiModel::SmolLM2_360M => "HuggingFaceTB/SmolLM2-360M-Instruct",
+            AiModel::Qwen2_5_0_5B => "onnx-community/Qwen2.5-0.5B-Instruct",
+            AiModel::Llama3_2_1B => "onnx-community/Llama-3.2-1B-Instruct-ONNX",
+            AiModel::Qwen3_0_6B | AiModel::Unknown => "onnx-community/Qwen3-0.6B-ONNX",
+            AiModel::Gemma4E2b => "onnx-community/gemma-4-E2B-it-ONNX",
         }
     }
 
@@ -353,8 +355,19 @@ impl AiModel {
         match self {
             AiModel::SmolLM2_360M => "SmolLM2 360M (~200MB)",
             AiModel::Qwen2_5_0_5B => "Qwen2.5 0.5B (~350MB)",
-            AiModel::Llama3_2_1B => "Llama 3.2 1B (~600MB)",
-            AiModel::Qwen3_0_6B | AiModel::Unknown => "Qwen3 0.6B (~500MB)",
+            AiModel::Llama3_2_1B => "Llama 3.2 1B (~700MB)",
+            AiModel::Qwen3_0_6B | AiModel::Unknown => "Qwen3 0.6B (~400MB)",
+            AiModel::Gemma4E2b => "Gemma 4 2B (~3GB)",
+        }
+    }
+
+    pub fn dtype(&self) -> &'static str {
+        match self {
+            AiModel::SmolLM2_360M => "q4f16",
+            AiModel::Qwen2_5_0_5B => "q4f16",
+            AiModel::Llama3_2_1B => "q4f16",
+            AiModel::Qwen3_0_6B | AiModel::Unknown => "q4f16",
+            AiModel::Gemma4E2b => "q4f16",
         }
     }
 
@@ -364,6 +377,7 @@ impl AiModel {
             AiModel::Qwen3_0_6B,
             AiModel::Qwen2_5_0_5B,
             AiModel::Llama3_2_1B,
+            AiModel::Gemma4E2b,
         ]
     }
 
@@ -373,6 +387,7 @@ impl AiModel {
             "qwen3" => AiModel::Qwen3_0_6B,
             "qwen2.5" => AiModel::Qwen2_5_0_5B,
             "llama3.2" => AiModel::Llama3_2_1B,
+            "gemma4" => AiModel::Gemma4E2b,
             _ => AiModel::default(),
         }
     }
@@ -383,6 +398,7 @@ impl AiModel {
             AiModel::Qwen2_5_0_5B => "qwen2.5",
             AiModel::Llama3_2_1B => "llama3.2",
             AiModel::Qwen3_0_6B | AiModel::Unknown => "qwen3",
+            AiModel::Gemma4E2b => "gemma4",
         }
     }
 }
